@@ -142,7 +142,12 @@ export function BulkImportForm({
       .select("id")
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw new Error(
+        `Erro ao criar categoria "${categoryName}": ${error.message}. ` +
+        `Verifique se você tem permissões de admin/moderador.`
+      );
+    }
     return newCategory.id;
   };
 
@@ -199,10 +204,17 @@ export function BulkImportForm({
           result.success++;
         } catch (error: any) {
           result.failed++;
+          const errorMsg = error.message || "Erro desconhecido";
+          const detailedError = errorMsg.includes("categoria")
+            ? `${errorMsg} (Categoria: ${article.categoria})`
+            : errorMsg;
+          
           result.errors.push({
             slug: article.slug,
-            error: error.message || "Erro desconhecido",
+            error: detailedError,
           });
+          
+          console.error(`Erro ao importar "${article.titulo}":`, error);
         }
 
         // Atualizar progresso
