@@ -27,6 +27,8 @@ const Moderation = lazy(() => import("./pages/Moderation"));
 const News = lazy(() => import("./pages/News"));
 const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
 const PaymentCancel = lazy(() => import("./pages/PaymentCancel"));
+const FAQ = lazy(() => import("./pages/FAQ"));
+const Search = lazy(() => import("./pages/Search"));
 
 const queryClient = new QueryClient();
 
@@ -37,11 +39,15 @@ function Analytics() {
     const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID;
     if (measurementId) {
       initGA(measurementId);
+    } else {
+      console.info('[Analytics] Google Analytics not configured. Set VITE_GA_MEASUREMENT_ID to enable tracking.');
     }
   }, []);
 
   useEffect(() => {
-    trackPageView(location.pathname + location.search);
+    if (import.meta.env.VITE_GA_MEASUREMENT_ID) {
+      trackPageView(location.pathname + location.search);
+    }
   }, [location]);
 
   return null;
@@ -62,8 +68,10 @@ const App = () => (
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/noticias" element={<News />} />
                 <Route path="/news/:slug" element={<Article />} />
+                <Route path="/busca" element={<Search />} />
                 <Route path="/sobre" element={<About />} />
                 <Route path="/contato" element={<Contact />} />
+                <Route path="/faq" element={<FAQ />} />
                 <Route path="/privacidade" element={<Privacy />} />
                 <Route path="/termos" element={<Terms />} />
                 <Route path="/assinaturas" element={<Pricing />} />

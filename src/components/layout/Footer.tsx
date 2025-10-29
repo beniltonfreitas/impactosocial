@@ -39,6 +39,14 @@ export function Footer() {
               </li>
               <li>
                 <a
+                  href="/faq"
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
+                  Perguntas Frequentes
+                </a>
+              </li>
+              <li>
+                <a
                   href="/privacidade"
                   className="text-sm text-muted-foreground hover:text-primary transition-colors"
                 >

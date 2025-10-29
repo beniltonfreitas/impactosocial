@@ -12,7 +12,8 @@ import { PasswordChanger } from '@/components/dashboard/PasswordChanger';
 import { SubscriptionManager } from '@/components/dashboard/SubscriptionManager';
 import { PreferencesEditor } from '@/components/dashboard/PreferencesEditor';
 import { PushToggle } from '@/components/notifications/PushToggle';
-import { Shield, User, Bell, Settings, Lock, CreditCard } from 'lucide-react';
+import { UserComments } from '@/components/dashboard/UserComments';
+import { Shield, User, Bell, Settings, Lock, CreditCard, MessageSquare } from 'lucide-react';
 
 export default function Dashboard() {
   const { profile, roles, hasRole } = useAuth();
@@ -34,7 +35,7 @@ export default function Dashboard() {
           </div>
 
           <Tabs defaultValue="profile" className="w-full">
-            <TabsList className="grid w-full grid-cols-5 mb-6">
+            <TabsList className="grid w-full grid-cols-6 mb-6">
               <TabsTrigger value="profile">
                 <User className="h-4 w-4 mr-2" />
                 Perfil
@@ -42,6 +43,10 @@ export default function Dashboard() {
               <TabsTrigger value="subscription">
                 <CreditCard className="h-4 w-4 mr-2" />
                 Assinatura
+              </TabsTrigger>
+              <TabsTrigger value="comments">
+                <MessageSquare className="h-4 w-4 mr-2" />
+                Comentários
               </TabsTrigger>
               <TabsTrigger value="preferences">
                 <Settings className="h-4 w-4 mr-2" />
@@ -120,6 +125,20 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <SubscriptionManager />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="comments">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Meus Comentários</CardTitle>
+                  <CardDescription>
+                    Gerencie todos os comentários que você fez em artigos
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <UserComments />
                 </CardContent>
               </Card>
             </TabsContent>

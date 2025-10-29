@@ -60,6 +60,34 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
+## Configuration
+
+### Google Analytics
+
+To enable Google Analytics tracking, you need to set up your measurement ID:
+
+1. Create a Google Analytics 4 property at [Google Analytics](https://analytics.google.com/)
+2. Get your Measurement ID (format: `G-XXXXXXXXXX`)
+3. Add it to your environment variables in `.env`:
+
+```env
+VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+```
+
+The application will automatically initialize Google Analytics and track:
+- Page views
+- Article views
+- Searches
+- Social shares
+- Comments
+- Subscription conversions
+
+If the measurement ID is not set, analytics tracking will be disabled gracefully without affecting the application.
+
+### Push Notifications
+
+Push notifications are configured automatically. Users can opt-in through their Dashboard → Notifications tab.
+
 ## How can I deploy this project?
 
 Simply open [Lovable](https://lovable.dev/projects/63827ff7-5866-40cd-9af6-2b48dff69b63) and click on Share -> Publish.

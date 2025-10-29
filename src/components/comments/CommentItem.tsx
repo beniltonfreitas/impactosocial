@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { MessageCircle, Pencil, Trash2, Check, X } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/components/auth/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -146,7 +148,22 @@ export function CommentItem({
             {editedAt && (
               <>
                 <span className="text-muted-foreground">•</span>
-                <span className="text-xs text-muted-foreground italic">editado</span>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Badge variant="outline" className="text-xs">
+                        Editado
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>
+                        Editado em {format(new Date(editedAt), "dd/MM/yyyy 'às' HH:mm", {
+                          locale: ptBR,
+                        })}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </>
             )}
           </div>

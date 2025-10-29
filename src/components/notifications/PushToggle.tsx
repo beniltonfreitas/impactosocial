@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/components/auth/AuthContext";
 import { subscribeToPush, unsubscribeFromPush, hasPushSubscription } from "@/lib/pushNotifications";
-import { TENANT_NAME } from "@/lib/constants";
 
 export function PushToggle() {
   const [enabled, setEnabled] = useState(false);
@@ -50,8 +49,8 @@ export function PushToggle() {
           description: "Você não receberá mais alertas de notícias urgentes",
         });
       } else {
-        // Subscribe
-        await subscribeToPush('default-tenant-id'); // TODO: Get actual tenant ID
+        // Subscribe - using 'nacional' as default tenant for now
+        await subscribeToPush('nacional');
         setEnabled(true);
         toast({
           title: "Notificações habilitadas",

@@ -181,6 +181,32 @@ export default function Article() {
 
   const contentPreview = article.content?.substring(0, 200) || article.summary?.substring(0, 200) || "";
 
+  // Generate JSON-LD schema for article
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": article.title,
+    "description": article.summary || "",
+    "image": article.image_url || "",
+    "datePublished": article.published_at || "",
+    "author": {
+      "@type": "Person",
+      "name": article.author || "Conexão na Cidade"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Conexão na Cidade",
+      "logo": {
+        "@type": "ImageObject",
+        "url": `${window.location.origin}/icons/icon-512.png`
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": window.location.href
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <SEO
@@ -190,6 +216,7 @@ export default function Article() {
         type="article"
         author={article.author || undefined}
         publishedTime={article.published_at || undefined}
+        schema={articleSchema}
       />
       <Header />
       <main className="flex-1">
