@@ -2,21 +2,18 @@ import { useEffect, useState } from "react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Sidebar } from "@/components/layout/Sidebar";
-import { GeoResolverModal } from "@/components/geo/GeoResolverModal";
 import { AgentFAB } from "@/components/ai/AgentFAB";
 import { NewsTicker } from "@/components/news/NewsTicker";
 import { NewsGrid } from "@/components/news/NewsGrid";
 import { NewsSearch } from "@/components/news/NewsSearch";
 import { NewsFilters } from "@/components/news/NewsFilters";
 import { SEO } from "@/components/SEO";
-import { getTenantCookie } from "@/lib/geo";
 import { TENANT_NAME } from "@/lib/constants";
 import { fetchArticles, type Article } from "@/lib/widgets";
 import { Newspaper } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Index = () => {
-  const [showGeoModal, setShowGeoModal] = useState(false);
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -24,11 +21,6 @@ const Index = () => {
   const [orderBy, setOrderBy] = useState("recent");
 
   useEffect(() => {
-    const hasCookie = getTenantCookie();
-    if (!hasCookie) {
-      setShowGeoModal(true);
-    }
-
     // VLibras widget container
     const vlibrasDiv = document.getElementById("vlibras-widget");
     if (!vlibrasDiv) {
@@ -47,7 +39,7 @@ const Index = () => {
     const loadArticles = async () => {
       try {
         setLoading(true);
-        const tenantSlug = getTenantCookie() || 'nacional';
+        const tenantSlug = 'nacional';
         const data = await fetchArticles(
           tenantSlug, 
           12, 
@@ -84,17 +76,10 @@ const Index = () => {
               <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-4">
                 Conexão na Cidade — {TENANT_NAME}
               </h1>
-              <p className="text-lg text-primary-foreground/90 mb-6">
+              <p className="text-lg text-primary-foreground/90">
                 Seu portal de notícias regional com informações relevantes da sua
                 cidade e região.
               </p>
-              <Button
-                variant="secondary"
-                onClick={() => setShowGeoModal(true)}
-                className="shadow-lg"
-              >
-                Escolher Outra Região
-              </Button>
             </div>
           </div>
         </section>
@@ -140,7 +125,6 @@ const Index = () => {
       </main>
 
       <Footer />
-      <GeoResolverModal open={showGeoModal} onOpenChange={setShowGeoModal} />
       <AgentFAB />
     </div>
   );
