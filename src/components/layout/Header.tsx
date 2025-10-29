@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X, LogIn } from "lucide-react";
+import { Menu, X, LogIn, MapPin } from "lucide-react";
 import { TENANT_NAME } from "@/lib/constants";
 import { AccessibilityBar } from "@/components/accessibility/AccessibilityBar";
+import { GeoResolverModal } from "@/components/geo/GeoResolverModal";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/auth/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,6 +11,7 @@ import UserMenu from "./UserMenu";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [geoModalOpen, setGeoModalOpen] = useState(false);
   const [isModerator, setIsModerator] = useState(false);
   const { user } = useAuth();
 
@@ -87,16 +89,28 @@ export function Header() {
               )}
             </nav>
             
-            {user ? (
-              <UserMenu />
-            ) : (
-              <Button asChild size="sm">
-                <Link to="/auth">
-                  <LogIn className="h-4 w-4 mr-2" />
-                  Entrar
-                </Link>
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setGeoModalOpen(true)}
+                className="hidden lg:flex items-center gap-2"
+              >
+                <MapPin className="h-4 w-4" />
+                Região
               </Button>
-            )}
+              
+              {user ? (
+                <UserMenu />
+              ) : (
+                <Button asChild size="sm">
+                  <Link to="/auth">
+                    <LogIn className="h-4 w-4 mr-2" />
+                    Entrar
+                  </Link>
+                </Button>
+              )}
+            </div>
           </div>
 
           <Button
@@ -168,6 +182,8 @@ export function Header() {
           </nav>
         )}
       </div>
+      
+      <GeoResolverModal open={geoModalOpen} onOpenChange={setGeoModalOpen} />
     </header>
   );
 }

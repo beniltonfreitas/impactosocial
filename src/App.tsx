@@ -24,6 +24,9 @@ const Privacy = lazy(() => import("./pages/Privacy"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Pricing = lazy(() => import("./pages/Pricing"));
 const Moderation = lazy(() => import("./pages/Moderation"));
+const News = lazy(() => import("./pages/News"));
+const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
+const PaymentCancel = lazy(() => import("./pages/PaymentCancel"));
 
 const queryClient = new QueryClient();
 
@@ -57,12 +60,15 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
+                <Route path="/noticias" element={<News />} />
                 <Route path="/news/:slug" element={<Article />} />
                 <Route path="/sobre" element={<About />} />
                 <Route path="/contato" element={<Contact />} />
                 <Route path="/privacidade" element={<Privacy />} />
                 <Route path="/termos" element={<Terms />} />
                 <Route path="/assinaturas" element={<Pricing />} />
+                <Route path="/pagamento/sucesso" element={<PaymentSuccess />} />
+                <Route path="/pagamento/cancelado" element={<PaymentCancel />} />
                 <Route
                   path="/dashboard"
                   element={

@@ -70,14 +70,34 @@ const Pricing = () => {
     fetchPlans();
   }, [user]);
 
-  const handleSubscribe = (planSlug: string) => {
+  const handleSubscribe = async (planSlug: string) => {
     if (!user) {
-      navigate('/auth');
+      navigate('/auth', { state: { from: '/assinaturas' } });
       return;
     }
 
-    // TODO: Implementar integração com Stripe
-    console.log('Subscribe to plan:', planSlug);
+    try {
+      const plan = plans.find(p => p.slug === planSlug);
+      if (!plan) return;
+
+      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+        body: { planId: plan.id }
+      });
+      
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error('Erro ao criar checkout:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao processar pagamento';
+      
+      if (errorMessage.includes('STRIPE_SECRET_KEY')) {
+        alert('Sistema de pagamentos ainda não configurado. Entre em contato com o suporte.');
+      } else {
+        alert('Não foi possível iniciar o processo de pagamento. Tente novamente.');
+      }
+    }
   };
 
   const formatPrice = (cents: number) => {

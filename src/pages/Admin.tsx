@@ -34,42 +34,23 @@ export default function Admin() {
 
   const fetchUsers = async () => {
     setLoading(true);
-    
-    // Fetch profiles
-    const { data: profiles, error: profilesError } = await supabase
-      .from('profiles')
-      .select('id, full_name');
+    try {
+      // Chamar edge function para buscar usuários com emails reais
+      const { data, error } = await supabase.functions.invoke('admin-users');
 
-    if (profilesError) {
+      if (error) throw error;
+
+      setUsers(data || []);
+    } catch (error) {
+      console.error('Erro ao buscar usuários:', error);
       toast({
-        title: "Erro ao carregar usuários",
-        description: profilesError.message,
+        title: "Erro",
+        description: "Não foi possível carregar os usuários.",
         variant: "destructive",
       });
+    } finally {
       setLoading(false);
-      return;
     }
-
-    // Fetch roles
-    const { data: rolesData, error: rolesError } = await supabase
-      .from('user_roles')
-      .select('user_id, role');
-
-    if (rolesError) {
-      console.error('Error fetching roles:', rolesError);
-    }
-
-    // Get auth users (admin only operation - would need edge function in production)
-    // For now, combine profiles with roles
-    const usersWithRoles: UserWithRoles[] = profiles.map(profile => ({
-      id: profile.id,
-      email: `user-${profile.id.slice(0, 8)}@email.com`, // Placeholder - would need edge function
-      full_name: profile.full_name,
-      roles: rolesData?.filter(r => r.user_id === profile.id).map(r => r.role) || [],
-    }));
-
-    setUsers(usersWithRoles);
-    setLoading(false);
   };
 
   const handleRoleChange = async (userId: string, newRole: string) => {

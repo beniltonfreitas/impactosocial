@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 
+// Coordenadas padrão: São Paulo, SP
+const DEFAULT_COORDS = { lat: -23.5505, lng: -46.6333 };
+
 export function useRegionCoords() {
-  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [coords, setCoords] = useState<{ lat: number; lng: number }>(DEFAULT_COORDS);
 
   useEffect(() => {
     try {
@@ -10,9 +13,14 @@ export function useRegionCoords() {
         const j = JSON.parse(loc);
         if (j?.lat && j?.lng) {
           setCoords({ lat: j.lat, lng: j.lng });
+          return;
         }
       }
-    } catch {}
+      // Se não houver coords salvas, usar padrão
+      setCoords(DEFAULT_COORDS);
+    } catch {
+      setCoords(DEFAULT_COORDS);
+    }
   }, []);
 
   return coords;
