@@ -21,20 +21,6 @@ const Index = () => {
   const [orderBy, setOrderBy] = useState("recent");
 
   useEffect(() => {
-    // VLibras widget container
-    const vlibrasDiv = document.getElementById("vlibras-widget");
-    if (!vlibrasDiv) {
-      const div = document.createElement("div");
-      div.id = "vlibras-widget";
-      div.setAttribute("vw", "");
-      div.className = "enabled";
-      div.innerHTML = `
-        <div vw-access-button class="active"></div>
-        <div vw-plugin-wrapper></div>
-      `;
-      document.body.appendChild(div);
-    }
-
     // Fetch articles
     const loadArticles = async () => {
       try {
