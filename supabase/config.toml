@@ -1,5 +1,8 @@
 project_id = "wlbdscnfizpqsfcezrnn"
 
+[auth.password_protection]
+enabled = true
+
 [functions.admin-users]
 verify_jwt = true
 
