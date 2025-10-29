@@ -10,8 +10,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import { Shield, User, UserCog, BarChart3 } from 'lucide-react';
+import { Shield, User, UserCog, BarChart3, FileText, Upload } from 'lucide-react';
 import { AnalyticsDashboard } from '@/components/analytics/AnalyticsDashboard';
+import { useNavigate } from 'react-router-dom';
 
 interface UserWithRoles {
   id: string;
@@ -25,6 +26,7 @@ export default function Admin() {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const { hasRole } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchUsers();
@@ -147,6 +149,32 @@ export default function Admin() {
           <div>
             <h1 className="text-3xl font-bold mb-2">Administração</h1>
             <p className="text-muted-foreground">Gerencie usuários, permissões e analytics do sistema</p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-6">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate("/admin/articles")}>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="h-5 w-5" />
+                  Gerenciar Artigos
+                </CardTitle>
+                <CardDescription>
+                  Criar, editar e gerenciar artigos do portal
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate("/admin/bulk-import")}>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Upload className="h-5 w-5" />
+                  Importar em Massa
+                </CardTitle>
+                <CardDescription>
+                  Importar múltiplas notícias via JSON
+                </CardDescription>
+              </CardHeader>
+            </Card>
           </div>
 
           <Tabs defaultValue="users" className="space-y-6">
