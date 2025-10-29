@@ -29,6 +29,7 @@ const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
 const PaymentCancel = lazy(() => import("./pages/PaymentCancel"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const Search = lazy(() => import("./pages/Search"));
+const RedePcd = lazy(() => import("./pages/RedePcd"));
 
 const queryClient = new QueryClient();
 
@@ -77,6 +78,8 @@ const App = () => (
                 <Route path="/assinaturas" element={<Pricing />} />
                 <Route path="/pagamento/sucesso" element={<PaymentSuccess />} />
                 <Route path="/pagamento/cancelado" element={<PaymentCancel />} />
+                <Route path="/rede-pcd" element={<RedePcd />} />
+                <Route path="/rede-pcd/*" element={<RedePcd />} />
                 <Route
                   path="/dashboard"
                   element={
