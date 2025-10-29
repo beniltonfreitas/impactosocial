@@ -1,0 +1,26 @@
+html.high-contrast,
+html.high-contrast body {
+  background: #000 !important;
+  color: #fff !important;
+}
+
+html.high-contrast a {
+  color: #00ffff !important;
+  text-decoration: underline;
+}
+
+html.high-contrast img {
+  filter: contrast(120%);
+}
+
+html.high-contrast .btn,
+html.high-contrast button {
+  background: #fff !important;
+  color: #000 !important;
+  border: 2px solid #fff !important;
+}
+
+:focus {
+  outline: 3px solid #F59E0B;
+  outline-offset: 2px;
+}
