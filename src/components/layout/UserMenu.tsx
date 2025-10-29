@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LogOut, LayoutDashboard, Shield } from 'lucide-react';
+import { LogOut, LayoutDashboard, Shield, FileEdit } from 'lucide-react';
 
 export default function UserMenu() {
   const { profile, signOut, hasRole } = useAuth();
@@ -45,12 +45,20 @@ export default function UserMenu() {
           </Link>
         </DropdownMenuItem>
         {(hasRole('admin') || hasRole('moderator')) && (
-          <DropdownMenuItem asChild>
-            <Link to="/admin" className="cursor-pointer">
-              <Shield className="mr-2 h-4 w-4" />
-              <span>Administração</span>
-            </Link>
-          </DropdownMenuItem>
+          <>
+            <DropdownMenuItem asChild>
+              <Link to="/admin/articles" className="cursor-pointer">
+                <FileEdit className="mr-2 h-4 w-4" />
+                <span>Gerenciar Artigos</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to="/admin" className="cursor-pointer">
+                <Shield className="mr-2 h-4 w-4" />
+                <span>Administração</span>
+              </Link>
+            </DropdownMenuItem>
+          </>
         )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={signOut} className="cursor-pointer text-destructive">
