@@ -365,6 +365,649 @@ export type Database = {
           },
         ]
       }
+      pcd_articles: {
+        Row: {
+          accessibility_level: string | null
+          audio_url: string | null
+          created_at: string | null
+          disability_tags: string[] | null
+          id: string
+          original_article_id: string | null
+          sign_language_video_url: string | null
+          simplified_content: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          accessibility_level?: string | null
+          audio_url?: string | null
+          created_at?: string | null
+          disability_tags?: string[] | null
+          id?: string
+          original_article_id?: string | null
+          sign_language_video_url?: string | null
+          simplified_content?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          accessibility_level?: string | null
+          audio_url?: string | null
+          created_at?: string | null
+          disability_tags?: string[] | null
+          id?: string
+          original_article_id?: string | null
+          sign_language_video_url?: string | null
+          simplified_content?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pcd_articles_original_article_id_fkey"
+            columns: ["original_article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pcd_athletes: {
+        Row: {
+          achievements: Json | null
+          active: boolean | null
+          bio: string | null
+          city: string | null
+          created_at: string | null
+          disability_type: string | null
+          id: string
+          name: string
+          photo_url: string | null
+          social_media: Json | null
+          sport: string | null
+          state: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          achievements?: Json | null
+          active?: boolean | null
+          bio?: string | null
+          city?: string | null
+          created_at?: string | null
+          disability_type?: string | null
+          id?: string
+          name: string
+          photo_url?: string | null
+          social_media?: Json | null
+          sport?: string | null
+          state?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          achievements?: Json | null
+          active?: boolean | null
+          bio?: string | null
+          city?: string | null
+          created_at?: string | null
+          disability_type?: string | null
+          id?: string
+          name?: string
+          photo_url?: string | null
+          social_media?: Json | null
+          sport?: string | null
+          state?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      pcd_benefits: {
+        Row: {
+          active: boolean | null
+          category: string | null
+          city: string | null
+          coupon_code: string | null
+          created_at: string | null
+          description: string | null
+          discount_percentage: number | null
+          id: string
+          partner_name: string
+          state: string | null
+          updated_at: string | null
+          valid_until: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          category?: string | null
+          city?: string | null
+          coupon_code?: string | null
+          created_at?: string | null
+          description?: string | null
+          discount_percentage?: number | null
+          id?: string
+          partner_name: string
+          state?: string | null
+          updated_at?: string | null
+          valid_until?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          category?: string | null
+          city?: string | null
+          coupon_code?: string | null
+          created_at?: string | null
+          description?: string | null
+          discount_percentage?: number | null
+          id?: string
+          partner_name?: string
+          state?: string | null
+          updated_at?: string | null
+          valid_until?: string | null
+        }
+        Relationships: []
+      }
+      pcd_blog_posts: {
+        Row: {
+          audio_url: string | null
+          author_id: string | null
+          category: string | null
+          content: string
+          created_at: string | null
+          featured_image: string | null
+          id: string
+          published_at: string | null
+          title: string
+          updated_at: string | null
+          views: number | null
+        }
+        Insert: {
+          audio_url?: string | null
+          author_id?: string | null
+          category?: string | null
+          content: string
+          created_at?: string | null
+          featured_image?: string | null
+          id?: string
+          published_at?: string | null
+          title: string
+          updated_at?: string | null
+          views?: number | null
+        }
+        Update: {
+          audio_url?: string | null
+          author_id?: string | null
+          category?: string | null
+          content?: string
+          created_at?: string | null
+          featured_image?: string | null
+          id?: string
+          published_at?: string | null
+          title?: string
+          updated_at?: string | null
+          views?: number | null
+        }
+        Relationships: []
+      }
+      pcd_campaigns: {
+        Row: {
+          beneficiary_name: string | null
+          created_at: string | null
+          creator_id: string | null
+          description: string | null
+          ends_at: string | null
+          external_url: string | null
+          goal_cents: number | null
+          id: string
+          payment_platform: string | null
+          raised_cents: number | null
+          status: string | null
+          title: string
+          updated_at: string | null
+          verified: boolean | null
+        }
+        Insert: {
+          beneficiary_name?: string | null
+          created_at?: string | null
+          creator_id?: string | null
+          description?: string | null
+          ends_at?: string | null
+          external_url?: string | null
+          goal_cents?: number | null
+          id?: string
+          payment_platform?: string | null
+          raised_cents?: number | null
+          status?: string | null
+          title: string
+          updated_at?: string | null
+          verified?: boolean | null
+        }
+        Update: {
+          beneficiary_name?: string | null
+          created_at?: string | null
+          creator_id?: string | null
+          description?: string | null
+          ends_at?: string | null
+          external_url?: string | null
+          goal_cents?: number | null
+          id?: string
+          payment_platform?: string | null
+          raised_cents?: number | null
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+          verified?: boolean | null
+        }
+        Relationships: []
+      }
+      pcd_complaints: {
+        Row: {
+          category: string | null
+          city: string | null
+          created_at: string | null
+          description: string
+          id: string
+          location_address: string | null
+          location_lat: number | null
+          location_lng: number | null
+          media_urls: string[] | null
+          protocol_number: string | null
+          public_body: string | null
+          state: string | null
+          status: string | null
+          title: string
+          updated_at: string | null
+          user_id: string | null
+          visibility: string | null
+        }
+        Insert: {
+          category?: string | null
+          city?: string | null
+          created_at?: string | null
+          description: string
+          id?: string
+          location_address?: string | null
+          location_lat?: number | null
+          location_lng?: number | null
+          media_urls?: string[] | null
+          protocol_number?: string | null
+          public_body?: string | null
+          state?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string | null
+          user_id?: string | null
+          visibility?: string | null
+        }
+        Update: {
+          category?: string | null
+          city?: string | null
+          created_at?: string | null
+          description?: string
+          id?: string
+          location_address?: string | null
+          location_lat?: number | null
+          location_lng?: number | null
+          media_urls?: string[] | null
+          protocol_number?: string | null
+          public_body?: string | null
+          state?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string | null
+          visibility?: string | null
+        }
+        Relationships: []
+      }
+      pcd_config: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          id: string
+          module: string
+          settings: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          id?: string
+          module: string
+          settings?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          id?: string
+          module?: string
+          settings?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      pcd_councils: {
+        Row: {
+          active: boolean | null
+          address: string | null
+          city: string | null
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string | null
+          id: string
+          level: string | null
+          meeting_schedule: string | null
+          name: string
+          president_name: string | null
+          state: string | null
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          address?: string | null
+          city?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          id?: string
+          level?: string | null
+          meeting_schedule?: string | null
+          name: string
+          president_name?: string | null
+          state?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          address?: string | null
+          city?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          id?: string
+          level?: string | null
+          meeting_schedule?: string | null
+          name?: string
+          president_name?: string | null
+          state?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
+      pcd_courses: {
+        Row: {
+          accessibility_features: Json | null
+          created_at: string | null
+          description: string | null
+          duration_hours: number | null
+          has_certificate: boolean | null
+          id: string
+          instructor: string | null
+          price_cents: number | null
+          published_at: string | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          accessibility_features?: Json | null
+          created_at?: string | null
+          description?: string | null
+          duration_hours?: number | null
+          has_certificate?: boolean | null
+          id?: string
+          instructor?: string | null
+          price_cents?: number | null
+          published_at?: string | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          accessibility_features?: Json | null
+          created_at?: string | null
+          description?: string | null
+          duration_hours?: number | null
+          has_certificate?: boolean | null
+          id?: string
+          instructor?: string | null
+          price_cents?: number | null
+          published_at?: string | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      pcd_legislation: {
+        Row: {
+          benefit_type: string[] | null
+          created_at: string | null
+          disability_types: string[] | null
+          federal_law: boolean | null
+          file_url: string | null
+          full_text: string | null
+          id: string
+          municipality: string | null
+          number: string | null
+          published_at: string | null
+          simplified_guide: string | null
+          state_uf: string | null
+          summary: string | null
+          title: string
+          type: string | null
+          updated_at: string | null
+          year: number | null
+        }
+        Insert: {
+          benefit_type?: string[] | null
+          created_at?: string | null
+          disability_types?: string[] | null
+          federal_law?: boolean | null
+          file_url?: string | null
+          full_text?: string | null
+          id?: string
+          municipality?: string | null
+          number?: string | null
+          published_at?: string | null
+          simplified_guide?: string | null
+          state_uf?: string | null
+          summary?: string | null
+          title: string
+          type?: string | null
+          updated_at?: string | null
+          year?: number | null
+        }
+        Update: {
+          benefit_type?: string[] | null
+          created_at?: string | null
+          disability_types?: string[] | null
+          federal_law?: boolean | null
+          file_url?: string | null
+          full_text?: string | null
+          id?: string
+          municipality?: string | null
+          number?: string | null
+          published_at?: string | null
+          simplified_guide?: string | null
+          state_uf?: string | null
+          summary?: string | null
+          title?: string
+          type?: string | null
+          updated_at?: string | null
+          year?: number | null
+        }
+        Relationships: []
+      }
+      pcd_portfolios: {
+        Row: {
+          business_name: string
+          category: string | null
+          city: string | null
+          created_at: string | null
+          description: string | null
+          email: string | null
+          id: string
+          phone: string | null
+          portfolio_images: string[] | null
+          premium: boolean | null
+          qr_code_url: string | null
+          social_media: Json | null
+          state: string | null
+          updated_at: string | null
+          user_id: string | null
+          views: number | null
+          website: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          business_name: string
+          category?: string | null
+          city?: string | null
+          created_at?: string | null
+          description?: string | null
+          email?: string | null
+          id?: string
+          phone?: string | null
+          portfolio_images?: string[] | null
+          premium?: boolean | null
+          qr_code_url?: string | null
+          social_media?: Json | null
+          state?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          views?: number | null
+          website?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          business_name?: string
+          category?: string | null
+          city?: string | null
+          created_at?: string | null
+          description?: string | null
+          email?: string | null
+          id?: string
+          phone?: string | null
+          portfolio_images?: string[] | null
+          premium?: boolean | null
+          qr_code_url?: string | null
+          social_media?: Json | null
+          state?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          views?: number | null
+          website?: string | null
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
+      pcd_products: {
+        Row: {
+          active: boolean | null
+          category: string | null
+          commission_rate: number | null
+          created_at: string | null
+          description: string | null
+          id: string
+          images: string[] | null
+          price_cents: number
+          seller_id: string | null
+          stock: number | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          category?: string | null
+          commission_rate?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          price_cents: number
+          seller_id?: string | null
+          stock?: number | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          category?: string | null
+          commission_rate?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          price_cents?: number
+          seller_id?: string | null
+          stock?: number | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      pcd_videos: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          description: string | null
+          duration: number | null
+          has_audio_description: boolean | null
+          has_sign_language: boolean | null
+          has_subtitles: boolean | null
+          id: string
+          published_at: string | null
+          tenant_id: string | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string | null
+          video_url: string
+          views: number | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          duration?: number | null
+          has_audio_description?: boolean | null
+          has_sign_language?: boolean | null
+          has_subtitles?: boolean | null
+          id?: string
+          published_at?: string | null
+          tenant_id?: string | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string | null
+          video_url: string
+          views?: number | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          duration?: number | null
+          has_audio_description?: boolean | null
+          has_sign_language?: boolean | null
+          has_subtitles?: boolean | null
+          id?: string
+          published_at?: string | null
+          tenant_id?: string | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string | null
+          video_url?: string
+          views?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pcd_videos_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenant"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
