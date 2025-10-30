@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Check, X } from 'lucide-react';
+import { Loader2, Check, X, Eye, EyeOff } from 'lucide-react';
 
 const passwordSchema = z.object({
   newPassword: z.string()
@@ -26,6 +26,8 @@ type PasswordFormData = z.infer<typeof passwordSchema>;
 export function PasswordChanger() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { register, handleSubmit, watch, reset, formState: { errors } } = useForm<PasswordFormData>({
     resolver: zodResolver(passwordSchema),
@@ -84,12 +86,24 @@ export function PasswordChanger() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="space-y-2">
         <Label htmlFor="newPassword">Nova Senha</Label>
-        <Input
-          id="newPassword"
-          type="password"
-          {...register('newPassword')}
-          placeholder="Digite sua nova senha"
-        />
+        <div className="relative">
+          <Input
+            id="newPassword"
+            type={showPassword ? "text" : "password"}
+            {...register('newPassword')}
+            placeholder="Digite sua nova senha"
+            className="pr-10"
+          />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </Button>
+        </div>
         {errors.newPassword && (
           <p className="text-sm text-destructive">{errors.newPassword.message}</p>
         )}
@@ -129,12 +143,24 @@ export function PasswordChanger() {
 
       <div className="space-y-2">
         <Label htmlFor="confirmPassword">Confirmar Nova Senha</Label>
-        <Input
-          id="confirmPassword"
-          type="password"
-          {...register('confirmPassword')}
-          placeholder="Digite novamente sua nova senha"
-        />
+        <div className="relative">
+          <Input
+            id="confirmPassword"
+            type={showConfirmPassword ? "text" : "password"}
+            {...register('confirmPassword')}
+            placeholder="Digite novamente sua nova senha"
+            className="pr-10"
+          />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+          >
+            {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </Button>
+        </div>
         {errors.confirmPassword && (
           <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>
         )}
