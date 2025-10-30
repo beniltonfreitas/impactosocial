@@ -9,17 +9,30 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 import { ImageUpload } from './ImageUpload';
 import { ArticleEditor } from './ArticleEditor';
+import { TagsInput } from './TagsInput';
+import { ImageGalleryManager } from './ImageGalleryManager';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Copy } from 'lucide-react';
 
 const articleSchema = z.object({
-  title: z.string().min(5, 'Título deve ter no mínimo 5 caracteres').max(200),
-  slug: z.string().min(3).max(200).regex(/^[a-z0-9-]+$/, 'Use apenas letras minúsculas, números e hífens'),
-  summary: z.string().max(500).optional().nullable(),
+  title: z.string().min(6, 'Título deve ter no mínimo 6 caracteres').max(120),
+  slug: z.string().min(6).max(120).regex(/^[a-z0-9-]+$/, 'Use apenas letras minúsculas, números e hífens'),
+  summary: z.string().max(160).optional().nullable(),
   content: z.string().min(50, 'Conteúdo deve ter no mínimo 50 caracteres'),
   image_url: z.string().url().optional().nullable(),
+  image_og_url: z.string().url().optional().nullable(),
+  image_card_url: z.string().url().optional().nullable(),
+  image_alt: z.string().max(140).optional().nullable(),
+  image_credit: z.string().max(100).optional().nullable(),
+  source_url: z.string().url().optional().nullable(),
+  gallery_images: z.array(z.string().url()).default([]),
+  tags: z.array(z.string()).default([]),
+  seo_meta_title: z.string().max(60).optional().nullable(),
+  seo_meta_description: z.string().max(160).optional().nullable(),
   author: z.string().min(2).max(100).optional().nullable(),
   category_id: z.string().uuid().optional().nullable(),
   tenant_id: z.string().uuid().optional().nullable(),
@@ -27,6 +40,7 @@ const articleSchema = z.object({
   breaking: z.boolean().default(false),
   premium_only: z.boolean().default(false),
   published_at: z.string().optional().nullable(),
+  status: z.enum(['draft', 'published', 'scheduled']).default('published'),
 });
 
 type ArticleFormData = z.infer<typeof articleSchema>;
@@ -41,6 +55,10 @@ export function ArticleForm({ articleId, onSuccess, onCancel }: ArticleFormProps
   const [categories, setCategories] = useState<any[]>([]);
   const [tenants, setTenants] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [applyAutoSeo, setApplyAutoSeo] = useState(false);
+  const [titleCharCount, setTitleCharCount] = useState(0);
+  const [slugCharCount, setSlugCharCount] = useState(0);
+  const [summaryCharCount, setSummaryCharCount] = useState(0);
   const { toast } = useToast();
 
   const form = useForm<ArticleFormData>({
@@ -51,6 +69,15 @@ export function ArticleForm({ articleId, onSuccess, onCancel }: ArticleFormProps
       summary: '',
       content: '',
       image_url: '',
+      image_og_url: '',
+      image_card_url: '',
+      image_alt: '',
+      image_credit: '',
+      source_url: '',
+      gallery_images: [],
+      tags: [],
+      seo_meta_title: '',
+      seo_meta_description: '',
       author: '',
       category_id: undefined,
       tenant_id: undefined,
@@ -58,6 +85,7 @@ export function ArticleForm({ articleId, onSuccess, onCancel }: ArticleFormProps
       breaking: false,
       premium_only: false,
       published_at: null,
+      status: 'published',
     },
   });
 
@@ -86,6 +114,9 @@ export function ArticleForm({ articleId, onSuccess, onCancel }: ArticleFormProps
       if (data) {
         form.reset({
           ...data,
+          gallery_images: data.gallery_images || [],
+          tags: data.tags || [],
+          status: (data.status as 'draft' | 'published' | 'scheduled') || 'published',
           category_id: data.category_id || undefined,
           tenant_id: data.tenant_id || undefined,
         });
@@ -116,11 +147,20 @@ export function ArticleForm({ articleId, onSuccess, onCancel }: ArticleFormProps
         tenant_id: data.tenant_id || null,
         summary: data.summary || null,
         image_url: data.image_url || null,
+        image_og_url: data.image_og_url || null,
+        image_card_url: data.image_card_url || null,
+        image_credit: data.image_credit || null,
+        source_url: data.source_url || null,
+        gallery_images: data.gallery_images || [],
+        tags: data.tags || [],
+        seo_meta_title: data.seo_meta_title || null,
+        seo_meta_description: data.seo_meta_description || null,
         author: data.author || null,
         published_at: data.published_at || null,
         featured: data.featured,
         breaking: data.breaking,
         premium_only: data.premium_only,
+        status: data.status || 'published',
       };
 
       if (articleId) {

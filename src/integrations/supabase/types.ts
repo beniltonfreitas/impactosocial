@@ -63,12 +63,21 @@ export type Database = {
           content: string | null
           created_at: string | null
           featured: boolean | null
+          gallery_images: string[] | null
           id: string
+          image_card_url: string | null
+          image_credit: string | null
+          image_og_url: string | null
           image_url: string | null
           premium_only: boolean | null
           published_at: string | null
+          seo_meta_description: string | null
+          seo_meta_title: string | null
           slug: string
+          source_url: string | null
+          status: string | null
           summary: string | null
+          tags: string[] | null
           tenant_id: string | null
           title: string
           updated_at: string | null
@@ -81,12 +90,21 @@ export type Database = {
           content?: string | null
           created_at?: string | null
           featured?: boolean | null
+          gallery_images?: string[] | null
           id?: string
+          image_card_url?: string | null
+          image_credit?: string | null
+          image_og_url?: string | null
           image_url?: string | null
           premium_only?: boolean | null
           published_at?: string | null
+          seo_meta_description?: string | null
+          seo_meta_title?: string | null
           slug: string
+          source_url?: string | null
+          status?: string | null
           summary?: string | null
+          tags?: string[] | null
           tenant_id?: string | null
           title: string
           updated_at?: string | null
@@ -99,12 +117,21 @@ export type Database = {
           content?: string | null
           created_at?: string | null
           featured?: boolean | null
+          gallery_images?: string[] | null
           id?: string
+          image_card_url?: string | null
+          image_credit?: string | null
+          image_og_url?: string | null
           image_url?: string | null
           premium_only?: boolean | null
           published_at?: string | null
+          seo_meta_description?: string | null
+          seo_meta_title?: string | null
           slug?: string
+          source_url?: string | null
+          status?: string | null
           summary?: string | null
+          tags?: string[] | null
           tenant_id?: string | null
           title?: string
           updated_at?: string | null
