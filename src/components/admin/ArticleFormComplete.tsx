@@ -216,20 +216,7 @@ export function ArticleFormComplete({ articleId, onSuccess, onCancel }: ArticleF
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 max-w-4xl mx-auto">
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold">Nova Notícia</h2>
-          <div className="flex gap-2">
-            <Button type="button" variant="outline">
-              Prévia
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Salvar
-            </Button>
-          </div>
-        </div>
-
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 max-h-[75vh] overflow-y-auto px-1">
         <ArticleFormFields
           control={form.control}
           categories={categories}

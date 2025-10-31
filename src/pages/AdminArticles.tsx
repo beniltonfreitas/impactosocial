@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArticleForm } from '@/components/admin/ArticleForm';
+import { ArticleFormComplete } from '@/components/admin/ArticleFormComplete';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Pencil, Trash2, Search, Eye, Calendar } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
@@ -301,7 +301,7 @@ export default function AdminArticles() {
                 Preencha os campos abaixo para {editingId ? 'atualizar' : 'criar'} o artigo
               </DialogDescription>
             </DialogHeader>
-            <ArticleForm
+            <ArticleFormComplete
               articleId={editingId}
               onSuccess={handleFormSuccess}
               onCancel={() => {
