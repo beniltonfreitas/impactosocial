@@ -31,8 +31,6 @@ const FAQ = lazy(() => import("./pages/FAQ"));
 const Search = lazy(() => import("./pages/Search"));
 const RedePcd = lazy(() => import("./pages/RedePcd"));
 
-const queryClient = new QueryClient();
-
 function Analytics() {
   const location = useLocation();
 
@@ -54,8 +52,17 @@ function Analytics() {
   return null;
 }
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
+const App = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 60 * 1000,
+      },
+    },
+  });
+
+  return (
+    <QueryClientProvider client={queryClient}>
     <HelmetProvider>
       <TooltipProvider>
         <AuthProvider>
@@ -128,6 +135,7 @@ const App = () => (
       </TooltipProvider>
     </HelmetProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;
