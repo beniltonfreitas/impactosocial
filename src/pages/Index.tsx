@@ -60,7 +60,7 @@ const Index = () => {
           <div className="container mx-auto px-4">
             <div className="max-w-3xl">
               <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-4">
-                Conexão na Cidade — {TENANT_NAME}
+                Impacto Social - PcD Cotia
               </h1>
               <p className="text-lg text-primary-foreground/90">
                 Seu portal de notícias regional com informações relevantes da sua
