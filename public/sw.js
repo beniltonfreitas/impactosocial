@@ -1,6 +1,6 @@
-const CACHE_NAME = 'cnc-v1';
-const STATIC_CACHE = 'cnc-static-v1';
-const DYNAMIC_CACHE = 'cnc-dynamic-v1';
+const CACHE_NAME = 'cnc-v2';
+const STATIC_CACHE = 'cnc-static-v2';
+const DYNAMIC_CACHE = 'cnc-dynamic-v2';
 
 const STATIC_ASSETS = [
   '/',
@@ -53,12 +53,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Cache-first for static assets (images, fonts, CSS, JS)
+  // Cache-first for static assets (images, fonts, CSS)
   if (
     request.destination === 'image' ||
     request.destination === 'font' ||
-    request.destination === 'style' ||
-    request.destination === 'script'
+    request.destination === 'style'
   ) {
     event.respondWith(cacheFirst(request));
     return;
