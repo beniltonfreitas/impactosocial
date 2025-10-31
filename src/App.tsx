@@ -1,7 +1,6 @@
 import React, { lazy, Suspense, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "@/components/auth/AuthContext";
@@ -64,75 +63,73 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
     <HelmetProvider>
-      <TooltipProvider>
-        <AuthProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Analytics />
-            <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>}>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/noticias" element={<News />} />
-                <Route path="/news/:slug" element={<Article />} />
-                <Route path="/busca" element={<Search />} />
-                <Route path="/sobre" element={<About />} />
-                <Route path="/contato" element={<Contact />} />
-                <Route path="/faq" element={<FAQ />} />
-                <Route path="/privacidade" element={<Privacy />} />
-                <Route path="/termos" element={<Terms />} />
-                <Route path="/assinaturas" element={<Pricing />} />
-                <Route path="/pagamento/sucesso" element={<PaymentSuccess />} />
-                <Route path="/pagamento/cancelado" element={<PaymentCancel />} />
-                <Route path="/rede-pcd" element={<RedePcd />} />
-                <Route path="/rede-pcd/*" element={<RedePcd />} />
-                <Route
-                  path="/dashboard"
-                  element={
-                    <ProtectedRoute>
-                      <Dashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin"
-                  element={
-                    <ProtectedRoute requiredRole="admin">
-                      <Admin />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/articles"
-                  element={
-                    <ProtectedRoute requiredRole="admin">
-                      <AdminArticles />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/bulk-import"
-                  element={
-                    <ProtectedRoute requiredRole="admin">
-                      <AdminBulkImport />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/moderation"
-                  element={
-                    <ProtectedRoute requiredRole="moderator">
-                      <Moderation />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
-          </BrowserRouter>
-        </AuthProvider>
-      </TooltipProvider>
+      <AuthProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Analytics />
+          <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>}>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/noticias" element={<News />} />
+              <Route path="/news/:slug" element={<Article />} />
+              <Route path="/busca" element={<Search />} />
+              <Route path="/sobre" element={<About />} />
+              <Route path="/contato" element={<Contact />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/privacidade" element={<Privacy />} />
+              <Route path="/termos" element={<Terms />} />
+              <Route path="/assinaturas" element={<Pricing />} />
+              <Route path="/pagamento/sucesso" element={<PaymentSuccess />} />
+              <Route path="/pagamento/cancelado" element={<PaymentCancel />} />
+              <Route path="/rede-pcd" element={<RedePcd />} />
+              <Route path="/rede-pcd/*" element={<RedePcd />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <Admin />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/articles"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminArticles />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/bulk-import"
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminBulkImport />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/moderation"
+                element={
+                  <ProtectedRoute requiredRole="moderator">
+                    <Moderation />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
+        </BrowserRouter>
+      </AuthProvider>
     </HelmetProvider>
   </QueryClientProvider>
   );
