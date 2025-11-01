@@ -105,8 +105,8 @@ export default function AdminArticles() {
       if (error) throw error;
 
       toast({
-        title: 'Artigo excluído',
-        description: 'O artigo foi removido com sucesso',
+        title: 'Notícia excluída',
+        description: 'A notícia foi removida com sucesso',
       });
 
       loadData();
@@ -131,21 +131,21 @@ export default function AdminArticles() {
   return (
     <>
       <SEO 
-        title="Gerenciar Artigos - Admin"
-        description="Painel de administração de artigos"
+        title="Gerenciar Notícias - Admin"
+        description="Painel de administração de notícias"
       />
       
       <div className="container mx-auto py-8 space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Gerenciar Artigos</h1>
+            <h1 className="text-3xl font-bold">Gerenciar Notícias</h1>
             <p className="text-muted-foreground">
-              {filteredArticles.length} de {articles.length} artigos
+              {filteredArticles.length} de {articles.length} notícias
             </p>
           </div>
           <Button onClick={() => setShowForm(true)}>
             <Plus className="mr-2 h-4 w-4" />
-            Novo Artigo
+            Nova Notícia
           </Button>
         </div>
 
@@ -295,10 +295,10 @@ export default function AdminArticles() {
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
-                {editingId ? 'Editar Artigo' : 'Novo Artigo'}
+                {editingId ? 'Editar Notícia' : 'Nova Notícia'}
               </DialogTitle>
               <DialogDescription>
-                Preencha os campos abaixo para {editingId ? 'atualizar' : 'criar'} o artigo
+                Preencha os campos abaixo para {editingId ? 'atualizar' : 'criar'} a notícia
               </DialogDescription>
             </DialogHeader>
             <ArticleFormComplete
@@ -318,7 +318,7 @@ export default function AdminArticles() {
             <AlertDialogHeader>
               <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
               <AlertDialogDescription>
-                Esta ação não pode ser desfeita. O artigo será permanentemente removido.
+                Esta ação não pode ser desfeita. A notícia será permanentemente removida.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

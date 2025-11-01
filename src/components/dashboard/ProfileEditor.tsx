@@ -8,7 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/components/auth/AuthContext';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Shield } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 const profileSchema = z.object({
   full_name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres').max(100),
@@ -18,7 +19,7 @@ const profileSchema = z.object({
 type ProfileFormData = z.infer<typeof profileSchema>;
 
 export function ProfileEditor() {
-  const { profile, updateProfile } = useAuth();
+  const { profile, updateProfile, hasRole } = useAuth();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -57,6 +58,18 @@ export function ProfileEditor() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {hasRole('admin') && (
+        <div className="flex items-center gap-2 p-4 bg-gradient-to-r from-yellow-400/10 to-orange-500/10 border border-yellow-400/20 rounded-lg">
+          <Badge variant="default" className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black border-0">
+            <Shield className="h-3 w-3 mr-1" />
+            Super Admin
+          </Badge>
+          <p className="text-sm text-muted-foreground">
+            Você tem acesso total ao sistema
+          </p>
+        </div>
+      )}
+      
       <div className="flex items-center gap-6">
         <Avatar className="h-24 w-24">
           <AvatarImage src={avatarUrl || profile?.avatar_url || ''} />

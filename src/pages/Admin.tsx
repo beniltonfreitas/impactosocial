@@ -25,7 +25,7 @@ export default function Admin() {
   const [users, setUsers] = useState<UserWithRoles[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
-  const { hasRole } = useAuth();
+  const { hasRole, user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -53,9 +53,19 @@ export default function Admin() {
     }
   };
 
-  const handleRoleChange = async (userId: string, newRole: string) => {
+  const handleRoleChange = async (userId: string, newRole: string, currentUser: any) => {
     // Type guard to ensure role is valid
     if (newRole !== 'admin' && newRole !== 'moderator' && newRole !== 'user') {
+      return;
+    }
+
+    // Impedir que admin se rebaixe
+    if (userId === currentUser?.id && newRole !== 'admin') {
+      toast({
+        title: "Ação bloqueada",
+        description: "Você não pode alterar sua própria permissão de admin.",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -137,10 +147,10 @@ export default function Admin() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <FileText className="h-5 w-5" />
-                  Gerenciar Artigos
+                  Gerenciar Notícias
                 </CardTitle>
                 <CardDescription>
-                  Criar, editar e gerenciar artigos do portal
+                  Criar, editar e gerenciar notícias do portal
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -215,7 +225,7 @@ export default function Admin() {
                               {hasRole('admin') && (
                                 <Select
                                   value={user.roles[0] || 'user'}
-                                  onValueChange={(value) => handleRoleChange(user.id, value)}
+                                  onValueChange={(value) => handleRoleChange(user.id, value, user)}
                                 >
                                   <SelectTrigger className="w-40">
                                     <SelectValue />
