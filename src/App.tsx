@@ -29,6 +29,8 @@ const PaymentCancel = lazy(() => import("./pages/PaymentCancel"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const Search = lazy(() => import("./pages/Search"));
 const RedePcd = lazy(() => import("./pages/RedePcd"));
+const DesafioSocial = lazy(() => import("./pages/DesafioSocial"));
+const DesafioSocialGrupo = lazy(() => import("./pages/DesafioSocialGrupo"));
 
 function Analytics() {
   const location = useLocation();
@@ -85,6 +87,22 @@ const App = () => {
               <Route path="/pagamento/cancelado" element={<PaymentCancel />} />
               <Route path="/rede-pcd" element={<RedePcd />} />
               <Route path="/rede-pcd/*" element={<RedePcd />} />
+              <Route
+                path="/desafio-social"
+                element={
+                  <ProtectedRoute>
+                    <DesafioSocial />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/desafio-social/:grupo"
+                element={
+                  <ProtectedRoute>
+                    <DesafioSocialGrupo />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/dashboard"
                 element={

@@ -1241,6 +1241,111 @@ export type Database = {
         }
         Relationships: []
       }
+      social_challenge_groups: {
+        Row: {
+          created_at: string
+          description: string
+          group_number: number
+          icon_emoji: string
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          group_number: number
+          icon_emoji: string
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          group_number?: number
+          icon_emoji?: string
+          id?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      social_challenge_stats: {
+        Row: {
+          challenge_points: number
+          completed_challenges: number
+          created_at: string
+          id: string
+          pix_points: number
+          rank_position: number | null
+          referral_points: number
+          status: string
+          total_points: number
+          updated_at: string
+          user_group: string | null
+          user_id: string
+        }
+        Insert: {
+          challenge_points?: number
+          completed_challenges?: number
+          created_at?: string
+          id?: string
+          pix_points?: number
+          rank_position?: number | null
+          referral_points?: number
+          status?: string
+          total_points?: number
+          updated_at?: string
+          user_group?: string | null
+          user_id: string
+        }
+        Update: {
+          challenge_points?: number
+          completed_challenges?: number
+          created_at?: string
+          id?: string
+          pix_points?: number
+          rank_position?: number | null
+          referral_points?: number
+          status?: string
+          total_points?: number
+          updated_at?: string
+          user_group?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      social_challenges: {
+        Row: {
+          challenge_number: number
+          created_at: string
+          description: string
+          icon_emoji: string
+          id: string
+          points_reward: number
+          title: string
+        }
+        Insert: {
+          challenge_number: number
+          created_at?: string
+          description: string
+          icon_emoji: string
+          id?: string
+          points_reward?: number
+          title: string
+        }
+        Update: {
+          challenge_number?: number
+          created_at?: string
+          description?: string
+          icon_emoji?: string
+          id?: string
+          points_reward?: number
+          title?: string
+        }
+        Relationships: []
+      }
       subscription_plans: {
         Row: {
           active: boolean | null
@@ -1339,6 +1444,50 @@ export type Database = {
             columns: ["tenant_id_preferred"]
             isOneToOne: false
             referencedRelation: "tenant"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_challenge_progress: {
+        Row: {
+          challenge_id: string
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          proof_url: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          challenge_id: string
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          proof_url?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          challenge_id?: string
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          proof_url?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_challenge_progress_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "social_challenges"
             referencedColumns: ["id"]
           },
         ]

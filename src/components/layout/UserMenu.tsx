@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LogOut, LayoutDashboard, Shield, FileEdit, Users } from 'lucide-react';
+import { LogOut, LayoutDashboard, Shield, FileEdit, Users, Trophy } from 'lucide-react';
 
 export default function UserMenu() {
   const { profile, signOut, hasRole } = useAuth();
@@ -48,6 +48,12 @@ export default function UserMenu() {
           <Link to="/dashboard?tab=community" className="cursor-pointer">
             <Users className="mr-2 h-4 w-4" />
             <span>Comunidade</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link to="/desafio-social" className="cursor-pointer">
+            <Trophy className="mr-2 h-4 w-4" />
+            <span>Desafio Social</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />

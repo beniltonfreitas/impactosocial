@@ -13,7 +13,7 @@ import { SubscriptionManager } from '@/components/dashboard/SubscriptionManager'
 import { PreferencesEditor } from '@/components/dashboard/PreferencesEditor';
 import { PushToggle } from '@/components/notifications/PushToggle';
 import { UserComments } from '@/components/dashboard/UserComments';
-import { Shield, User, Bell, Settings, Lock, CreditCard, MessageSquare, Users } from 'lucide-react';
+import { Shield, User, Bell, Settings, Lock, CreditCard, MessageSquare, Users, Trophy } from 'lucide-react';
 import { CommunityPanel } from '@/components/community/CommunityPanel';
 
 export default function Dashboard() {
@@ -38,7 +38,7 @@ export default function Dashboard() {
           </div>
 
           <Tabs defaultValue={initialTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-7 mb-6">
+            <TabsList className="grid w-full grid-cols-8 mb-6">
               <TabsTrigger value="profile">
                 <User className="h-4 w-4 mr-2" />
                 Perfil
@@ -50,6 +50,10 @@ export default function Dashboard() {
               <TabsTrigger value="community">
                 <Users className="h-4 w-4 mr-2" />
                 Comunidade
+              </TabsTrigger>
+              <TabsTrigger value="desafio-social">
+                <Trophy className="h-4 w-4 mr-2" />
+                Desafio Social
               </TabsTrigger>
               <TabsTrigger value="comments">
                 <MessageSquare className="h-4 w-4 mr-2" />
@@ -138,6 +142,29 @@ export default function Dashboard() {
 
             <TabsContent value="community">
               <CommunityPanel />
+            </TabsContent>
+
+            <TabsContent value="desafio-social">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Trophy className="h-5 w-5" />
+                    Desafio Social
+                  </CardTitle>
+                  <CardDescription>
+                    Acesse a página completa do Desafio Social para ver todos os desafios
+                    e acompanhar seu progresso.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Link to="/desafio-social">
+                    <Button className="w-full">
+                      <Trophy className="mr-2 h-4 w-4" />
+                      Ver Desafio Social Completo
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
             </TabsContent>
 
             <TabsContent value="comments">

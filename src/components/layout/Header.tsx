@@ -120,6 +120,11 @@ export function Header() {
                       ❤️ PcD Rede do Bem
                     </Link>
                   </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/desafio-social" className="w-full cursor-pointer">
+                      🏆 Desafio Social
+                    </Link>
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
               
