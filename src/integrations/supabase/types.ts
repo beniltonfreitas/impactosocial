@@ -288,6 +288,108 @@ export type Database = {
           },
         ]
       }
+      community_challenges: {
+        Row: {
+          challenge_type: string
+          completed: boolean | null
+          completed_at: string | null
+          created_at: string | null
+          current_value: number | null
+          id: string
+          points_reward: number
+          target_value: number
+          user_id: string
+        }
+        Insert: {
+          challenge_type: string
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string | null
+          current_value?: number | null
+          id?: string
+          points_reward: number
+          target_value: number
+          user_id: string
+        }
+        Update: {
+          challenge_type?: string
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string | null
+          current_value?: number | null
+          id?: string
+          points_reward?: number
+          target_value?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      community_referrals: {
+        Row: {
+          clicks: number | null
+          conversions: number | null
+          created_at: string | null
+          generated_link: string
+          id: string
+          ref_code: string
+          target_url: string
+          user_id: string
+        }
+        Insert: {
+          clicks?: number | null
+          conversions?: number | null
+          created_at?: string | null
+          generated_link: string
+          id?: string
+          ref_code: string
+          target_url: string
+          user_id: string
+        }
+        Update: {
+          clicks?: number | null
+          conversions?: number | null
+          created_at?: string | null
+          generated_link?: string
+          id?: string
+          ref_code?: string
+          target_url?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      community_stats: {
+        Row: {
+          id: string
+          points: number | null
+          rank_position: number | null
+          total_clicks: number | null
+          total_conversions: number | null
+          total_shares: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          points?: number | null
+          rank_position?: number | null
+          total_clicks?: number | null
+          total_conversions?: number | null
+          total_shares?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          id?: string
+          points?: number | null
+          rank_position?: number | null
+          total_clicks?: number | null
+          total_conversions?: number | null
+          total_shares?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       contact_messages: {
         Row: {
           created_at: string | null
@@ -1363,6 +1465,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      init_user_challenges: { Args: { _user_id: string }; Returns: undefined }
       normalize_cep: { Args: { cep_in: string }; Returns: string }
       register_article_view: {
         Args: {
@@ -1396,6 +1499,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      challenge_type: "clicks_10" | "shares_5" | "conversions_3"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1524,6 +1628,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      challenge_type: ["clicks_10", "shares_5", "conversions_3"],
     },
   },
 } as const

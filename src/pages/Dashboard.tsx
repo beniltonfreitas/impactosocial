@@ -13,7 +13,8 @@ import { SubscriptionManager } from '@/components/dashboard/SubscriptionManager'
 import { PreferencesEditor } from '@/components/dashboard/PreferencesEditor';
 import { PushToggle } from '@/components/notifications/PushToggle';
 import { UserComments } from '@/components/dashboard/UserComments';
-import { Shield, User, Bell, Settings, Lock, CreditCard, MessageSquare } from 'lucide-react';
+import { Shield, User, Bell, Settings, Lock, CreditCard, MessageSquare, Users } from 'lucide-react';
+import { CommunityPanel } from '@/components/community/CommunityPanel';
 
 export default function Dashboard() {
   const { profile, roles, hasRole } = useAuth();
@@ -35,7 +36,7 @@ export default function Dashboard() {
           </div>
 
           <Tabs defaultValue="profile" className="w-full">
-            <TabsList className="grid w-full grid-cols-6 mb-6">
+            <TabsList className="grid w-full grid-cols-7 mb-6">
               <TabsTrigger value="profile">
                 <User className="h-4 w-4 mr-2" />
                 Perfil
@@ -43,6 +44,10 @@ export default function Dashboard() {
               <TabsTrigger value="subscription">
                 <CreditCard className="h-4 w-4 mr-2" />
                 Assinatura
+              </TabsTrigger>
+              <TabsTrigger value="community">
+                <Users className="h-4 w-4 mr-2" />
+                Comunidade
               </TabsTrigger>
               <TabsTrigger value="comments">
                 <MessageSquare className="h-4 w-4 mr-2" />
@@ -127,6 +132,10 @@ export default function Dashboard() {
                   <SubscriptionManager />
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            <TabsContent value="community">
+              <CommunityPanel />
             </TabsContent>
 
             <TabsContent value="comments">
