@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/components/auth/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,6 +18,8 @@ import { CommunityPanel } from '@/components/community/CommunityPanel';
 
 export default function Dashboard() {
   const { profile, roles, hasRole } = useAuth();
+  const [searchParams] = useSearchParams();
+  const initialTab = searchParams.get('tab') || 'profile';
 
   const getInitials = (name: string | null) => {
     if (!name) return 'U';
@@ -35,7 +37,7 @@ export default function Dashboard() {
             <p className="text-muted-foreground">Gerencie sua conta e preferências</p>
           </div>
 
-          <Tabs defaultValue="profile" className="w-full">
+          <Tabs defaultValue={initialTab} className="w-full">
             <TabsList className="grid w-full grid-cols-7 mb-6">
               <TabsTrigger value="profile">
                 <User className="h-4 w-4 mr-2" />

@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Copy } from 'lucide-react';
 
 interface ReferralGeneratorProps {
-  onGenerate: (targetUrl: string, refCode: string) => void;
+  onGenerate: (params: { targetUrl: string; refCode: string }) => void;
   isGenerating: boolean;
   defaultRefCode: string;
 }
@@ -21,7 +21,7 @@ export function ReferralGenerator({ onGenerate, isGenerating, defaultRefCode }: 
       alert('Informe um link válido.');
       return;
     }
-    onGenerate(targetUrl, refCode);
+    onGenerate({ targetUrl, refCode });
   };
 
   return (
