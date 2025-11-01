@@ -61,8 +61,9 @@ Deno.serve(async (req) => {
     if (targetUrl) {
       return Response.redirect(targetUrl, 302);
     }
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: errorMessage }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

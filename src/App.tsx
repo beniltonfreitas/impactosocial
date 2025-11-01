@@ -32,6 +32,20 @@ const RedePcd = lazy(() => import("./pages/RedePcd"));
 const DesafioSocial = lazy(() => import("./pages/DesafioSocial"));
 const DesafioSocialGrupo = lazy(() => import("./pages/DesafioSocialGrupo"));
 
+// Rede PcD Module Pages
+const PcdPlus = lazy(() => import("./pages/rede-pcd/PcdPlus"));
+const PcdDireitos = lazy(() => import("./pages/rede-pcd/PcdDireitos"));
+const PcdAlerta = lazy(() => import("./pages/rede-pcd/PcdAlerta"));
+const PcdPlay = lazy(() => import("./pages/rede-pcd/PcdPlay"));
+const PcdEsportes = lazy(() => import("./pages/rede-pcd/PcdEsportes"));
+const Cddpcd = lazy(() => import("./pages/rede-pcd/Cddpcd"));
+const PcdShop = lazy(() => import("./pages/rede-pcd/PcdShop"));
+const PcdVitrine = lazy(() => import("./pages/rede-pcd/PcdVitrine"));
+const PcdBlog = lazy(() => import("./pages/rede-pcd/PcdBlog"));
+const PcdAcademy = lazy(() => import("./pages/rede-pcd/PcdAcademy"));
+const PcdClube = lazy(() => import("./pages/rede-pcd/PcdClube"));
+const PcdRededobem = lazy(() => import("./pages/rede-pcd/PcdRededobem"));
+
 function Analytics() {
   const location = useLocation();
 
@@ -86,7 +100,18 @@ const App = () => {
               <Route path="/pagamento/sucesso" element={<PaymentSuccess />} />
               <Route path="/pagamento/cancelado" element={<PaymentCancel />} />
               <Route path="/rede-pcd" element={<RedePcd />} />
-              <Route path="/rede-pcd/*" element={<RedePcd />} />
+              <Route path="/rede-pcd/feed" element={<PcdPlus />} />
+              <Route path="/rede-pcd/direitos" element={<PcdDireitos />} />
+              <Route path="/rede-pcd/alerta" element={<PcdAlerta />} />
+              <Route path="/rede-pcd/play" element={<PcdPlay />} />
+              <Route path="/rede-pcd/esportes" element={<PcdEsportes />} />
+              <Route path="/rede-pcd/conselhos" element={<Cddpcd />} />
+              <Route path="/rede-pcd/shop" element={<PcdShop />} />
+              <Route path="/rede-pcd/vitrine" element={<PcdVitrine />} />
+              <Route path="/rede-pcd/blog" element={<PcdBlog />} />
+              <Route path="/rede-pcd/academy" element={<PcdAcademy />} />
+              <Route path="/rede-pcd/clube" element={<PcdClube />} />
+              <Route path="/rede-pcd/rede-do-bem" element={<PcdRededobem />} />
               <Route
                 path="/desafio-social"
                 element={
