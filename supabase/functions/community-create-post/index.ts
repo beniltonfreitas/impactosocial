@@ -25,6 +25,17 @@ Deno.serve(async (req) => {
 
     console.log('User authenticated:', user.id);
 
+    // Verificar se é admin ou moderator
+    const { data: isAdmin } = await supabase.rpc('has_role', { 
+      _user_id: user.id, 
+      _role: 'admin' 
+    });
+    const { data: isMod } = await supabase.rpc('has_role', { 
+      _user_id: user.id, 
+      _role: 'moderator' 
+    });
+    const privileged = !!isAdmin || !!isMod;
+
     // Verificar se é Premium
     const { data: subscription, error: subError } = await supabase
       .from('user_subscriptions')
@@ -38,8 +49,10 @@ Deno.serve(async (req) => {
       throw subError;
     }
 
-    if (!subscription) {
-      console.log('User is not Premium');
+    const isPremium = !!subscription;
+
+    if (!isPremium && !privileged) {
+      console.log('User is not Premium or privileged');
       throw new Error('Premium subscription required');
     }
 

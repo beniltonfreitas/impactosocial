@@ -15,7 +15,7 @@ import { CommunityDashboard } from './CommunityDashboard';
 import { useAuth } from '@/components/auth/AuthContext';
 
 export function CommunityPanel() {
-  const { profile } = useAuth();
+  const { profile, hasRole } = useAuth();
   const {
     stats,
     challenges,
@@ -25,6 +25,8 @@ export function CommunityPanel() {
     isGenerating,
   } = useCommunityData();
 
+  const isPrivileged = hasRole('admin') || hasRole('moderator');
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -33,7 +35,7 @@ export function CommunityPanel() {
     );
   }
 
-  if (!isSubscriber) {
+  if (!isSubscriber && !isPrivileged) {
     return (
       <Card className="border-amber-400">
         <CardHeader>

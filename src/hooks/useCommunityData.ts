@@ -20,15 +20,21 @@ interface Challenge {
 }
 
 export function useCommunityData() {
-  const { user } = useAuth();
+  const { user, hasRole } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Check if user is privileged (admin or moderator)
+  const isPrivileged = hasRole('admin') || hasRole('moderator');
 
   // Check subscription status
   const { data: isSubscriber } = useQuery({
     queryKey: ['subscription-status', user?.id],
     queryFn: async () => {
       if (!user) return false;
+      
+      // Bypass subscription check for admin/moderator
+      if (isPrivileged) return true;
       
       const { data } = await supabase
         .from('user_subscriptions')
