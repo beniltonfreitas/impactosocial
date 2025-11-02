@@ -23,6 +23,33 @@ Deno.serve(async (req) => {
       throw new Error('Unauthorized');
     }
 
+    console.log('User authenticated:', user.id);
+
+    // Verificar se é admin ou moderator
+    const { data: isAdmin } = await supabase.rpc('has_role', { 
+      _user_id: user.id, 
+      _role: 'admin' 
+    });
+    const { data: isMod } = await supabase.rpc('has_role', { 
+      _user_id: user.id, 
+      _role: 'moderator' 
+    });
+    const privileged = !!isAdmin || !!isMod;
+
+    // Verificar se é Premium
+    if (!privileged) {
+      const { data: subscription } = await supabase
+        .from('user_subscriptions')
+        .select('status')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .maybeSingle();
+
+      if (!subscription) {
+        throw new Error('Premium subscription required');
+      }
+    }
+
     const { post_id } = await req.json();
 
     if (!post_id) {
