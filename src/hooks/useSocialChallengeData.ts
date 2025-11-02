@@ -14,6 +14,9 @@ export interface SocialChallenge {
   completed_at: string | null;
   proof_url: string | null;
   notes: string | null;
+  admin_validated: boolean;
+  validated_by: string | null;
+  validated_at: string | null;
 }
 
 export interface SocialChallengeStats {

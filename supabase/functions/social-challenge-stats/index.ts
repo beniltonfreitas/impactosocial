@@ -46,7 +46,7 @@ Deno.serve(async (req) => {
       throw statsError;
     }
 
-    // Buscar progresso nos desafios
+    // Buscar progresso nos desafios (incluindo validação admin)
     const { data: challenges, error: challengesError } = await supabase
       .from('social_challenges')
       .select(`
@@ -55,7 +55,10 @@ Deno.serve(async (req) => {
           completed,
           completed_at,
           proof_url,
-          notes
+          notes,
+          admin_validated,
+          validated_by,
+          validated_at
         )
       `)
       .eq('user_challenge_progress.user_id', user.id)
@@ -76,7 +79,7 @@ Deno.serve(async (req) => {
       throw allChallengesError;
     }
 
-    // Merge progresso com desafios
+    // Merge progresso com desafios (incluindo validação admin)
     const challengesWithProgress = allChallenges.map(challenge => {
       const progress = challenges?.find(c => c.id === challenge.id);
       return {
@@ -85,6 +88,9 @@ Deno.serve(async (req) => {
         completed_at: progress?.user_challenge_progress?.[0]?.completed_at || null,
         proof_url: progress?.user_challenge_progress?.[0]?.proof_url || null,
         notes: progress?.user_challenge_progress?.[0]?.notes || null,
+        admin_validated: progress?.user_challenge_progress?.[0]?.admin_validated || false,
+        validated_by: progress?.user_challenge_progress?.[0]?.validated_by || null,
+        validated_at: progress?.user_challenge_progress?.[0]?.validated_at || null,
       };
     });
 

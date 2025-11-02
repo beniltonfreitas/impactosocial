@@ -31,6 +31,21 @@ const Search = lazy(() => import("./pages/Search"));
 const RedePcd = lazy(() => import("./pages/RedePcd"));
 const DesafioSocial = lazy(() => import("./pages/DesafioSocial"));
 const DesafioSocialGrupo = lazy(() => import("./pages/DesafioSocialGrupo"));
+const AdminDesafioSocial = lazy(() => import("./pages/AdminDesafioSocial"));
+
+// Grupo Pages
+const GrupoMaesAtipicas = lazy(() => import("./pages/grupo/MaesAtipicas"));
+const GrupoPcd = lazy(() => import("./pages/grupo/Pcd"));
+const GrupoMotoboys = lazy(() => import("./pages/grupo/Motoboys"));
+const GrupoTaxistas = lazy(() => import("./pages/grupo/Taxistas"));
+const GrupoMotoristasApp = lazy(() => import("./pages/grupo/MotoristasApp"));
+const GrupoAlunos = lazy(() => import("./pages/grupo/Alunos"));
+const GrupoEmpreendedores = lazy(() => import("./pages/grupo/Empreendedores"));
+const GrupoEducadores = lazy(() => import("./pages/grupo/Educadores"));
+const GrupoProfissionaisSaude = lazy(() => import("./pages/grupo/ProfissionaisSaude"));
+const GrupoComerciantes = lazy(() => import("./pages/grupo/Comerciantes"));
+const GrupoDelivery = lazy(() => import("./pages/grupo/Delivery"));
+const GrupoVoluntarios = lazy(() => import("./pages/grupo/Voluntarios"));
 
 // Rede PcD Module Pages
 const PcdPlus = lazy(() => import("./pages/rede-pcd/PcdPlus"));
@@ -128,6 +143,18 @@ const App = () => {
                     </ProtectedRoute>
                   }
                 />
+                <Route path="/grupo/maes-atipicas" element={<GrupoMaesAtipicas />} />
+                <Route path="/grupo/pcd" element={<GrupoPcd />} />
+                <Route path="/grupo/motoboys" element={<GrupoMotoboys />} />
+                <Route path="/grupo/taxistas" element={<GrupoTaxistas />} />
+                <Route path="/grupo/motoristas-app" element={<GrupoMotoristasApp />} />
+                <Route path="/grupo/alunos" element={<GrupoAlunos />} />
+                <Route path="/grupo/empreendedores" element={<GrupoEmpreendedores />} />
+                <Route path="/grupo/educadores" element={<GrupoEducadores />} />
+                <Route path="/grupo/saude" element={<GrupoProfissionaisSaude />} />
+                <Route path="/grupo/comerciantes" element={<GrupoComerciantes />} />
+                <Route path="/grupo/delivery" element={<GrupoDelivery />} />
+                <Route path="/grupo/voluntarios" element={<GrupoVoluntarios />} />
                 <Route
                   path="/dashboard"
                   element={
@@ -141,6 +168,14 @@ const App = () => {
                   element={
                     <ProtectedRoute requiredRole="admin">
                       <Admin />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/desafio-social"
+                  element={
+                    <ProtectedRoute requiredRole="admin">
+                      <AdminDesafioSocial />
                     </ProtectedRoute>
                   }
                 />

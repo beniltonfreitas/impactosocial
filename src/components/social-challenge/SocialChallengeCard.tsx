@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { format } from 'date-fns';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { SocialChallenge } from '@/hooks/useSocialChallengeData';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { SocialChallenge } from '@/hooks/useSocialChallengeData';
 
 interface SocialChallengeCardProps {
   challenge: SocialChallenge;
@@ -13,71 +12,77 @@ interface SocialChallengeCardProps {
   isCompleting: boolean;
 }
 
-export function SocialChallengeCard({
-  challenge,
-  onComplete,
-  isCompleting,
-}: SocialChallengeCardProps) {
+export function SocialChallengeCard({ challenge }: SocialChallengeCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
     <Card
       className={cn(
-        'relative overflow-hidden transition-all duration-300',
-        challenge.completed
-          ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/20'
-          : 'hover:-translate-y-1 hover:shadow-lg',
-        isHovered && !challenge.completed && 'border-primary'
+        'transition-all duration-300 hover:shadow-lg',
+        challenge.completed && challenge.admin_validated && 'border-emerald-500 bg-emerald-50/50',
+        challenge.completed && !challenge.admin_validated && 'border-yellow-500 bg-yellow-50/50',
+        isHovered && 'scale-105'
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <CardHeader>
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-4xl" role="img" aria-label={challenge.title}>
-              {challenge.icon_emoji}
-            </span>
-            <div>
-              <CardTitle className="text-lg">
-                {challenge.challenge_number}️⃣ {challenge.title}
-              </CardTitle>
-            </div>
-          </div>
-
-          {challenge.completed && (
-            <Badge className="bg-emerald-600 hover:bg-emerald-700">
-              <Check className="h-3 w-3 mr-1" />
-              Completo
-            </Badge>
-          )}
+        <div className="flex items-center justify-between">
+          <span className="text-4xl">{challenge.icon_emoji}</span>
+          <Badge variant="outline" className="font-mono">
+            #{challenge.challenge_number}
+          </Badge>
         </div>
+        <CardTitle className="text-lg">{challenge.title}</CardTitle>
+        <CardDescription>{challenge.description}</CardDescription>
       </CardHeader>
 
       <CardContent>
-        <p className="text-sm text-muted-foreground mb-4">
-          {challenge.description}
-        </p>
-
-        {!challenge.completed ? (
-          <Button
-            onClick={() => onComplete(challenge.id)}
-            disabled={isCompleting}
-            className="w-full"
-            variant="default"
-          >
-            {isCompleting ? 'Salvando...' : 'Marcar como Concluído'}
-          </Button>
-        ) : (
-          <p className="text-xs text-center text-emerald-600 dark:text-emerald-400">
-            Concluído em {format(new Date(challenge.completed_at!), 'dd/MM/yyyy')}
-          </p>
-        )}
-
-        <p className="text-center text-xs text-muted-foreground mt-2">
-          +{challenge.points_reward} códigos
-        </p>
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-muted-foreground">Recompensa:</span>
+          <span className="text-lg font-bold text-primary">
+            +{challenge.points_reward} códigos
+          </span>
+        </div>
       </CardContent>
+
+      <CardFooter className="flex flex-col gap-2">
+        {!challenge.completed ? (
+          <div className="w-full text-center">
+            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+              📋 Disponível para completar
+            </Badge>
+            <p className="text-xs text-muted-foreground mt-2">
+              Complete a ação descrita acima
+            </p>
+          </div>
+        ) : challenge.admin_validated ? (
+          <div className="w-full text-center space-y-2">
+            <Badge className="bg-emerald-600 hover:bg-emerald-700">
+              ✅ Desafio Validado
+            </Badge>
+            {challenge.validated_at && (
+              <p className="text-xs text-muted-foreground">
+                Validado em {format(new Date(challenge.validated_at), "dd 'de' MMMM 'às' HH:mm", { locale: ptBR })}
+              </p>
+            )}
+          </div>
+        ) : (
+          <div className="w-full text-center space-y-2">
+            <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
+              ⏳ Aguardando Validação
+            </Badge>
+            <p className="text-xs text-muted-foreground">
+              Complete a ação e aguarde a validação da equipe organizadora
+            </p>
+            {challenge.completed_at && (
+              <p className="text-xs text-muted-foreground">
+                Marcado como concluído em {format(new Date(challenge.completed_at), "dd 'de' MMMM", { locale: ptBR })}
+              </p>
+            )}
+          </div>
+        )}
+      </CardFooter>
     </Card>
   );
 }

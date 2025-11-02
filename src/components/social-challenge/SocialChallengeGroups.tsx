@@ -9,10 +9,10 @@ const groups = [
   { id: 5, name: 'Motoristas de App', emoji: '🚗', slug: 'motoristas-app' },
   { id: 6, name: 'Alunos', emoji: '🎓', slug: 'alunos' },
   { id: 7, name: 'Empreendedores', emoji: '💼', slug: 'empreendedores' },
-  { id: 8, name: 'Educadores', emoji: '🏫', slug: 'educadores' },
-  { id: 9, name: 'Profissionais da Saúde', emoji: '🩺', slug: 'saude' },
+  { id: 8, name: 'Educadores', emoji: '👨‍🏫', slug: 'educadores' },
+  { id: 9, name: 'Profissionais da Saúde', emoji: '⚕️', slug: 'saude' },
   { id: 10, name: 'Comerciantes', emoji: '🏪', slug: 'comerciantes' },
-  { id: 11, name: 'Influenciadores', emoji: '📱', slug: 'influenciadores' },
+  { id: 11, name: 'Delivery', emoji: '🛵', slug: 'delivery' },
   { id: 12, name: 'Voluntários', emoji: '🤝', slug: 'voluntarios' },
 ];
 
@@ -25,11 +25,11 @@ export function SocialChallengeGroups() {
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {groups.map((group) => (
-          <Link
-            key={group.id}
-            to={`/desafio-social/${group.slug}`}
-            className="block"
-          >
+        <Link
+          key={group.id}
+          to={`/grupo/${group.slug}`}
+          className="block"
+        >
             <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer border-2 hover:border-primary">
               <CardContent className="p-6 text-center">
                 <span

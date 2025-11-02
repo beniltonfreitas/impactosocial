@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Inserir ou atualizar progresso
+    // Inserir ou atualizar progresso (sem validação automática)
     const { error: upsertError } = await supabase
       .from('user_challenge_progress')
       .upsert({
@@ -73,6 +73,7 @@ Deno.serve(async (req) => {
         completed_at: new Date().toISOString(),
         proof_url: proofUrl || null,
         notes: notes || null,
+        admin_validated: false, // Aguarda validação admin
         updated_at: new Date().toISOString(),
       }, {
         onConflict: 'user_id,challenge_id',
