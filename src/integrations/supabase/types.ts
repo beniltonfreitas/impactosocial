@@ -1450,6 +1450,7 @@ export type Database = {
       }
       user_challenge_progress: {
         Row: {
+          admin_validated: boolean | null
           challenge_id: string
           completed: boolean
           completed_at: string | null
@@ -1459,8 +1460,11 @@ export type Database = {
           proof_url: string | null
           updated_at: string
           user_id: string
+          validated_at: string | null
+          validated_by: string | null
         }
         Insert: {
+          admin_validated?: boolean | null
           challenge_id: string
           completed?: boolean
           completed_at?: string | null
@@ -1470,8 +1474,11 @@ export type Database = {
           proof_url?: string | null
           updated_at?: string
           user_id: string
+          validated_at?: string | null
+          validated_by?: string | null
         }
         Update: {
+          admin_validated?: boolean | null
           challenge_id?: string
           completed?: boolean
           completed_at?: string | null
@@ -1481,6 +1488,8 @@ export type Database = {
           proof_url?: string | null
           updated_at?: string
           user_id?: string
+          validated_at?: string | null
+          validated_by?: string | null
         }
         Relationships: [
           {
