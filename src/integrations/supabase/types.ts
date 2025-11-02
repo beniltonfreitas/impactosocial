@@ -1792,6 +1792,26 @@ export type Database = {
       }
     }
     Functions: {
+      get_community_ranking: {
+        Args: { limit_rows?: number }
+        Returns: {
+          level: string
+          rank_position: number
+          total_actions: number
+          total_points: number
+          user_id: string
+        }[]
+      }
+      get_user_ranking: {
+        Args: { target_user_id: string }
+        Returns: {
+          level: string
+          rank_position: number
+          total_actions: number
+          total_points: number
+          user_id: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1801,6 +1821,7 @@ export type Database = {
       }
       init_user_challenges: { Args: { _user_id: string }; Returns: undefined }
       normalize_cep: { Args: { cep_in: string }; Returns: string }
+      refresh_community_ranking: { Args: never; Returns: undefined }
       register_article_view: {
         Args: {
           p_article_id: string

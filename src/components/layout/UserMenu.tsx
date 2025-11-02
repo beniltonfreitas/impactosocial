@@ -78,6 +78,12 @@ export default function UserMenu() {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
+          <Link to="/admin/comunidade" className="cursor-pointer">
+            <Users className="mr-2 h-4 w-4" />
+            <span>Moderar Comunidade</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
           <Link to="/admin" className="cursor-pointer">
             <Shield className="mr-2 h-4 w-4" />
             <span>Administração</span>

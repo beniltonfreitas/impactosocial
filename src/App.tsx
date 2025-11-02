@@ -32,6 +32,8 @@ const RedePcd = lazy(() => import("./pages/RedePcd"));
 const DesafioSocial = lazy(() => import("./pages/DesafioSocial"));
 const DesafioSocialGrupo = lazy(() => import("./pages/DesafioSocialGrupo"));
 const AdminDesafioSocial = lazy(() => import("./pages/AdminDesafioSocial"));
+const PerfilPublico = lazy(() => import("./pages/PerfilPublico"));
+const AdminComunidade = lazy(() => import("./pages/AdminComunidade"));
 
 // Grupo Pages
 const GrupoMaesAtipicas = lazy(() => import("./pages/grupo/MaesAtipicas"));
@@ -155,6 +157,7 @@ const App = () => {
                 <Route path="/grupo/comerciantes" element={<GrupoComerciantes />} />
                 <Route path="/grupo/delivery" element={<GrupoDelivery />} />
                 <Route path="/grupo/voluntarios" element={<GrupoVoluntarios />} />
+                <Route path="/perfil/:username" element={<PerfilPublico />} />
                 <Route
                   path="/dashboard"
                   element={
@@ -168,6 +171,14 @@ const App = () => {
                   element={
                     <ProtectedRoute requiredRole="admin">
                       <Admin />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/comunidade"
+                  element={
+                    <ProtectedRoute requiredRole="admin">
+                      <AdminComunidade />
                     </ProtectedRoute>
                   }
                 />
