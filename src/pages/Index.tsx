@@ -3,7 +3,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { AgentFAB } from "@/components/ai/AgentFAB";
-import { NewsTicker } from "@/components/news/NewsTicker";
+
 import { NewsGrid } from "@/components/news/NewsGrid";
 import { NewsSearch } from "@/components/news/NewsSearch";
 import { NewsFilters } from "@/components/news/NewsFilters";
@@ -55,33 +55,20 @@ const Index = () => {
       <Header />
 
       <main className="flex-1">
-        {/* Hero Section */}
-        <section className="bg-gradient-to-r from-primary via-primary/90 to-accent py-12 md:py-16">
-          <div className="container mx-auto px-4">
-            <div className="max-w-3xl">
-              <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-4">
-                Impacto Social - PcD Cotia
-              </h1>
-              <p className="text-lg text-primary-foreground/90">
-                Seu portal de notícias regional com informações relevantes da sua
-                cidade e região.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* News Ticker */}
-        <NewsTicker articles={articles.slice(0, 10)} />
-
         {/* News Grid & Sidebar */}
         <section className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Content */}
             <div className="lg:col-span-2">
-              <h2 className="text-2xl font-bold mb-6 text-foreground flex items-center gap-2">
-                <Newspaper className="text-primary" />
-                Últimas Notícias
-              </h2>
+              <div className="mb-8">
+                <h1 className="text-3xl md:text-4xl font-bold mb-2 text-foreground flex items-center gap-2">
+                  <Newspaper className="text-primary" />
+                  Todas as Notícias
+                </h1>
+                <p className="text-muted-foreground">
+                  Acompanhe as últimas notícias da sua região
+                </p>
+              </div>
 
               {/* Search and Filters */}
               <div className="mb-6 space-y-4">
