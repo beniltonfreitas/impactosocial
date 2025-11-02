@@ -14,6 +14,47 @@ export type Database = {
   }
   public: {
     Tables: {
+      article_gallery: {
+        Row: {
+          article_id: string
+          caption: string | null
+          created_at: string | null
+          credit: string | null
+          display_order: number | null
+          id: string
+          image_url: string
+          updated_at: string | null
+        }
+        Insert: {
+          article_id: string
+          caption?: string | null
+          created_at?: string | null
+          credit?: string | null
+          display_order?: number | null
+          id?: string
+          image_url: string
+          updated_at?: string | null
+        }
+        Update: {
+          article_id?: string
+          caption?: string | null
+          created_at?: string | null
+          credit?: string | null
+          display_order?: number | null
+          id?: string
+          image_url?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_gallery_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       article_views: {
         Row: {
           article_id: string

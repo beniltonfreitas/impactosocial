@@ -63,8 +63,8 @@ export function TagsInput({
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <Label>{label}</Label>
-        <span className="text-sm text-muted-foreground">
-          {value.length}/{maxTags} tags
+        <span className={`text-sm font-medium ${value.length === maxTags ? 'text-green-600' : 'text-amber-600'}`}>
+          {value.length}/{maxTags} tags {value.length === maxTags ? '✅' : '⚠️ Obrigatório'}
         </span>
       </div>
       

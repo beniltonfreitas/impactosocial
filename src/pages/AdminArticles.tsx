@@ -6,9 +6,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArticleFormComplete } from '@/components/admin/ArticleFormComplete';
+import { IAReporterImport } from '@/components/admin/IAReporterImport';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Pencil, Trash2, Search, Eye, Calendar } from 'lucide-react';
+import { Plus, Pencil, Trash2, Search, Eye, Calendar, Sparkles } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -143,11 +145,25 @@ export default function AdminArticles() {
               {filteredArticles.length} de {articles.length} notícias
             </p>
           </div>
-          <Button onClick={() => setShowForm(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            Nova Notícia
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => setShowForm(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Nova Notícia
+            </Button>
+          </div>
         </div>
+
+        {/* IA Repórter Pró */}
+        <IAReporterImport 
+          categories={categories}
+          onSuccess={(articleId) => {
+            loadData();
+            toast({
+              title: 'Artigo importado',
+              description: 'A notícia foi criada e está disponível como rascunho',
+            });
+          }}
+        />
 
         {/* Filtros */}
         <Card>

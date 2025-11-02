@@ -179,6 +179,17 @@ export function ArticleFormFields({ control, categories, tenants, onApplyAutoSeo
                       placeholder="https://exemplo.com/hero.jpg"
                       {...field}
                       value={field.value || ''}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        // Replicação automática: quando Hero é preenchido, replica para OG e Card
+                        const heroUrl = e.target.value;
+                        if (heroUrl && !control._formValues.image_og_url) {
+                          control._formValues.image_og_url = heroUrl;
+                        }
+                        if (heroUrl && !control._formValues.image_card_url) {
+                          control._formValues.image_card_url = heroUrl;
+                        }
+                      }}
                     />
                     <Button
                       type="button"
@@ -198,7 +209,7 @@ export function ArticleFormFields({ control, categories, tenants, onApplyAutoSeo
                     </Button>
                   </div>
                 </FormControl>
-                <FormDescription>Imagem principal (hero)</FormDescription>
+                <FormDescription>Imagem principal (hero) - será replicada automaticamente</FormDescription>
                 <FormMessage />
               </FormItem>
             )}

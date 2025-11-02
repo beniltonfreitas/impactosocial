@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CommentsSection } from "@/components/comments/CommentsSection";
 import { ShareButtons } from "@/components/article/ShareButtons";
+import { ArticleGallery } from "@/components/article/ArticleGallery";
 import { PremiumGate } from "@/components/paywall/PremiumGate";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/components/auth/AuthContext";
@@ -304,6 +305,9 @@ export default function Article() {
                   ))}
                 </div>
               )}
+
+              {/* Galeria de Imagens */}
+              <ArticleGallery articleId={article.id} />
 
               <Separator className="my-12" />
 

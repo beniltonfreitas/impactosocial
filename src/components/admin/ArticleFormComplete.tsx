@@ -23,7 +23,9 @@ const articleSchema = z.object({
   image_credit: z.string().max(100).optional().nullable(),
   source_url: z.string().url().optional().nullable(),
   gallery_images: z.array(z.string().url()).default([]),
-  tags: z.array(z.string()).default([]),
+  tags: z.array(z.string())
+    .length(12, 'Você deve adicionar exatamente 12 tags')
+    .default([]),
   seo_meta_title: z.string().max(60).optional().nullable(),
   seo_meta_description: z.string().max(160).optional().nullable(),
   author: z.string().min(2).max(100).optional().nullable(),
