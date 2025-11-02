@@ -53,14 +53,14 @@ export default function Admin() {
     }
   };
 
-  const handleRoleChange = async (userId: string, newRole: string, currentUser: any) => {
+  const handleRoleChange = async (userId: string, newRole: string) => {
     // Type guard to ensure role is valid
     if (newRole !== 'admin' && newRole !== 'moderator' && newRole !== 'user') {
       return;
     }
 
     // Impedir que admin se rebaixe
-    if (userId === currentUser?.id && newRole !== 'admin') {
+    if (userId === user?.id && newRole !== 'admin') {
       toast({
         title: "Ação bloqueada",
         description: "Você não pode alterar sua própria permissão de admin.",
@@ -225,7 +225,7 @@ export default function Admin() {
                               {hasRole('admin') && (
                                 <Select
                                   value={user.roles[0] || 'user'}
-                                  onValueChange={(value) => handleRoleChange(user.id, value, user)}
+                                  onValueChange={(value) => handleRoleChange(user.id, value)}
                                 >
                                   <SelectTrigger className="w-40">
                                     <SelectValue />
