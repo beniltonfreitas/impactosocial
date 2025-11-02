@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { CommentsSection } from "@/components/comments/CommentsSection";
 import { ShareButtons } from "@/components/article/ShareButtons";
 import { ArticleGallery } from "@/components/article/ArticleGallery";
+import { ArticleAudioPlayer } from "@/components/article/ArticleAudioPlayer";
 import { PremiumGate } from "@/components/paywall/PremiumGate";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/components/auth/AuthContext";
@@ -273,6 +274,24 @@ export default function Article() {
               <Eye className="h-4 w-4" />
               {article.views} visualizações
             </span>
+          </div>
+
+          {/* Audio Player & Share Buttons */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+            <ArticleAudioPlayer
+              title={article.title}
+              summary={article.summary}
+              content={article.content}
+            />
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-muted-foreground">Compartilhar:</span>
+              <ShareButtons
+                url={window.location.href}
+                title={article.title}
+                description={article.summary || ''}
+                variant="compact"
+              />
+            </div>
           </div>
 
           {/* Hero Image */}

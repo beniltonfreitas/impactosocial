@@ -17,9 +17,10 @@ interface ShareButtonsProps {
   url: string;
   title: string;
   description?: string;
+  variant?: 'full' | 'compact';
 }
 
-export function ShareButtons({ url, title, description }: ShareButtonsProps) {
+export function ShareButtons({ url, title, description, variant = 'full' }: ShareButtonsProps) {
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
 
@@ -55,6 +56,61 @@ export function ShareButtons({ url, title, description }: ShareButtonsProps) {
     telegram: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
     email: `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent((description || title) + '\n\n' + url)}`,
   };
+
+  if (variant === 'compact') {
+    return (
+      <div className="flex flex-wrap items-center gap-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => handleShare('whatsapp', shareLinks.whatsapp)}
+          aria-label="Compartilhar no WhatsApp"
+        >
+          <MessageCircle className="h-4 w-4 text-green-600" />
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => handleShare('facebook', shareLinks.facebook)}
+          aria-label="Compartilhar no Facebook"
+        >
+          <Facebook className="h-4 w-4 text-blue-600" />
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => handleShare('twitter', shareLinks.twitter)}
+          aria-label="Compartilhar no Twitter"
+        >
+          <Twitter className="h-4 w-4 text-sky-500" />
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => handleShare('linkedin', shareLinks.linkedin)}
+          aria-label="Compartilhar no LinkedIn"
+        >
+          <Linkedin className="h-4 w-4 text-blue-700" />
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleCopyLink}
+          aria-label="Copiar link"
+        >
+          {copied ? (
+            <Check className="h-4 w-4 text-green-600" />
+          ) : (
+            <Link2 className="h-4 w-4" />
+          )}
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
