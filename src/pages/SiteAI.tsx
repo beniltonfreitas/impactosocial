@@ -6,22 +6,28 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Upload, FileText, Trash2, Bot, Save, Loader2 } from "lucide-react";
 import { SEO } from "@/components/SEO";
+import { SiteAIUrlManager } from "@/components/dashboard/SiteAIUrlManager";
 
-interface KnowledgeFile {
+interface KnowledgeSource {
+  type: 'file' | 'url';
   name: string;
   url: string;
-  size: number;
+  size?: number;
+  content_preview?: string;
   uploaded_at: string;
+  status?: 'pending' | 'processed' | 'error';
+  error_message?: string;
 }
 
 interface SiteAIConfigType {
   agent_name: string;
   agent_description: string;
   agent_instructions: string;
-  knowledge_files: KnowledgeFile[];
+  knowledge_files: KnowledgeSource[];
 }
 
 export default function SiteAI() {
@@ -135,11 +141,13 @@ export default function SiteAI() {
         .from('site-ai-knowledge')
         .getPublicUrl(filePath);
 
-      const newFile: KnowledgeFile = {
+      const newFile: KnowledgeSource = {
+        type: 'file',
         name: file.name,
         url: publicUrl,
         size: file.size,
-        uploaded_at: new Date().toISOString()
+        uploaded_at: new Date().toISOString(),
+        status: 'processed'
       };
 
       setConfig(prev => ({
@@ -157,7 +165,7 @@ export default function SiteAI() {
     }
   };
 
-  const handleDeleteFile = async (fileToDelete: KnowledgeFile) => {
+  const handleDeleteFile = async (fileToDelete: KnowledgeSource) => {
     if (!profile?.id) return;
 
     try {
@@ -179,6 +187,49 @@ export default function SiteAI() {
       console.error('Error deleting file:', error);
       toast.error('Erro ao remover arquivo');
     }
+  };
+
+  const handleAddUrl = async (url: string) => {
+    try {
+      const urlObj = new URL(url);
+      const hostname = urlObj.hostname;
+      const pathname = urlObj.pathname;
+      const name = hostname + (pathname !== '/' ? pathname : '');
+
+      const newSource: KnowledgeSource = {
+        type: 'url',
+        name: name.length > 50 ? name.substring(0, 47) + '...' : name,
+        url,
+        uploaded_at: new Date().toISOString(),
+        status: 'processed',
+        content_preview: 'Conteúdo externo será processado durante o uso.'
+      };
+
+      setConfig(prev => ({
+        ...prev,
+        knowledge_files: [...prev.knowledge_files, newSource]
+      }));
+    } catch (error) {
+      throw new Error('Erro ao validar URL');
+    }
+  };
+
+  const handleRefreshUrl = async (url: string) => {
+    setConfig(prev => ({
+      ...prev,
+      knowledge_files: prev.knowledge_files.map(source =>
+        source.url === url
+          ? { ...source, uploaded_at: new Date().toISOString(), status: 'processed' as const }
+          : source
+      )
+    }));
+  };
+
+  const handleRemoveUrl = (url: string) => {
+    setConfig(prev => ({
+      ...prev,
+      knowledge_files: prev.knowledge_files.filter(source => source.url !== url)
+    }));
   };
 
   const formatFileSize = (bytes: number) => {
@@ -259,63 +310,88 @@ export default function SiteAI() {
               <CardHeader>
                 <CardTitle>Base de Conhecimento</CardTitle>
                 <CardDescription>
-                  Carregue arquivos para expandir o conhecimento do agente (máx. 10 arquivos, 5MB cada)
+                  Adicione arquivos e links externos para alimentar o conhecimento do agente
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="file_upload" className="cursor-pointer">
-                    <div className="border-2 border-dashed rounded-lg p-6 hover:border-primary transition-colors text-center">
-                      <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground">
-                        Clique para selecionar arquivos
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        PDF, TXT, MD ou DOCX (máx. 5MB)
-                      </p>
-                    </div>
-                    <Input
-                      id="file_upload"
-                      type="file"
-                      className="hidden"
-                      onChange={handleFileUpload}
-                      accept=".pdf,.txt,.md,.docx"
-                      disabled={uploading || config.knowledge_files.length >= 10}
-                    />
-                  </Label>
-                </div>
+              <CardContent>
+                <Tabs defaultValue="files" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="files">
+                      Arquivos ({config.knowledge_files.filter(f => f.type === 'file' || !f.type).length}/10)
+                    </TabsTrigger>
+                    <TabsTrigger value="links">
+                      Links ({config.knowledge_files.filter(f => f.type === 'url').length}/10)
+                    </TabsTrigger>
+                  </TabsList>
 
-                {config.knowledge_files.length > 0 && (
-                  <div className="space-y-2">
-                    {config.knowledge_files.map((file, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between p-3 bg-muted rounded-lg"
-                      >
-                        <div className="flex items-center gap-3 flex-1 min-w-0">
-                          <FileText className="h-4 w-4 flex-shrink-0 text-primary" />
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium truncate">{file.name}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {formatFileSize(file.size)}
-                            </p>
-                          </div>
+                  <TabsContent value="files" className="space-y-4 mt-4">
+                    <div>
+                      <Label htmlFor="file_upload" className="cursor-pointer">
+                        <div className="border-2 border-dashed rounded-lg p-6 hover:border-primary transition-colors text-center">
+                          <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                          <p className="text-sm text-muted-foreground">
+                            Clique para selecionar arquivos
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            PDF, TXT, MD ou DOCX (máx. 5MB)
+                          </p>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDeleteFile(file)}
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                        <Input
+                          id="file_upload"
+                          type="file"
+                          className="hidden"
+                          onChange={handleFileUpload}
+                          accept=".pdf,.txt,.md,.docx"
+                          disabled={uploading || config.knowledge_files.filter(f => f.type === 'file' || !f.type).length >= 10}
+                        />
+                      </Label>
+                    </div>
 
-                <p className="text-xs text-muted-foreground">
-                  {config.knowledge_files.length}/10 arquivos carregados
-                </p>
+                    {config.knowledge_files.filter(f => f.type === 'file' || !f.type).length > 0 && (
+                      <div className="space-y-2">
+                        {config.knowledge_files
+                          .filter(f => f.type === 'file' || !f.type)
+                          .map((file, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center justify-between p-3 bg-muted rounded-lg"
+                            >
+                              <div className="flex items-center gap-3 flex-1 min-w-0">
+                                <FileText className="h-4 w-4 flex-shrink-0 text-primary" />
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium truncate">{file.name}</p>
+                                  <p className="text-xs text-muted-foreground">
+                                    {file.size ? formatFileSize(file.size) : 'N/A'}
+                                  </p>
+                                </div>
+                              </div>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeleteFile(file)}
+                              >
+                                <Trash2 className="h-4 w-4 text-destructive" />
+                              </Button>
+                            </div>
+                          ))}
+                      </div>
+                    )}
+
+                    <p className="text-xs text-muted-foreground">
+                      {config.knowledge_files.filter(f => f.type === 'file' || !f.type).length}/10 arquivos carregados
+                    </p>
+                  </TabsContent>
+
+                  <TabsContent value="links" className="mt-4">
+                    <SiteAIUrlManager
+                      urls={config.knowledge_files.filter(f => f.type === 'url')}
+                      onAddUrl={handleAddUrl}
+                      onRemoveUrl={handleRemoveUrl}
+                      onRefreshUrl={handleRefreshUrl}
+                      maxUrls={10}
+                    />
+                  </TabsContent>
+                </Tabs>
               </CardContent>
             </Card>
 
@@ -367,13 +443,27 @@ export default function SiteAI() {
 
                 <div>
                   <h4 className="font-medium text-sm mb-2">Base de Conhecimento:</h4>
-                  <div className="bg-muted p-3 rounded-lg">
-                    <p className="text-sm">
-                      📚 {config.knowledge_files.length} arquivo(s) carregado(s)
-                    </p>
-                    {config.knowledge_files.length > 0 && (
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Total: {formatFileSize(config.knowledge_files.reduce((acc, f) => acc + f.size, 0))}
+                  <div className="bg-muted p-3 rounded-lg space-y-2">
+                    {config.knowledge_files.filter(f => f.type === 'file' || !f.type).length > 0 && (
+                      <div>
+                        <p className="text-sm font-medium">
+                          📄 {config.knowledge_files.filter(f => f.type === 'file' || !f.type).length} arquivo(s)
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Total: {formatFileSize(config.knowledge_files.filter(f => f.type === 'file' || !f.type).reduce((acc, f) => acc + (f.size || 0), 0))}
+                        </p>
+                      </div>
+                    )}
+                    {config.knowledge_files.filter(f => f.type === 'url').length > 0 && (
+                      <div>
+                        <p className="text-sm font-medium">
+                          🔗 {config.knowledge_files.filter(f => f.type === 'url').length} link(s) externo(s)
+                        </p>
+                      </div>
+                    )}
+                    {config.knowledge_files.length === 0 && (
+                      <p className="text-sm text-muted-foreground">
+                        Nenhuma fonte de conhecimento adicionada
                       </p>
                     )}
                   </div>

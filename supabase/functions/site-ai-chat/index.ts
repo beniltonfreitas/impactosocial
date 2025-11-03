@@ -11,16 +11,22 @@ interface ChatMessage {
   content: string;
 }
 
+interface KnowledgeSource {
+  type?: 'file' | 'url';
+  name: string;
+  url: string;
+  size?: number;
+  content_preview?: string;
+  uploaded_at: string;
+  status?: 'pending' | 'processed' | 'error';
+  error_message?: string;
+}
+
 interface SiteAIConfig {
   agent_name: string;
   agent_description: string | null;
   agent_instructions: string | null;
-  knowledge_files: Array<{
-    name: string;
-    url: string;
-    size: number;
-    uploaded_at: string;
-  }>;
+  knowledge_files: KnowledgeSource[];
 }
 
 async function extractTextFromFile(url: string, filename: string): Promise<string> {
@@ -30,6 +36,66 @@ async function extractTextFromFile(url: string, filename: string): Promise<strin
     return text;
   } catch (error) {
     console.error(`Error extracting text from ${filename}:`, error);
+    return '';
+  }
+}
+
+function stripHtml(html: string): string {
+  return html
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+async function extractTextFromUrl(url: string): Promise<string> {
+  try {
+    // Validate URL
+    const urlObj = new URL(url);
+    if (!['http:', 'https:'].includes(urlObj.protocol)) {
+      throw new Error('Invalid protocol');
+    }
+    
+    // Prevent SSRF attacks
+    const hostname = urlObj.hostname.toLowerCase();
+    if (hostname === 'localhost' || 
+        hostname.startsWith('127.') || 
+        hostname.startsWith('192.168.') || 
+        hostname.startsWith('10.') || 
+        hostname.startsWith('172.16.') ||
+        hostname.endsWith('.local')) {
+      throw new Error('Private network URLs not allowed');
+    }
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+
+    const response = await fetch(url, {
+      signal: controller.signal,
+      headers: {
+        'User-Agent': 'SiteAI-Bot/1.0'
+      }
+    });
+    
+    clearTimeout(timeout);
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.includes('text/html') && !contentType.includes('text/plain')) {
+      throw new Error('Unsupported content type');
+    }
+
+    const html = await response.text();
+    const cleanText = stripHtml(html);
+    
+    // Limit to 50KB
+    return cleanText.slice(0, 50000);
+  } catch (error) {
+    console.error(`Error fetching URL ${url}:`, error);
     return '';
   }
 }
@@ -87,14 +153,21 @@ Se não souber algo, seja honesto e sugira onde o usuário pode encontrar a info
       }
     }
 
-    // Extract knowledge from uploaded files
+    // Extract knowledge from uploaded files and URLs
     let knowledgeContext = '';
     if (config.knowledge_files.length > 0) {
       knowledgeContext = '\n\n=== BASE DE CONHECIMENTO ADICIONAL ===\n';
-      for (const file of config.knowledge_files) {
-        const text = await extractTextFromFile(file.url, file.name);
+      for (const source of config.knowledge_files) {
+        let text = '';
+        
+        if (source.type === 'file' || !source.type) {
+          text = await extractTextFromFile(source.url, source.name);
+        } else if (source.type === 'url') {
+          text = await extractTextFromUrl(source.url);
+        }
+        
         if (text) {
-          knowledgeContext += `\n--- Documento: ${file.name} ---\n${text}\n`;
+          knowledgeContext += `\n--- Fonte: ${source.name} ---\n${text}\n`;
         }
       }
     }
@@ -179,7 +252,7 @@ Responda sempre em português brasileiro, de forma cordial e objetiva.`;
   } catch (error) {
     console.error('Error in site-ai-chat:', error);
     return new Response(
-      JSON.stringify({ error: error.message || 'Erro interno do servidor' }),
+      JSON.stringify({ error: (error instanceof Error ? error.message : null) || 'Erro interno do servidor' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
