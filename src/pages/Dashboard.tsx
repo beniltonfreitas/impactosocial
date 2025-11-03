@@ -13,8 +13,9 @@ import { SubscriptionManager } from '@/components/dashboard/SubscriptionManager'
 import { PreferencesEditor } from '@/components/dashboard/PreferencesEditor';
 import { PushToggle } from '@/components/notifications/PushToggle';
 import { UserComments } from '@/components/dashboard/UserComments';
-import { Shield, User, Bell, Settings, Lock, CreditCard, MessageSquare, Users, Trophy, Bot } from 'lucide-react';
+import { Shield, User, Bell, Settings, Lock, CreditCard, MessageSquare, Users, Trophy, Bot, Sparkles } from 'lucide-react';
 import { CommunityPanel } from '@/components/community/CommunityPanel';
+import { IACreativeGenerator } from '@/components/dashboard/IACreativeGenerator';
 import SiteAI from './SiteAI';
 
 export default function Dashboard() {
@@ -48,9 +49,9 @@ export default function Dashboard() {
                 <CreditCard className="h-4 w-4 mr-2" />
                 Assinatura
               </TabsTrigger>
-              <TabsTrigger value="site-ai">
+              <TabsTrigger value="ferramentas-ia">
                 <Bot className="h-4 w-4 mr-2" />
-                Site AI
+                Ferramentas IA
               </TabsTrigger>
               <TabsTrigger value="community">
                 <Users className="h-4 w-4 mr-2" />
@@ -145,8 +146,40 @@ export default function Dashboard() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="site-ai">
-              <SiteAI />
+            <TabsContent value="ferramentas-ia">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Bot className="h-5 w-5" />
+                    🤖 Ferramentas de Inteligência Artificial
+                  </CardTitle>
+                  <CardDescription>
+                    Acesse ferramentas avançadas de IA para criar conteúdo e automatizar tarefas
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Tabs defaultValue="ia-criativa" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2 mb-6">
+                      <TabsTrigger value="ia-criativa">
+                        <Sparkles className="h-4 w-4 mr-2" />
+                        🎨 IA Criativa
+                      </TabsTrigger>
+                      <TabsTrigger value="site-ia">
+                        <Bot className="h-4 w-4 mr-2" />
+                        🧠 Site IA
+                      </TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="ia-criativa">
+                      <IACreativeGenerator />
+                    </TabsContent>
+
+                    <TabsContent value="site-ia">
+                      <SiteAI />
+                    </TabsContent>
+                  </Tabs>
+                </CardContent>
+              </Card>
             </TabsContent>
 
             <TabsContent value="community">

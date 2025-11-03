@@ -137,9 +137,6 @@ export function Header() {
               <a href="/assinaturas" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
                 Assinaturas
               </a>
-              <a href="/gerar-imagem" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
-                🎨 IA Criativa
-              </a>
               {isModerator && <a href="/moderation" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
                   Moderação
                 </a>}
@@ -208,9 +205,6 @@ export function Header() {
               </a>
               <a href="/assinaturas" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
                 Assinaturas
-              </a>
-              <a href="/gerar-imagem" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
-                🎨 IA Criativa
               </a>
               {isModerator && <a href="/moderation" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
                   Moderação
