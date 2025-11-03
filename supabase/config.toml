@@ -14,3 +14,6 @@ verify_jwt = false
 
 [functions.update-password]
 verify_jwt = true
+
+[functions.site-ai-chat]
+verify_jwt = false

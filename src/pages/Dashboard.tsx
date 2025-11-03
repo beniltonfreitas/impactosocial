@@ -13,8 +13,9 @@ import { SubscriptionManager } from '@/components/dashboard/SubscriptionManager'
 import { PreferencesEditor } from '@/components/dashboard/PreferencesEditor';
 import { PushToggle } from '@/components/notifications/PushToggle';
 import { UserComments } from '@/components/dashboard/UserComments';
-import { Shield, User, Bell, Settings, Lock, CreditCard, MessageSquare, Users, Trophy } from 'lucide-react';
+import { Shield, User, Bell, Settings, Lock, CreditCard, MessageSquare, Users, Trophy, Bot } from 'lucide-react';
 import { CommunityPanel } from '@/components/community/CommunityPanel';
+import SiteAI from './SiteAI';
 
 export default function Dashboard() {
   const { profile, roles, hasRole } = useAuth();
@@ -38,7 +39,7 @@ export default function Dashboard() {
           </div>
 
           <Tabs defaultValue={initialTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-8 mb-6">
+            <TabsList className="grid w-full grid-cols-9 mb-6">
               <TabsTrigger value="profile">
                 <User className="h-4 w-4 mr-2" />
                 Perfil
@@ -46,6 +47,10 @@ export default function Dashboard() {
               <TabsTrigger value="subscription">
                 <CreditCard className="h-4 w-4 mr-2" />
                 Assinatura
+              </TabsTrigger>
+              <TabsTrigger value="site-ai">
+                <Bot className="h-4 w-4 mr-2" />
+                Site AI
               </TabsTrigger>
               <TabsTrigger value="community">
                 <Users className="h-4 w-4 mr-2" />
@@ -138,6 +143,10 @@ export default function Dashboard() {
                   <SubscriptionManager />
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            <TabsContent value="site-ai">
+              <SiteAI />
             </TabsContent>
 
             <TabsContent value="community">

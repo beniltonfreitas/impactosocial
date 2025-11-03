@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AgentPanelProps {
   onClose: () => void;
@@ -15,24 +16,29 @@ interface Message {
   content: string;
 }
 
-const AI_AGENT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-agent`;
-
 async function callAIAgent(type: 'search' | 'summarize' | 'chat', payload: string, history?: Message[]) {
-  const response = await fetch(AI_AGENT_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`
-    },
-    body: JSON.stringify({ type, payload, history })
+  // For chat, use site-ai-chat which has access to user's custom configuration
+  if (type === 'chat') {
+    const { data, error } = await supabase.functions.invoke('site-ai-chat', {
+      body: {
+        message: payload,
+        history
+      }
+    });
+    if (error) throw error;
+    return { response: data.reply };
+  }
+  
+  // For search and summarize, use the original ai-agent
+  const { data, error } = await supabase.functions.invoke('ai-agent', {
+    body: {
+      type,
+      payload
+    }
   });
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || 'Erro na requisição');
-  }
-
-  return await response.json();
+  if (error) throw error;
+  return data;
 }
 
 export default function AgentPanel({ onClose }: AgentPanelProps) {

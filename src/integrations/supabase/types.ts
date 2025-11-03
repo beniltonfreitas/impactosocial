@@ -1448,6 +1448,42 @@ export type Database = {
         }
         Relationships: []
       }
+      site_ai_config: {
+        Row: {
+          agent_description: string | null
+          agent_instructions: string | null
+          agent_name: string
+          created_at: string
+          id: string
+          is_active: boolean
+          knowledge_files: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          agent_description?: string | null
+          agent_instructions?: string | null
+          agent_name?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          knowledge_files?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          agent_description?: string | null
+          agent_instructions?: string | null
+          agent_name?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          knowledge_files?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       social_challenge_groups: {
         Row: {
           created_at: string
