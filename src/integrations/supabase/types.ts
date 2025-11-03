@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_generated_images: {
+        Row: {
+          created_at: string | null
+          id: string
+          image_url: string
+          is_public: boolean | null
+          prompt: string
+          quality: string | null
+          size: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          image_url: string
+          is_public?: boolean | null
+          prompt: string
+          quality?: string | null
+          size?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          image_url?: string
+          is_public?: boolean | null
+          prompt?: string
+          quality?: string | null
+          size?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       article_gallery: {
         Row: {
           article_id: string

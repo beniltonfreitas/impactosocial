@@ -34,6 +34,7 @@ const DesafioSocialGrupo = lazy(() => import("./pages/DesafioSocialGrupo"));
 const AdminDesafioSocial = lazy(() => import("./pages/AdminDesafioSocial"));
 const PerfilPublico = lazy(() => import("./pages/PerfilPublico"));
 const AdminComunidade = lazy(() => import("./pages/AdminComunidade"));
+const GerarImagem = lazy(() => import("./pages/GerarImagem"));
 
 // Grupo Pages
 const GrupoMaesAtipicas = lazy(() => import("./pages/grupo/MaesAtipicas"));
@@ -116,6 +117,7 @@ const App = () => {
                 <Route path="/assinaturas" element={<Pricing />} />
                 <Route path="/pagamento/sucesso" element={<PaymentSuccess />} />
                 <Route path="/pagamento/cancelado" element={<PaymentCancel />} />
+                <Route path="/gerar-imagem" element={<GerarImagem />} />
                 <Route path="/rede-pcd" element={<RedePcd />} />
                 <Route path="/rede-pcd/feed" element={<PcdPlus />} />
                 <Route path="/rede-pcd/direitos" element={<PcdDireitos />} />
