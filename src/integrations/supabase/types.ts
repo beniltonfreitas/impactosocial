@@ -47,6 +47,39 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_generated_videos: {
+        Row: {
+          created_at: string | null
+          duration: string | null
+          id: string
+          is_public: boolean | null
+          prompt: string
+          resolution: string | null
+          user_id: string | null
+          video_url: string
+        }
+        Insert: {
+          created_at?: string | null
+          duration?: string | null
+          id?: string
+          is_public?: boolean | null
+          prompt: string
+          resolution?: string | null
+          user_id?: string | null
+          video_url: string
+        }
+        Update: {
+          created_at?: string | null
+          duration?: string | null
+          id?: string
+          is_public?: boolean | null
+          prompt?: string
+          resolution?: string | null
+          user_id?: string | null
+          video_url?: string
+        }
+        Relationships: []
+      }
       article_gallery: {
         Row: {
           article_id: string

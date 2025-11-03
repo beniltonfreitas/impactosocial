@@ -20,3 +20,6 @@ verify_jwt = true
 
 [functions.site-ai-chat]
 verify_jwt = false
+
+[functions.generate-video]
+verify_jwt = true
