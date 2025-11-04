@@ -13,12 +13,13 @@ import { SubscriptionManager } from '@/components/dashboard/SubscriptionManager'
 import { PreferencesEditor } from '@/components/dashboard/PreferencesEditor';
 import { PushToggle } from '@/components/notifications/PushToggle';
 import { UserComments } from '@/components/dashboard/UserComments';
-import { Shield, User, Bell, Settings, Lock, CreditCard, MessageSquare, Users, Trophy, Bot, Sparkles, Settings2 } from 'lucide-react';
+import { Shield, User, Bell, Settings, Lock, CreditCard, MessageSquare, Users, Trophy, Bot, Sparkles, Settings2, Network } from 'lucide-react';
 import { CommunityPanel } from '@/components/community/CommunityPanel';
 import { IACreativeGenerator } from '@/components/dashboard/IACreativeGenerator';
 import IAVideoGenerator from '@/components/dashboard/IAVideoGenerator';
 import IAStudio from '@/components/dashboard/IAStudio';
 import SiteAI from './SiteAI';
+import { RedePcdNavigationGrid } from '@/components/dashboard/RedePcdNavigationGrid';
 
 export default function Dashboard() {
   const { profile, roles, hasRole } = useAuth();
@@ -84,52 +85,79 @@ export default function Dashboard() {
             <TabsContent value="profile">
               <Card>
                 <CardHeader>
-                  <CardTitle>Informações do Perfil</CardTitle>
+                  <CardTitle>Meu Perfil</CardTitle>
                   <CardDescription>
-                    Atualize suas informações pessoais e foto de perfil
+                    Gerencie suas informações pessoais e acesse a Rede PcD
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="flex items-start gap-6 pb-6 border-b">
-                    <Avatar className="h-20 w-20">
-                      <AvatarImage src={profile?.avatar_url || ''} />
-                      <AvatarFallback className="text-2xl">
-                        {getInitials(profile?.full_name || null)}
-                      </AvatarFallback>
-                    </Avatar>
-                    
-                    <div className="flex-1 space-y-3">
-                      <div>
-                        <p className="text-sm text-muted-foreground">Nome</p>
-                        <p className="text-lg font-medium">{profile?.full_name || 'Usuário'}</p>
-                      </div>
-                      
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-2">Permissões</p>
-                        <div className="flex flex-wrap gap-2">
-                          {roles.map(role => (
-                            <Badge key={role} variant={role === 'admin' ? 'default' : 'secondary'}>
-                              {role === 'admin' && <Shield className="h-3 w-3 mr-1" />}
-                              {role === 'moderator' && <Shield className="h-3 w-3 mr-1" />}
-                              {role === 'user' && <User className="h-3 w-3 mr-1" />}
-                              {role === 'admin' ? 'Administrador' : role === 'moderator' ? 'Moderador' : 'Usuário'}
-                            </Badge>
-                          ))}
+                <CardContent>
+                  <Tabs defaultValue="dados-pessoais" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2 mb-6">
+                      <TabsTrigger value="dados-pessoais">
+                        <User className="h-4 w-4 mr-2" />
+                        Dados Pessoais
+                      </TabsTrigger>
+                      <TabsTrigger value="rede-pcd">
+                        <Network className="h-4 w-4 mr-2" />
+                        Rede PcD
+                      </TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="dados-pessoais" className="space-y-6">
+                      <div className="flex items-start gap-6 pb-6 border-b">
+                        <Avatar className="h-20 w-20">
+                          <AvatarImage src={profile?.avatar_url || ''} />
+                          <AvatarFallback className="text-2xl">
+                            {getInitials(profile?.full_name || null)}
+                          </AvatarFallback>
+                        </Avatar>
+                        
+                        <div className="flex-1 space-y-3">
+                          <div>
+                            <p className="text-sm text-muted-foreground">Nome</p>
+                            <p className="text-lg font-medium">{profile?.full_name || 'Usuário'}</p>
+                          </div>
+                          
+                          <div>
+                            <p className="text-sm text-muted-foreground mb-2">Permissões</p>
+                            <div className="flex flex-wrap gap-2">
+                              {roles.map(role => (
+                                <Badge key={role} variant={role === 'admin' ? 'default' : 'secondary'}>
+                                  {role === 'admin' && <Shield className="h-3 w-3 mr-1" />}
+                                  {role === 'moderator' && <Shield className="h-3 w-3 mr-1" />}
+                                  {role === 'user' && <User className="h-3 w-3 mr-1" />}
+                                  {role === 'admin' ? 'Administrador' : role === 'moderator' ? 'Moderador' : 'Usuário'}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+
+                          {(hasRole('admin') || hasRole('moderator')) && (
+                            <Button asChild size="sm" variant="outline">
+                              <Link to="/admin">
+                                <Shield className="h-4 w-4 mr-2" />
+                                Acessar Painel Administrativo
+                              </Link>
+                            </Button>
+                          )}
                         </div>
                       </div>
 
-                      {(hasRole('admin') || hasRole('moderator')) && (
-                        <Button asChild size="sm" variant="outline">
-                          <Link to="/admin">
-                            <Shield className="h-4 w-4 mr-2" />
-                            Acessar Painel Administrativo
-                          </Link>
-                        </Button>
-                      )}
-                    </div>
-                  </div>
+                      <ProfileEditor />
+                    </TabsContent>
 
-                  <ProfileEditor />
+                    <TabsContent value="rede-pcd">
+                      <div className="space-y-4">
+                        <div>
+                          <h3 className="text-lg font-semibold mb-2">Navegue pela Rede PcD</h3>
+                          <p className="text-sm text-muted-foreground">
+                            Acesse todos os módulos e serviços da Rede PcD em um só lugar
+                          </p>
+                        </div>
+                        <RedePcdNavigationGrid />
+                      </div>
+                    </TabsContent>
+                  </Tabs>
                 </CardContent>
               </Card>
             </TabsContent>
