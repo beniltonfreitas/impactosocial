@@ -13,9 +13,11 @@ import { SubscriptionManager } from '@/components/dashboard/SubscriptionManager'
 import { PreferencesEditor } from '@/components/dashboard/PreferencesEditor';
 import { PushToggle } from '@/components/notifications/PushToggle';
 import { UserComments } from '@/components/dashboard/UserComments';
-import { Shield, User, Bell, Settings, Lock, CreditCard, MessageSquare, Users, Trophy, Bot, Sparkles } from 'lucide-react';
+import { Shield, User, Bell, Settings, Lock, CreditCard, MessageSquare, Users, Trophy, Bot, Sparkles, Settings2 } from 'lucide-react';
 import { CommunityPanel } from '@/components/community/CommunityPanel';
 import { IACreativeGenerator } from '@/components/dashboard/IACreativeGenerator';
+import IAVideoGenerator from '@/components/dashboard/IAVideoGenerator';
+import IAStudio from '@/components/dashboard/IAStudio';
 import SiteAI from './SiteAI';
 
 export default function Dashboard() {
@@ -159,10 +161,18 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <Tabs defaultValue="ia-criativa" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2 mb-6">
+                    <TabsList className="grid w-full grid-cols-4 mb-6">
                       <TabsTrigger value="ia-criativa">
                         <Sparkles className="h-4 w-4 mr-2" />
                         🎨 IA Criativa
+                      </TabsTrigger>
+                      <TabsTrigger value="ia-video">
+                        <Sparkles className="h-4 w-4 mr-2" />
+                        🎥 Vídeo IA
+                      </TabsTrigger>
+                      <TabsTrigger value="studio-ia">
+                        <Settings2 className="h-4 w-4 mr-2" />
+                        🛠️ Studio IA
                       </TabsTrigger>
                       <TabsTrigger value="site-ia">
                         <Bot className="h-4 w-4 mr-2" />
@@ -172,6 +182,14 @@ export default function Dashboard() {
 
                     <TabsContent value="ia-criativa">
                       <IACreativeGenerator />
+                    </TabsContent>
+
+                    <TabsContent value="ia-video">
+                      <IAVideoGenerator />
+                    </TabsContent>
+
+                    <TabsContent value="studio-ia">
+                      <IAStudio />
                     </TabsContent>
 
                     <TabsContent value="site-ia">
