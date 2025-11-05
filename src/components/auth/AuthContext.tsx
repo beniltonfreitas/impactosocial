@@ -19,12 +19,14 @@ interface AuthContextType {
   session: Session | null;
   profile: Profile | null;
   roles: string[];
+  permissions: string[];
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: Error | null }>;
   hasRole: (role: string) => boolean;
+  hasPermission: (permission: string) => boolean;
   updateProfile: (updates: Partial<Profile>) => Promise<void>;
 }
 
@@ -35,6 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [roles, setRoles] = useState<string[]>([]);
+  const [permissions, setPermissions] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -65,6 +68,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return data.map(r => r.role);
   };
 
+  const fetchPermissions = async (userId: string) => {
+    const { data, error } = await supabase
+      .from('user_permissions')
+      .select('permission')
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error('Error fetching permissions:', error);
+      return [];
+    }
+    return data.map(p => p.permission);
+  };
+
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -77,10 +93,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setTimeout(() => {
             fetchProfile(session.user.id).then(setProfile);
             fetchRoles(session.user.id).then(setRoles);
+            fetchPermissions(session.user.id).then(setPermissions);
           }, 0);
         } else {
           setProfile(null);
           setRoles([]);
+          setPermissions([]);
         }
         
         setLoading(false);
@@ -96,6 +114,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setTimeout(() => {
           fetchProfile(session.user.id).then(setProfile);
           fetchRoles(session.user.id).then(setRoles);
+          fetchPermissions(session.user.id).then(setPermissions);
         }, 0);
       }
       setLoading(false);
@@ -201,6 +220,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return roles.includes(role);
   };
 
+  const hasPermission = (permission: string) => {
+    // Admins always have all permissions
+    if (roles.includes('admin')) return true;
+    return permissions.includes(permission);
+  };
+
   const updateProfile = async (updates: Partial<Profile>) => {
     if (!user) throw new Error('User not authenticated');
 
@@ -222,12 +247,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         session,
         profile,
         roles,
+        permissions,
         loading,
         signIn,
         signUp,
         signOut,
         resetPassword,
         hasRole,
+        hasPermission,
         updateProfile,
       }}
     >

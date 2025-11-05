@@ -36,6 +36,11 @@ const PerfilPublico = lazy(() => import("./pages/PerfilPublico"));
 const AdminComunidade = lazy(() => import("./pages/AdminComunidade"));
 const GerarImagem = lazy(() => import("./pages/GerarImagem"));
 
+// Funcionalidades Pages
+const ContabPRO = lazy(() => import("./pages/funcionalidades/ContabPRO"));
+const IlluminaPay = lazy(() => import("./pages/funcionalidades/IlluminaPay"));
+const FerramentasIA = lazy(() => import("./pages/funcionalidades/FerramentasIA"));
+
 // Grupo Pages
 const GrupoMaesAtipicas = lazy(() => import("./pages/grupo/MaesAtipicas"));
 const GrupoPcd = lazy(() => import("./pages/grupo/Pcd"));
@@ -213,6 +218,30 @@ const App = () => {
                   element={
                     <ProtectedRoute requiredRole="moderator">
                       <Moderation />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/dashboard/funcionalidades/contabpro"
+                  element={
+                    <ProtectedRoute>
+                      <ContabPRO />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/dashboard/funcionalidades/illuminapay"
+                  element={
+                    <ProtectedRoute>
+                      <IlluminaPay />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/dashboard/funcionalidades/ferramentas-ia"
+                  element={
+                    <ProtectedRoute>
+                      <FerramentasIA />
                     </ProtectedRoute>
                   }
                 />

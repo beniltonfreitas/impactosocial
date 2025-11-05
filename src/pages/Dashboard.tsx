@@ -13,13 +13,14 @@ import { SubscriptionManager } from '@/components/dashboard/SubscriptionManager'
 import { PreferencesEditor } from '@/components/dashboard/PreferencesEditor';
 import { PushToggle } from '@/components/notifications/PushToggle';
 import { UserComments } from '@/components/dashboard/UserComments';
-import { Shield, User, Bell, Settings, Lock, CreditCard, MessageSquare, Users, Trophy, Bot, Sparkles, Settings2, Network } from 'lucide-react';
+import { Shield, User, Bell, Settings, Lock, CreditCard, MessageSquare, Users, Trophy, Bot, Sparkles, Settings2, Network, Blocks } from 'lucide-react';
 import { CommunityPanel } from '@/components/community/CommunityPanel';
 import { IACreativeGenerator } from '@/components/dashboard/IACreativeGenerator';
 import IAVideoGenerator from '@/components/dashboard/IAVideoGenerator';
 import IAStudio from '@/components/dashboard/IAStudio';
 import SiteAI from './SiteAI';
 import { RedePcdNavigationGrid } from '@/components/dashboard/RedePcdNavigationGrid';
+import { FuncionalidadesDashboard } from '@/components/dashboard/FuncionalidadesDashboard';
 
 export default function Dashboard() {
   const { profile, roles, hasRole } = useAuth();
@@ -43,10 +44,14 @@ export default function Dashboard() {
           </div>
 
           <Tabs defaultValue={initialTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-9 mb-6">
+            <TabsList className="grid w-full grid-cols-3 lg:grid-cols-10 mb-6 overflow-x-auto">
               <TabsTrigger value="profile">
                 <User className="h-4 w-4 mr-2" />
                 Perfil
+              </TabsTrigger>
+              <TabsTrigger value="funcionalidades">
+                <Blocks className="h-4 w-4 mr-2" />
+                Funcionalidades
               </TabsTrigger>
               <TabsTrigger value="subscription">
                 <CreditCard className="h-4 w-4 mr-2" />
@@ -160,6 +165,10 @@ export default function Dashboard() {
                   </Tabs>
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            <TabsContent value="funcionalidades">
+              <FuncionalidadesDashboard />
             </TabsContent>
 
             <TabsContent value="subscription">

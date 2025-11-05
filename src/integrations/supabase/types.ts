@@ -1810,6 +1810,30 @@ export type Database = {
           },
         ]
       }
+      user_permissions: {
+        Row: {
+          granted_at: string | null
+          granted_by: string | null
+          id: string
+          permission: Database["public"]["Enums"]["permission_type"]
+          user_id: string
+        }
+        Insert: {
+          granted_at?: string | null
+          granted_by?: string | null
+          id?: string
+          permission: Database["public"]["Enums"]["permission_type"]
+          user_id: string
+        }
+        Update: {
+          granted_at?: string | null
+          granted_by?: string | null
+          id?: string
+          permission?: Database["public"]["Enums"]["permission_type"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -1955,6 +1979,13 @@ export type Database = {
           user_id: string
         }[]
       }
+      has_permission: {
+        Args: {
+          _permission: Database["public"]["Enums"]["permission_type"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1998,6 +2029,12 @@ export type Database = {
     Enums: {
       app_role: "admin" | "moderator" | "user"
       challenge_type: "clicks_10" | "shares_5" | "conversions_3"
+      permission_type:
+        | "rede_pcd"
+        | "contabilidade"
+        | "financeiro"
+        | "ia_tools"
+        | "social"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2127,6 +2164,13 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "moderator", "user"],
       challenge_type: ["clicks_10", "shares_5", "conversions_3"],
+      permission_type: [
+        "rede_pcd",
+        "contabilidade",
+        "financeiro",
+        "ia_tools",
+        "social",
+      ],
     },
   },
 } as const
