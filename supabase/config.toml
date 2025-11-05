@@ -23,3 +23,9 @@ verify_jwt = false
 
 [functions.generate-video]
 verify_jwt = true
+
+[functions.ia-pipeline-execute]
+verify_jwt = true
+
+[functions.ia-analyze-spreadsheet]
+verify_jwt = true

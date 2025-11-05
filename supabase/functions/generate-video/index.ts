@@ -198,7 +198,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         error: 'UNKNOWN',
-        message: error.message || 'Erro desconhecido ao gerar vídeo' 
+        message: error instanceof Error ? error.message : 'Erro desconhecido ao gerar vídeo' 
       }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

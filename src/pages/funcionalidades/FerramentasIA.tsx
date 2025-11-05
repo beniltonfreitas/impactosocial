@@ -1,7 +1,12 @@
 import { ModuleLayout } from '@/components/funcionalidades/ModuleLayout';
 import { PermissionGate } from '@/components/auth/PermissionGate';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { MessageSquare, Image, Video, Workflow, BarChart3 } from 'lucide-react';
+import { ChatIAModule } from '@/components/ia/ChatIAModule';
+import { ImageGeneratorModule } from '@/components/ia/ImageGeneratorModule';
+import { VideoGeneratorModule } from '@/components/ia/VideoGeneratorModule';
+import { StudioIAModule } from '@/components/ia/StudioIAModule';
+import { AnalysesIAModule } from '@/components/ia/AnalysesIAModule';
 
 export default function FerramentasIA() {
   return (
@@ -10,31 +15,46 @@ export default function FerramentasIA() {
         title="Ferramentas IA"
         description="Explore o poder da inteligência artificial"
       >
-        <div className="grid gap-6">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Bem-vindo às Ferramentas IA</CardTitle>
-                <Badge>Em Desenvolvimento</Badge>
-              </div>
-              <CardDescription>
-                Seu hub de criação com inteligência artificial
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">
-                O módulo Ferramentas IA estará disponível em breve com:
-              </p>
-              <ul className="list-disc list-inside mt-4 space-y-2 text-muted-foreground">
-                <li>Chat IA - Assistente textual inteligente</li>
-                <li>Imagem IA - Geração de designs automáticos</li>
-                <li>Vídeo IA - Transforme texto em vídeo</li>
-                <li>Studio IA - Automações visuais combinadas</li>
-                <li>Análises IA - Dashboards e insights de dados</li>
-              </ul>
-            </CardContent>
-          </Card>
-        </div>
+        <Tabs defaultValue="chat" className="w-full">
+          <TabsList className="grid w-full grid-cols-5">
+            <TabsTrigger value="chat">
+              <MessageSquare className="mr-2 h-4 w-4" />
+              Chat IA
+            </TabsTrigger>
+            <TabsTrigger value="image">
+              <Image className="mr-2 h-4 w-4" />
+              Imagens
+            </TabsTrigger>
+            <TabsTrigger value="video">
+              <Video className="mr-2 h-4 w-4" />
+              Vídeos
+            </TabsTrigger>
+            <TabsTrigger value="studio">
+              <Workflow className="mr-2 h-4 w-4" />
+              Studio
+            </TabsTrigger>
+            <TabsTrigger value="analytics">
+              <BarChart3 className="mr-2 h-4 w-4" />
+              Análises
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="chat">
+            <ChatIAModule />
+          </TabsContent>
+          <TabsContent value="image">
+            <ImageGeneratorModule />
+          </TabsContent>
+          <TabsContent value="video">
+            <VideoGeneratorModule />
+          </TabsContent>
+          <TabsContent value="studio">
+            <StudioIAModule />
+          </TabsContent>
+          <TabsContent value="analytics">
+            <AnalysesIAModule />
+          </TabsContent>
+        </Tabs>
       </ModuleLayout>
     </PermissionGate>
   );
