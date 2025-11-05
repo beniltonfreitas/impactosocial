@@ -725,6 +725,175 @@ export type Database = {
           },
         ]
       }
+      ia_chat_conversations: {
+        Row: {
+          context: string | null
+          created_at: string | null
+          id: string
+          title: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          context?: string | null
+          created_at?: string | null
+          id?: string
+          title?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          context?: string | null
+          created_at?: string | null
+          id?: string
+          title?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ia_chat_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string | null
+          id: string
+          role: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string | null
+          id?: string
+          role: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string | null
+          id?: string
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ia_chat_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "ia_chat_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ia_pipeline_executions: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          error_message: string | null
+          id: string
+          input_data: Json | null
+          pipeline_id: string | null
+          results: Json | null
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          input_data?: Json | null
+          pipeline_id?: string | null
+          results?: Json | null
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          input_data?: Json | null
+          pipeline_id?: string | null
+          results?: Json | null
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ia_pipeline_executions_pipeline_id_fkey"
+            columns: ["pipeline_id"]
+            isOneToOne: false
+            referencedRelation: "ia_pipelines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ia_pipelines: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          steps: Json
+          template: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          steps: Json
+          template?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          steps?: Json
+          template?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ia_spreadsheet_analyses: {
+        Row: {
+          chart_data: Json | null
+          created_at: string | null
+          file_name: string
+          file_url: string | null
+          id: string
+          insights: Json | null
+          summary: string | null
+          user_id: string
+        }
+        Insert: {
+          chart_data?: Json | null
+          created_at?: string | null
+          file_name: string
+          file_url?: string | null
+          id?: string
+          insights?: Json | null
+          summary?: string | null
+          user_id: string
+        }
+        Update: {
+          chart_data?: Json | null
+          created_at?: string | null
+          file_name?: string
+          file_url?: string | null
+          id?: string
+          insights?: Json | null
+          summary?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       partner_map: {
         Row: {
           active: boolean
