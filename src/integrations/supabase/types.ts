@@ -894,6 +894,227 @@ export type Database = {
         }
         Relationships: []
       }
+      impacto_assinaturas: {
+        Row: {
+          created_at: string | null
+          data_pagamento: string | null
+          external_reference: Json | null
+          id: string
+          impacto_user_id: string
+          metodo: string
+          pontos_creditados: number | null
+          raw_payload: Json | null
+          status: string
+          transacao_id: string
+          valor_cents: number
+        }
+        Insert: {
+          created_at?: string | null
+          data_pagamento?: string | null
+          external_reference?: Json | null
+          id?: string
+          impacto_user_id: string
+          metodo: string
+          pontos_creditados?: number | null
+          raw_payload?: Json | null
+          status?: string
+          transacao_id: string
+          valor_cents: number
+        }
+        Update: {
+          created_at?: string | null
+          data_pagamento?: string | null
+          external_reference?: Json | null
+          id?: string
+          impacto_user_id?: string
+          metodo?: string
+          pontos_creditados?: number | null
+          raw_payload?: Json | null
+          status?: string
+          transacao_id?: string
+          valor_cents?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "impacto_assinaturas_impacto_user_id_fkey"
+            columns: ["impacto_user_id"]
+            isOneToOne: false
+            referencedRelation: "impacto_usuarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      impacto_conquistas: {
+        Row: {
+          data_conclusao: string | null
+          desafio_id: string
+          id: string
+          impacto_user_id: string
+          pontos_ganhos: number
+          validado_em: string | null
+          validado_por: string | null
+        }
+        Insert: {
+          data_conclusao?: string | null
+          desafio_id: string
+          id?: string
+          impacto_user_id: string
+          pontos_ganhos: number
+          validado_em?: string | null
+          validado_por?: string | null
+        }
+        Update: {
+          data_conclusao?: string | null
+          desafio_id?: string
+          id?: string
+          impacto_user_id?: string
+          pontos_ganhos?: number
+          validado_em?: string | null
+          validado_por?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "impacto_conquistas_desafio_id_fkey"
+            columns: ["desafio_id"]
+            isOneToOne: false
+            referencedRelation: "impacto_desafios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "impacto_conquistas_impacto_user_id_fkey"
+            columns: ["impacto_user_id"]
+            isOneToOne: false
+            referencedRelation: "impacto_usuarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      impacto_desafios: {
+        Row: {
+          created_at: string | null
+          descricao: string
+          id: string
+          ordem: number | null
+          pontos: number | null
+          status: string | null
+          titulo: string
+        }
+        Insert: {
+          created_at?: string | null
+          descricao: string
+          id?: string
+          ordem?: number | null
+          pontos?: number | null
+          status?: string | null
+          titulo: string
+        }
+        Update: {
+          created_at?: string | null
+          descricao?: string
+          id?: string
+          ordem?: number | null
+          pontos?: number | null
+          status?: string | null
+          titulo?: string
+        }
+        Relationships: []
+      }
+      impacto_indicacoes: {
+        Row: {
+          confirmado_em: string | null
+          created_at: string | null
+          id: string
+          pontos_bonus: number | null
+          ref_code_usado: string
+          referred_id: string | null
+          referrer_id: string
+          status: string | null
+        }
+        Insert: {
+          confirmado_em?: string | null
+          created_at?: string | null
+          id?: string
+          pontos_bonus?: number | null
+          ref_code_usado: string
+          referred_id?: string | null
+          referrer_id: string
+          status?: string | null
+        }
+        Update: {
+          confirmado_em?: string | null
+          created_at?: string | null
+          id?: string
+          pontos_bonus?: number | null
+          ref_code_usado?: string
+          referred_id?: string | null
+          referrer_id?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "impacto_indicacoes_referred_id_fkey"
+            columns: ["referred_id"]
+            isOneToOne: false
+            referencedRelation: "impacto_usuarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "impacto_indicacoes_referrer_id_fkey"
+            columns: ["referrer_id"]
+            isOneToOne: false
+            referencedRelation: "impacto_usuarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      impacto_usuarios: {
+        Row: {
+          cpf: string | null
+          created_at: string | null
+          data_cadastro: string | null
+          email: string
+          id: string
+          link_indicacao: string | null
+          nivel: string | null
+          nome: string
+          pontos: number | null
+          ref_code: string
+          telefone: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          cpf?: string | null
+          created_at?: string | null
+          data_cadastro?: string | null
+          email: string
+          id?: string
+          link_indicacao?: string | null
+          nivel?: string | null
+          nome: string
+          pontos?: number | null
+          ref_code: string
+          telefone?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          cpf?: string | null
+          created_at?: string | null
+          data_cadastro?: string | null
+          email?: string
+          id?: string
+          link_indicacao?: string | null
+          nivel?: string | null
+          nome?: string
+          pontos?: number | null
+          ref_code?: string
+          telefone?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       partner_map: {
         Row: {
           active: boolean
