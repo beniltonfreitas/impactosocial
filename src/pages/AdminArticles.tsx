@@ -7,14 +7,17 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ArticleFormComplete } from '@/components/admin/ArticleFormComplete';
 import { IAReporterImport } from '@/components/admin/IAReporterImport';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Pencil, Trash2, Search, Eye, Calendar, Sparkles } from 'lucide-react';
+import { Plus, Pencil, Trash2, Search, Eye, Calendar, Upload, FileText } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { SEO } from '@/components/SEO';
+import { useNavigate } from 'react-router-dom';
 
 export default function AdminArticles() {
   const [articles, setArticles] = useState<any[]>([]);
@@ -28,6 +31,7 @@ export default function AdminArticles() {
   const [deletingId, setDeletingId] = useState<string | undefined>();
   const [showForm, setShowForm] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadData();
@@ -131,30 +135,83 @@ export default function AdminArticles() {
   };
 
   return (
-    <>
-      <SEO 
-        title="Gerenciar Notícias - Admin"
-        description="Painel de administração de notícias"
-      />
-      
-      <div className="container mx-auto py-8 space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">Gerenciar Notícias</h1>
-            <p className="text-muted-foreground">
-              {filteredArticles.length} de {articles.length} notícias
-            </p>
+    <TooltipProvider>
+      <ErrorBoundary>
+        <SEO 
+          title="Gerenciar Notícias - Admin"
+          description="Painel de administração de notícias"
+        />
+        
+        <div className="container mx-auto py-8 space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold">Gerenciar Notícias</h1>
+              <p className="text-muted-foreground">
+                {filteredArticles.length} de {articles.length} notícias
+              </p>
+            </div>
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => setShowForm(true)}>
-              <Plus className="mr-2 h-4 w-4" />
-              Nova Notícia
-            </Button>
-          </div>
-        </div>
 
-        {/* IA Repórter Pró */}
-        <IAReporterImport 
+          {/* Barra de Ações */}
+          <div className="grid gap-4 md:grid-cols-3">
+            <Card 
+              className="hover:shadow-lg transition-shadow cursor-pointer border-blue-200 dark:border-blue-900"
+              onClick={() => setShowForm(true)}
+            >
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-blue-600 dark:text-blue-400">
+                  <Plus className="h-5 w-5" />
+                  Nova Notícia
+                </CardTitle>
+                <CardDescription>
+                  Criar uma nova notícia do zero
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Card 
+                  className="hover:shadow-lg transition-shadow cursor-pointer border-purple-200 dark:border-purple-900"
+                  onClick={() => navigate('/admin/bulk-import')}
+                >
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-purple-600 dark:text-purple-400">
+                      <Upload className="h-5 w-5" />
+                      Importar em Massa
+                    </CardTitle>
+                    <CardDescription>
+                      Importar múltiplas notícias via JSON
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Importar via JSON Premium v2.1</p>
+              </TooltipContent>
+            </Tooltip>
+
+            <Card 
+              className="hover:shadow-lg transition-shadow cursor-pointer opacity-50 border-orange-200 dark:border-orange-900"
+              onClick={() => toast({ 
+                title: "Em breve", 
+                description: "Funcionalidade em desenvolvimento" 
+              })}
+            >
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-orange-600 dark:text-orange-400">
+                  <FileText className="h-5 w-5" />
+                  Post Blog
+                </CardTitle>
+                <CardDescription>
+                  Criar post para blog (em breve)
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+
+          {/* IA Repórter Pró */}
+          <IAReporterImport
           categories={categories}
           onSuccess={(articleId) => {
             loadData();
@@ -216,21 +273,25 @@ export default function AdminArticles() {
           </CardContent>
         </Card>
 
-        {/* Lista de artigos */}
-        <div className="grid gap-4">
-          {loading ? (
-            <Card>
-              <CardContent className="py-8 text-center text-muted-foreground">
-                Carregando artigos...
-              </CardContent>
-            </Card>
-          ) : filteredArticles.length === 0 ? (
-            <Card>
-              <CardContent className="py-8 text-center text-muted-foreground">
-                Nenhum artigo encontrado
-              </CardContent>
-            </Card>
-          ) : (
+          {/* Lista de notícias */}
+          <div className="grid gap-4">
+            {loading ? (
+              <Card>
+                <CardContent className="py-8 text-center text-muted-foreground">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                  <p className="mt-4">Carregando notícias...</p>
+                </CardContent>
+              </Card>
+            ) : filteredArticles.length === 0 ? (
+              <Card>
+                <CardContent className="py-12 text-center">
+                  <div className="text-muted-foreground space-y-2">
+                    <p className="text-lg font-medium">Nenhuma notícia encontrada</p>
+                    <p className="text-sm">Crie sua primeira notícia ou ajuste os filtros</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
             filteredArticles.map((article) => (
               <Card key={article.id}>
                 <CardContent className="p-6">
@@ -249,23 +310,33 @@ export default function AdminArticles() {
                           <p className="text-sm text-muted-foreground">/{article.slug}</p>
                         </div>
                         <div className="flex gap-2">
-                          <Button
-                            size="icon"
-                            variant="outline"
-                            onClick={() => {
-                              setEditingId(article.id);
-                              setShowForm(true);
-                            }}
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            size="icon"
-                            variant="outline"
-                            onClick={() => setDeletingId(article.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                size="icon"
+                                variant="outline"
+                                onClick={() => {
+                                  setEditingId(article.id);
+                                  setShowForm(true);
+                                }}
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Editar notícia</TooltipContent>
+                          </Tooltip>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                size="icon"
+                                variant="outline"
+                                onClick={() => setDeletingId(article.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Excluir notícia</TooltipContent>
+                          </Tooltip>
                         </div>
                       </div>
 
@@ -302,48 +373,49 @@ export default function AdminArticles() {
                   </div>
                 </CardContent>
               </Card>
-            ))
-          )}
+              ))
+            )}
+          </div>
+
+          {/* Dialog de formulário */}
+          <Dialog open={showForm} onOpenChange={setShowForm}>
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>
+                  {editingId ? 'Editar Notícia' : 'Nova Notícia'}
+                </DialogTitle>
+                <DialogDescription>
+                  Preencha os campos abaixo para {editingId ? 'atualizar' : 'criar'} a notícia
+                </DialogDescription>
+              </DialogHeader>
+              <ArticleFormComplete
+                articleId={editingId}
+                onSuccess={handleFormSuccess}
+                onCancel={() => {
+                  setShowForm(false);
+                  setEditingId(undefined);
+                }}
+              />
+            </DialogContent>
+          </Dialog>
+
+          {/* Dialog de confirmação de exclusão */}
+          <AlertDialog open={!!deletingId} onOpenChange={() => setDeletingId(undefined)}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Esta ação não pode ser desfeita. A notícia será permanentemente removida.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDelete}>Excluir</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
-
-        {/* Dialog de formulário */}
-        <Dialog open={showForm} onOpenChange={setShowForm}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>
-                {editingId ? 'Editar Notícia' : 'Nova Notícia'}
-              </DialogTitle>
-              <DialogDescription>
-                Preencha os campos abaixo para {editingId ? 'atualizar' : 'criar'} a notícia
-              </DialogDescription>
-            </DialogHeader>
-            <ArticleFormComplete
-              articleId={editingId}
-              onSuccess={handleFormSuccess}
-              onCancel={() => {
-                setShowForm(false);
-                setEditingId(undefined);
-              }}
-            />
-          </DialogContent>
-        </Dialog>
-
-        {/* Dialog de confirmação de exclusão */}
-        <AlertDialog open={!!deletingId} onOpenChange={() => setDeletingId(undefined)}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
-              <AlertDialogDescription>
-                Esta ação não pode ser desfeita. A notícia será permanentemente removida.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDelete}>Excluir</AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
-    </>
+      </ErrorBoundary>
+    </TooltipProvider>
   );
 }

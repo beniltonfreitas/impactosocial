@@ -17,6 +17,7 @@ const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Admin = lazy(() => import("./pages/Admin"));
 const AdminArticles = lazy(() => import("./pages/AdminArticles"));
 const AdminBulkImport = lazy(() => import("./pages/AdminBulkImport"));
+const AdminImportHelp = lazy(() => import("./pages/AdminImportHelp"));
 const About = lazy(() => import("./pages/About"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Privacy = lazy(() => import("./pages/Privacy"));
@@ -210,6 +211,14 @@ const App = () => {
                   element={
                     <ProtectedRoute requiredRole="admin">
                       <AdminBulkImport />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/import-help"
+                  element={
+                    <ProtectedRoute requiredRole="admin">
+                      <AdminImportHelp />
                     </ProtectedRoute>
                   }
                 />

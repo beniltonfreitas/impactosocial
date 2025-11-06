@@ -222,6 +222,10 @@ export function BulkImportForm({
             console.warn(`Imagem inválida para "${article.titulo}": ${article.imagem.hero}`);
           }
 
+          // Replicar imagem hero para og e card se vazias
+          const imageOgUrl = article.imagem.og || article.imagem.hero;
+          const imageCardUrl = article.imagem.card || article.imagem.hero;
+
           // Buscar ou criar categoria
           const categoryId = await getOrCreateCategory(article.categoria);
 
@@ -236,6 +240,11 @@ export function BulkImportForm({
             ALLOWED_ATTR: ['href', 'target', 'rel']
           });
 
+          // Validar resumo
+          if (!article.resumo) {
+            console.warn(`Resumo vazio para "${article.titulo}" - usando meta_descricao do SEO`);
+          }
+
           // Preparar dados do artigo com TODOS os campos
           const articleData = {
             title: article.titulo,
@@ -243,8 +252,8 @@ export function BulkImportForm({
             summary: article.resumo || article.seo?.meta_descricao || "",
             content: sanitizedContent,
             image_url: article.imagem.hero,
-            image_og_url: article.imagem.og || null,
-            image_card_url: article.imagem.card || null,
+            image_og_url: imageOgUrl,
+            image_card_url: imageCardUrl,
             image_credit: article.imagem.credito || null,
             author: article.fonte || "Importação em Massa",
             source_url: article.fonte || null,
