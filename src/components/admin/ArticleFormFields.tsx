@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { ImageUpload } from './ImageUpload';
 import { TagsInput } from './TagsInput';
 import { ImageGalleryManager } from './ImageGalleryManager';
-import { Copy } from 'lucide-react';
+import { Copy, Calendar as CalendarIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface ArticleFormFieldsProps {
@@ -488,13 +488,37 @@ export function ArticleFormFields({ control, categories, tenants, onApplyAutoSeo
                 <FormItem>
                   <FormLabel>Data de Publicação</FormLabel>
                   <FormControl>
-                    <Input
-                      type="datetime-local"
-                      {...field}
-                      value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ''}
-                      onChange={(e) => field.onChange(e.target.value || null)}
-                    />
+                    <div className="space-y-2">
+                      <Input
+                        type="datetime-local"
+                        {...field}
+                        value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ''}
+                        onChange={(e) => {
+                          const newDate = e.target.value ? new Date(e.target.value).toISOString() : null;
+                          field.onChange(newDate);
+                          
+                          // Auto-ajustar status para "scheduled" se data futura
+                          if (newDate && new Date(newDate) > new Date()) {
+                            control._formValues.status = 'scheduled';
+                          } else if (newDate && new Date(newDate) <= new Date()) {
+                            control._formValues.status = 'published';
+                          }
+                        }}
+                        min={new Date().toISOString().slice(0, 16)}
+                      />
+                      {field.value && new Date(field.value) > new Date() && (
+                        <div className="flex items-center gap-2 text-sm text-amber-600">
+                          <CalendarIcon className="h-4 w-4" />
+                          <span>
+                            Será publicado automaticamente em {new Date(field.value).toLocaleString('pt-BR')}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </FormControl>
+                  <FormDescription>
+                    Deixe vazio para publicar imediatamente. Escolha data futura para agendar.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

@@ -12,7 +12,7 @@ import { ArticleFormComplete } from '@/components/admin/ArticleFormComplete';
 import { IAReporterImport } from '@/components/admin/IAReporterImport';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Pencil, Trash2, Search, Eye, Calendar, Upload, FileText, X } from 'lucide-react';
+import { Plus, Pencil, Trash2, Search, Eye, Calendar, Upload, FileText, X, Clock } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { DateRangePicker } from '@/components/ui/date-range-picker';

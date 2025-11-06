@@ -4,6 +4,7 @@ import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, R
 import { Eye, Users, TrendingUp, Calendar } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { PublicationsChart } from './PublicationsChart';
 
 interface AnalyticsStats {
   totalViews: number;
@@ -213,6 +214,9 @@ export const AnalyticsDashboard = () => {
           </ResponsiveContainer>
         </CardContent>
       </Card>
+
+      {/* Publications Chart */}
+      <PublicationsChart />
     </div>
   );
 };
