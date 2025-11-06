@@ -480,8 +480,23 @@ export default function AdminArticles() {
                       </div>
 
                       <div className="flex gap-2 flex-wrap">
-                        {!article.published_at && (
+                        {article.status === 'draft' && (
                           <Badge variant="secondary">Rascunho</Badge>
+                        )}
+                        {article.status === 'scheduled' && (
+                          <>
+                            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                              Agendado
+                            </Badge>
+                            {article.published_at && (
+                              <Badge variant="outline" className="gap-1 bg-amber-50 text-amber-700 border-amber-200">
+                                <Clock className="h-3 w-3" />
+                                {format(new Date(article.published_at), "dd/MM 'às' HH:mm", {
+                                  locale: ptBR,
+                                })}
+                              </Badge>
+                            )}
+                          </>
                         )}
                         {article.featured && <Badge>Destaque</Badge>}
                         {article.breaking && <Badge variant="destructive">Urgente</Badge>}

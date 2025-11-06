@@ -41,14 +41,15 @@ export function PublicationsChart() {
   const fetchStats = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('publications-stats', {
-        method: 'GET',
-        body: {
-          period,
-          startDate: dateFrom.toISOString(),
-          endDate: dateTo.toISOString(),
-        }
+      const params = new URLSearchParams({
+        period,
+        startDate: dateFrom.toISOString(),
+        endDate: dateTo.toISOString()
       });
+
+      const { data, error } = await supabase.functions.invoke(
+        `publications-stats?${params.toString()}`
+      );
 
       if (error) throw error;
       setStats(data);

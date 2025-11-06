@@ -2285,6 +2285,13 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_publications_by_period: {
+        Args: { date_format: string; end_date: string; start_date: string }
+        Returns: {
+          count: number
+          period: string
+        }[]
+      }
       get_user_ranking: {
         Args: { target_user_id: string }
         Returns: {

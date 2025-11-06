@@ -41,3 +41,9 @@ verify_jwt = true
 
 [functions.ia-analyze-spreadsheet]
 verify_jwt = true
+
+[functions.publish-scheduled-articles]
+verify_jwt = false
+
+[functions.publications-stats]
+verify_jwt = true
