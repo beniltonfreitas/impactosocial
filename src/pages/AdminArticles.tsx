@@ -12,10 +12,11 @@ import { ArticleFormComplete } from '@/components/admin/ArticleFormComplete';
 import { IAReporterImport } from '@/components/admin/IAReporterImport';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Pencil, Trash2, Search, Eye, Calendar, Upload, FileText } from 'lucide-react';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Plus, Pencil, Trash2, Search, Eye, Calendar, Upload, FileText, X } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { DateRangePicker } from '@/components/ui/date-range-picker';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { SEO } from '@/components/SEO';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,6 +27,9 @@ export default function AdminArticles() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [dateFilter, setDateFilter] = useState<'all' | 'created' | 'published'>('all');
+  const [dateFrom, setDateFrom] = useState<Date | undefined>();
+  const [dateTo, setDateTo] = useState<Date | undefined>();
   const [categories, setCategories] = useState<any[]>([]);
   const [editingId, setEditingId] = useState<string | undefined>();
   const [deletingId, setDeletingId] = useState<string | undefined>();
@@ -39,7 +43,7 @@ export default function AdminArticles() {
 
   useEffect(() => {
     filterArticles();
-  }, [articles, searchTerm, statusFilter, categoryFilter]);
+  }, [articles, searchTerm, statusFilter, categoryFilter, dateFilter, dateFrom, dateTo]);
 
   const loadData = async () => {
     try {
@@ -72,31 +76,64 @@ export default function AdminArticles() {
 
     // Filtro de busca
     if (searchTerm) {
+      const term = searchTerm.toLowerCase();
       filtered = filtered.filter(
         (a) =>
-          a.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          a.slug.toLowerCase().includes(searchTerm.toLowerCase())
+          a.title?.toLowerCase().includes(term) ||
+          a.slug?.toLowerCase().includes(term) ||
+          a.content?.toLowerCase().includes(term)
       );
     }
 
     // Filtro de status
     if (statusFilter !== 'all') {
-      if (statusFilter === 'published') {
-        filtered = filtered.filter((a) => a.published_at);
-      } else if (statusFilter === 'draft') {
-        filtered = filtered.filter((a) => !a.published_at);
-      } else if (statusFilter === 'featured') {
-        filtered = filtered.filter((a) => a.featured);
-      } else if (statusFilter === 'breaking') {
-        filtered = filtered.filter((a) => a.breaking);
-      } else if (statusFilter === 'premium') {
-        filtered = filtered.filter((a) => a.premium_only);
-      }
+      filtered = filtered.filter((a) => a.status === statusFilter);
     }
 
     // Filtro de categoria
     if (categoryFilter !== 'all') {
       filtered = filtered.filter((a) => a.category_id === categoryFilter);
+    }
+
+    // Validar período
+    if (dateFrom && dateTo && dateFrom > dateTo) {
+      toast({
+        title: 'Data inválida',
+        description: 'A data inicial não pode ser maior que a data final',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Filtro de data
+    if (dateFilter !== 'all' && (dateFrom || dateTo)) {
+      filtered = filtered.filter((a) => {
+        const dateToCompare = dateFilter === 'created' 
+          ? a.created_at 
+          : a.published_at;
+        
+        if (!dateToCompare) return false;
+        
+        const articleDate = new Date(dateToCompare);
+        
+        if (dateFrom && dateTo) {
+          const from = new Date(dateFrom);
+          from.setHours(0, 0, 0, 0);
+          const to = new Date(dateTo);
+          to.setHours(23, 59, 59, 999);
+          return articleDate >= from && articleDate <= to;
+        } else if (dateFrom) {
+          const from = new Date(dateFrom);
+          from.setHours(0, 0, 0, 0);
+          return articleDate >= from;
+        } else if (dateTo) {
+          const to = new Date(dateTo);
+          to.setHours(23, 59, 59, 999);
+          return articleDate <= to;
+        }
+        
+        return true;
+      });
     }
 
     setFilteredArticles(filtered);
@@ -144,11 +181,51 @@ export default function AdminArticles() {
         
         <div className="container mx-auto py-8 space-y-6">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold">Gerenciar Notícias</h1>
-              <p className="text-muted-foreground">
-                {filteredArticles.length} de {articles.length} notícias
-              </p>
+            <div className="space-y-2">
+              <div>
+                <h1 className="text-3xl font-bold">Gerenciar Notícias</h1>
+                <p className="text-muted-foreground">
+                  {filteredArticles.length} de {articles.length} notícias
+                  {dateFrom && dateTo && (
+                    <span className="ml-2 text-sm">
+                      • {format(dateFrom, "dd/MM/yyyy", { locale: ptBR })} até {format(dateTo, "dd/MM/yyyy", { locale: ptBR })}
+                    </span>
+                  )}
+                </p>
+              </div>
+              {(searchTerm || statusFilter !== 'all' || categoryFilter !== 'all' || dateFilter !== 'all') && (
+                <div className="flex gap-2 flex-wrap">
+                  {searchTerm && (
+                    <Badge variant="secondary" className="gap-1">
+                      Busca: {searchTerm}
+                      <X className="h-3 w-3 cursor-pointer" onClick={() => setSearchTerm('')} />
+                    </Badge>
+                  )}
+                  {statusFilter !== 'all' && (
+                    <Badge variant="secondary" className="gap-1">
+                      Status: {statusFilter === 'published' ? 'Publicado' : 'Rascunho'}
+                      <X className="h-3 w-3 cursor-pointer" onClick={() => setStatusFilter('all')} />
+                    </Badge>
+                  )}
+                  {categoryFilter !== 'all' && (
+                    <Badge variant="secondary" className="gap-1">
+                      Categoria
+                      <X className="h-3 w-3 cursor-pointer" onClick={() => setCategoryFilter('all')} />
+                    </Badge>
+                  )}
+                  {dateFilter !== 'all' && (
+                    <Badge variant="secondary" className="gap-1">
+                      {dateFilter === 'created' ? 'Criação' : 'Publicação'}
+                      {dateFrom && dateTo && `: ${format(dateFrom, "dd/MM", { locale: ptBR })} - ${format(dateTo, "dd/MM", { locale: ptBR })}`}
+                      <X className="h-3 w-3 cursor-pointer" onClick={() => {
+                        setDateFilter('all');
+                        setDateFrom(undefined);
+                        setDateTo(undefined);
+                      }} />
+                    </Badge>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
@@ -269,6 +346,47 @@ export default function AdminArticles() {
                   ))}
                 </SelectContent>
               </Select>
+
+              <Select value={dateFilter} onValueChange={(value: any) => setDateFilter(value)}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Filtrar por data" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Sem filtro de data</SelectItem>
+                  <SelectItem value="created">Data de criação</SelectItem>
+                  <SelectItem value="published">Data de publicação</SelectItem>
+                </SelectContent>
+              </Select>
+              
+              {dateFilter !== 'all' && (
+                <DateRangePicker
+                  dateFrom={dateFrom}
+                  dateTo={dateTo}
+                  onDateChange={(from, to) => {
+                    setDateFrom(from);
+                    setDateTo(to);
+                  }}
+                  placeholder={
+                    dateFilter === 'created'
+                      ? 'Período de criação'
+                      : 'Período de publicação'
+                  }
+                />
+              )}
+              
+              {dateFilter !== 'all' && (dateFrom || dateTo) && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    setDateFrom(undefined);
+                    setDateTo(undefined);
+                  }}
+                  title="Limpar filtro de data"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -286,8 +404,29 @@ export default function AdminArticles() {
               <Card>
                 <CardContent className="py-12 text-center">
                   <div className="text-muted-foreground space-y-2">
+                    <Calendar className="h-12 w-12 mx-auto opacity-50" />
                     <p className="text-lg font-medium">Nenhuma notícia encontrada</p>
-                    <p className="text-sm">Crie sua primeira notícia ou ajuste os filtros</p>
+                    <p className="text-sm">
+                      {dateFrom || dateTo
+                        ? 'Tente ajustar o período de busca'
+                        : 'Crie sua primeira notícia ou ajuste os filtros'}
+                    </p>
+                    {(dateFrom || dateTo || searchTerm || statusFilter !== 'all' || categoryFilter !== 'all') && (
+                      <Button
+                        variant="outline"
+                        className="mt-4"
+                        onClick={() => {
+                          setSearchTerm('');
+                          setStatusFilter('all');
+                          setCategoryFilter('all');
+                          setDateFilter('all');
+                          setDateFrom(undefined);
+                          setDateTo(undefined);
+                        }}
+                      >
+                        Limpar todos os filtros
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>
