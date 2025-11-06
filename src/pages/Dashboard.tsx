@@ -21,6 +21,7 @@ import IAStudio from '@/components/dashboard/IAStudio';
 import SiteAI from './SiteAI';
 import { RedePcdNavigationGrid } from '@/components/dashboard/RedePcdNavigationGrid';
 import { FuncionalidadesDashboard } from '@/components/dashboard/FuncionalidadesDashboard';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 export default function Dashboard() {
   const { profile, roles, hasRole } = useAuth();
@@ -88,6 +89,7 @@ export default function Dashboard() {
             </TabsList>
 
             <TabsContent value="profile">
+              <ErrorBoundary>
               <Card>
                 <CardHeader>
                   <CardTitle>Meu Perfil</CardTitle>
@@ -165,13 +167,17 @@ export default function Dashboard() {
                   </Tabs>
                 </CardContent>
               </Card>
+              </ErrorBoundary>
             </TabsContent>
 
             <TabsContent value="funcionalidades">
+              <ErrorBoundary>
               <FuncionalidadesDashboard />
+              </ErrorBoundary>
             </TabsContent>
 
             <TabsContent value="subscription">
+              <ErrorBoundary>
               <Card>
                 <CardHeader>
                   <CardTitle>Gerenciar Assinatura</CardTitle>
@@ -183,9 +189,11 @@ export default function Dashboard() {
                   <SubscriptionManager />
                 </CardContent>
               </Card>
+              </ErrorBoundary>
             </TabsContent>
 
             <TabsContent value="ferramentas-ia">
+              <ErrorBoundary>
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -235,13 +243,17 @@ export default function Dashboard() {
                   </Tabs>
                 </CardContent>
               </Card>
+              </ErrorBoundary>
             </TabsContent>
 
             <TabsContent value="community">
+              <ErrorBoundary>
               <CommunityPanel />
+              </ErrorBoundary>
             </TabsContent>
 
             <TabsContent value="desafio-social">
+              <ErrorBoundary>
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -262,9 +274,11 @@ export default function Dashboard() {
                   </Link>
                 </CardContent>
               </Card>
+              </ErrorBoundary>
             </TabsContent>
 
             <TabsContent value="comments">
+              <ErrorBoundary>
               <Card>
                 <CardHeader>
                   <CardTitle>Meus Comentários</CardTitle>
@@ -276,9 +290,11 @@ export default function Dashboard() {
                   <UserComments />
                 </CardContent>
               </Card>
+              </ErrorBoundary>
             </TabsContent>
 
             <TabsContent value="preferences">
+              <ErrorBoundary>
               <Card>
                 <CardHeader>
                   <CardTitle>Preferências</CardTitle>
@@ -290,9 +306,11 @@ export default function Dashboard() {
                   <PreferencesEditor />
                 </CardContent>
               </Card>
+              </ErrorBoundary>
             </TabsContent>
 
             <TabsContent value="security">
+              <ErrorBoundary>
               <Card>
                 <CardHeader>
                   <CardTitle>Segurança da Conta</CardTitle>
@@ -304,9 +322,11 @@ export default function Dashboard() {
                   <PasswordChanger />
                 </CardContent>
               </Card>
+              </ErrorBoundary>
             </TabsContent>
 
             <TabsContent value="notifications">
+              <ErrorBoundary>
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -321,6 +341,7 @@ export default function Dashboard() {
                   <PushToggle />
                 </CardContent>
               </Card>
+              </ErrorBoundary>
             </TabsContent>
           </Tabs>
         </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { z } from "zod";
+import DOMPurify from "dompurify";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,9 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { CheckCircle2, XCircle, Upload } from "lucide-react";
+import { CheckCircle2, XCircle, Upload, HelpCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Link } from "react-router-dom";
 import type { ImportArticle, ImportConfig, ImportResult } from "@/pages/AdminBulkImport";
 
 const newsItemSchema = z.object({
@@ -44,6 +46,7 @@ type BulkImportFormProps = {
   importing: boolean;
   setImporting: (value: boolean) => void;
   setProgress: (value: number) => void;
+  setCurrentImporting?: (value: string) => void;
   config: ImportConfig;
 };
 
@@ -54,6 +57,7 @@ export function BulkImportForm({
   importing,
   setImporting,
   setProgress,
+  setCurrentImporting,
   config,
 }: BulkImportFormProps) {
   const [jsonText, setJsonText] = useState("");
@@ -151,8 +155,46 @@ export function BulkImportForm({
     return newCategory.id;
   };
 
+  const validateImageUrl = async (url: string): Promise<boolean> => {
+    try {
+      const response = await fetch(url, { method: 'HEAD' });
+      return response.ok && response.headers.get('content-type')?.startsWith('image/');
+    } catch {
+      return false;
+    }
+  };
+
   const handleImport = async () => {
     if (!isValid) return;
+
+    // Verificar permissões
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      toast({
+        title: "Não autenticado",
+        description: "Você precisa estar logado para importar notícias.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const { data: userRoles } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id);
+
+    const hasPermission = userRoles?.some(r => 
+      r.role === 'admin' || r.role === 'moderator'
+    );
+
+    if (!hasPermission) {
+      toast({
+        title: "Sem permissão",
+        description: "Você não tem permissão para importar notícias.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setImporting(true);
     setProgress(0);
@@ -171,7 +213,15 @@ export function BulkImportForm({
       for (let i = 0; i < articles.length; i++) {
         const article = articles[i];
         
+        setCurrentImporting?.(article.titulo);
+        
         try {
+          // Validar imagem principal
+          const imageUrlValid = await validateImageUrl(article.imagem.hero);
+          if (!imageUrlValid) {
+            console.warn(`Imagem inválida para "${article.titulo}": ${article.imagem.hero}`);
+          }
+
           // Buscar ou criar categoria
           const categoryId = await getOrCreateCategory(article.categoria);
 
@@ -180,20 +230,34 @@ export function BulkImportForm({
             ? await ensureUniqueSlug(article.slug)
             : article.slug;
 
-          // Preparar dados do artigo
+          // Sanitizar HTML do conteúdo
+          const sanitizedContent = DOMPurify.sanitize(article.conteudo, {
+            ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'ul', 'ol', 'li', 'a'],
+            ALLOWED_ATTR: ['href', 'target', 'rel']
+          });
+
+          // Preparar dados do artigo com TODOS os campos
           const articleData = {
             title: article.titulo,
             slug: finalSlug,
             summary: article.resumo || article.seo?.meta_descricao || "",
-            content: article.conteudo,
+            content: sanitizedContent,
             image_url: article.imagem.hero,
+            image_og_url: article.imagem.og || null,
+            image_card_url: article.imagem.card || null,
+            image_credit: article.imagem.credito || null,
             author: article.fonte || "Importação em Massa",
+            source_url: article.fonte || null,
             category_id: categoryId,
             tenant_id: config.tenantId,
             published_at: config.publishImmediately ? new Date().toISOString() : null,
             featured: false,
             breaking: false,
             premium_only: false,
+            tags: article.tags || [],
+            seo_meta_title: article.seo?.meta_titulo || null,
+            seo_meta_description: article.seo?.meta_descricao || null,
+            status: config.publishImmediately ? 'published' : 'draft',
           };
 
           // Inserir artigo
@@ -212,6 +276,8 @@ export function BulkImportForm({
           result.errors.push({
             slug: article.slug,
             error: detailedError,
+            title: article.titulo,
+            categoria: article.categoria,
           });
           
           console.error(`Erro ao importar "${article.titulo}":`, error);
@@ -237,16 +303,50 @@ export function BulkImportForm({
       });
     } finally {
       setImporting(false);
+      setCurrentImporting?.("");
     }
+  };
+
+  const exampleJson = {
+    noticias: [
+      {
+        categoria: "Política",
+        titulo: "Título da notícia",
+        slug: "titulo-da-noticia",
+        resumo: "Resumo curto",
+        conteudo: "<p>Conteúdo HTML da notícia</p>",
+        fonte: "https://fonte.com/noticia",
+        imagem: {
+          hero: "https://cdn.com/imagem.jpg",
+          og: "https://cdn.com/og.jpg",
+          card: "https://cdn.com/card.jpg",
+          alt: "Descrição da imagem",
+          credito: "Fotógrafo/Agência"
+        },
+        tags: ["política", "brasil"],
+        seo: {
+          meta_titulo: "SEO Title",
+          meta_descricao: "SEO Description"
+        }
+      }
+    ]
   };
 
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Cole o JSON</CardTitle>
+          <CardTitle className="flex items-center justify-between">
+            <span>Cole o JSON</span>
+            <Button asChild variant="ghost" size="sm">
+              <Link to="/admin/import-help">
+                <HelpCircle className="h-4 w-4 mr-2" />
+                Ajuda
+              </Link>
+            </Button>
+          </CardTitle>
           <CardDescription>
-            Cole aqui o JSON no formato do Repórter AI
+            Cole aqui o JSON no formato correto
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -262,10 +362,21 @@ export function BulkImportForm({
             />
           </div>
 
-          <Button onClick={validateJson} disabled={!jsonText || importing}>
-            <CheckCircle2 className="mr-2 h-4 w-4" />
-            Validar JSON
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={validateJson} disabled={!jsonText || importing}>
+              <CheckCircle2 className="mr-2 h-4 w-4" />
+              Validar JSON
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => {
+                setJsonText(JSON.stringify(exampleJson, null, 2));
+              }}
+              disabled={importing}
+            >
+              Usar Exemplo
+            </Button>
+          </div>
 
           {validationError && (
             <Alert variant="destructive">

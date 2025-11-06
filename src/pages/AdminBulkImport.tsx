@@ -42,7 +42,7 @@ export type ImportConfig = {
 export type ImportResult = {
   success: number;
   failed: number;
-  errors: { slug: string; error: string }[];
+  errors: { slug: string; error: string; title?: string; categoria?: string }[];
 };
 
 export default function AdminBulkImport() {
@@ -55,6 +55,7 @@ export default function AdminBulkImport() {
   });
   const [importing, setImporting] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [currentImporting, setCurrentImporting] = useState<string>("");
   const [result, setResult] = useState<ImportResult | null>(null);
 
   const handleValidJson = (parsedArticles: ImportArticle[]) => {
@@ -106,6 +107,7 @@ export default function AdminBulkImport() {
                 importing={importing}
                 setImporting={setImporting}
                 setProgress={setProgress}
+                setCurrentImporting={setCurrentImporting}
                 config={config}
               />
 
@@ -119,8 +121,13 @@ export default function AdminBulkImport() {
                     <CardTitle>Importando Notícias...</CardTitle>
                     <CardDescription>Por favor, aguarde</CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="space-y-2">
                     <Progress value={progress} className="w-full" />
+                    {currentImporting && (
+                      <p className="text-sm text-muted-foreground">
+                        Importando: <span className="font-medium">{currentImporting}</span>
+                      </p>
+                    )}
                   </CardContent>
                 </Card>
               )}
