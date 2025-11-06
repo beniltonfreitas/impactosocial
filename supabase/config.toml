@@ -1,5 +1,17 @@
 project_id = "wlbdscnfizpqsfcezrnn"
 
+[functions.financial-dashboard-stats]
+verify_jwt = true
+
+[functions.create-pix-payment]
+verify_jwt = true
+
+[functions.pix-webhook]
+verify_jwt = false
+
+[functions.transactions-list]
+verify_jwt = true
+
 [auth.password_protection]
 enabled = true
 

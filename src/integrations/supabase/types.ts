@@ -936,6 +936,112 @@ export type Database = {
           },
         ]
       }
+      payment_config: {
+        Row: {
+          config_key: string
+          config_value: Json
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          config_key: string
+          config_value: Json
+          id?: string
+          updated_at?: string | null
+        }
+        Update: {
+          config_key?: string
+          config_value?: Json
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      payment_receipts: {
+        Row: {
+          id: string
+          issued_at: string | null
+          pdf_url: string | null
+          receipt_number: string
+          recipient_data: Json
+          transaction_id: string
+        }
+        Insert: {
+          id?: string
+          issued_at?: string | null
+          pdf_url?: string | null
+          receipt_number: string
+          recipient_data: Json
+          transaction_id: string
+        }
+        Update: {
+          id?: string
+          issued_at?: string | null
+          pdf_url?: string | null
+          receipt_number?: string
+          recipient_data?: Json
+          transaction_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_receipts_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: true
+            referencedRelation: "payment_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_transactions: {
+        Row: {
+          amount_cents: number
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          payment_method: string
+          provider: string
+          provider_transaction_id: string | null
+          status: string
+          subscription_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount_cents: number
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          payment_method: string
+          provider: string
+          provider_transaction_id?: string | null
+          status: string
+          subscription_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          payment_method?: string
+          provider?: string
+          provider_transaction_id?: string | null
+          status?: string
+          subscription_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_transactions_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "user_subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pcd_articles: {
         Row: {
           accessibility_level: string | null
@@ -1575,6 +1681,47 @@ export type Database = {
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenant"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pix_payments: {
+        Row: {
+          created_at: string | null
+          expires_at: string
+          id: string
+          pix_key: string
+          qr_code_base64: string
+          qr_code_text: string
+          transaction_id: string
+          txid: string
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at: string
+          id?: string
+          pix_key: string
+          qr_code_base64: string
+          qr_code_text: string
+          transaction_id: string
+          txid: string
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string
+          id?: string
+          pix_key?: string
+          qr_code_base64?: string
+          qr_code_text?: string
+          transaction_id?: string
+          txid?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pix_payments_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "payment_transactions"
             referencedColumns: ["id"]
           },
         ]
