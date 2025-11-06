@@ -11,6 +11,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { ArticleFormComplete } from '@/components/admin/ArticleFormComplete';
 import { IAReporterImport } from '@/components/admin/IAReporterImport';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { IlluminaAdminLayout } from '@/components/layout/IlluminaAdminLayout';
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Pencil, Trash2, Search, Eye, Calendar, Upload, FileText, X, Clock } from 'lucide-react';
 import { format } from 'date-fns';
@@ -172,14 +173,15 @@ export default function AdminArticles() {
   };
 
   return (
-    <TooltipProvider>
-      <ErrorBoundary>
-        <SEO 
-          title="Gerenciar Notícias - Admin"
-          description="Painel de administração de notícias"
-        />
-        
-        <div className="container mx-auto py-8 space-y-6">
+    <IlluminaAdminLayout title="Gerenciar Notícias">
+      <TooltipProvider>
+        <ErrorBoundary>
+          <SEO 
+            title="Gerenciar Notícias - Admin"
+            description="Painel de administração de notícias"
+          />
+          
+          <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="space-y-2">
               <div>
@@ -568,8 +570,9 @@ export default function AdminArticles() {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-        </div>
-      </ErrorBoundary>
-    </TooltipProvider>
+          </div>
+        </ErrorBoundary>
+      </TooltipProvider>
+    </IlluminaAdminLayout>
   );
 }

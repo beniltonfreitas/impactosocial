@@ -8,8 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
+import { IlluminaAdminLayout } from '@/components/layout/IlluminaAdminLayout';
 import { Shield, User, UserCog, BarChart3, FileText, Upload } from 'lucide-react';
 import { AnalyticsDashboard } from '@/components/analytics/AnalyticsDashboard';
 import { useNavigate } from 'react-router-dom';
@@ -132,129 +131,120 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      
-      <main className="flex-1 container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto space-y-6">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">Administração</h1>
-            <p className="text-muted-foreground">Gerencie usuários, permissões e analytics do sistema</p>
-          </div>
+    <IlluminaAdminLayout title="Administração">
+      <div className="space-y-6">
+        <p className="text-muted-foreground">Gerencie usuários, permissões e analytics do sistema</p>
 
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-6">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate("/admin/articles")}>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5" />
-                  Gerenciar Notícias
-                </CardTitle>
-                <CardDescription>
-                  Criar, editar e gerenciar notícias do portal
-                </CardDescription>
-              </CardHeader>
-            </Card>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate("/admin/articles")}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                Gerenciar Notícias
+              </CardTitle>
+              <CardDescription>
+                Criar, editar e gerenciar notícias do portal
+              </CardDescription>
+            </CardHeader>
+          </Card>
 
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate("/admin/bulk-import")}>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Upload className="h-5 w-5" />
-                  Importar em Massa
-                </CardTitle>
-                <CardDescription>
-                  Importar múltiplas notícias via JSON
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          </div>
-
-          <Tabs defaultValue="users" className="space-y-6">
-            <TabsList>
-              <TabsTrigger value="users" className="gap-2">
-                <UserCog className="h-4 w-4" />
-                Usuários
-              </TabsTrigger>
-              <TabsTrigger value="analytics" className="gap-2">
-                <BarChart3 className="h-4 w-4" />
-                Analytics
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="users">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Usuários do Sistema</CardTitle>
-                  <CardDescription>
-                    Gerencie as permissões dos usuários registrados
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {loading ? (
-                    <div className="flex justify-center py-8">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                    </div>
-                  ) : (
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Nome</TableHead>
-                          <TableHead>Permissão Atual</TableHead>
-                          <TableHead>Alterar Permissão</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {users.map((user) => (
-                          <TableRow key={user.id}>
-                            <TableCell>
-                              <div>
-                                <p className="font-medium">{user.full_name || 'Sem nome'}</p>
-                                <p className="text-sm text-muted-foreground">{user.email}</p>
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex flex-wrap gap-2">
-                                {user.roles.map(role => (
-                                  <Badge key={role} variant={getRoleBadgeVariant(role)} className="gap-1">
-                                    {getRoleIcon(role)}
-                                    {role === 'admin' ? 'Admin' : role === 'moderator' ? 'Moderador' : 'Usuário'}
-                                  </Badge>
-                                ))}
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              {hasRole('admin') && (
-                                <Select
-                                  value={user.roles[0] || 'user'}
-                                  onValueChange={(value) => handleRoleChange(user.id, value)}
-                                >
-                                  <SelectTrigger className="w-40">
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="user">Usuário</SelectItem>
-                                    <SelectItem value="moderator">Moderador</SelectItem>
-                                    <SelectItem value="admin">Admin</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              )}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="analytics">
-              <AnalyticsDashboard />
-            </TabsContent>
-          </Tabs>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate("/admin/bulk-import")}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Upload className="h-5 w-5" />
+                Importar em Massa
+              </CardTitle>
+              <CardDescription>
+                Importar múltiplas notícias via JSON
+              </CardDescription>
+            </CardHeader>
+          </Card>
         </div>
-      </main>
 
-      <Footer />
-    </div>
+        <Tabs defaultValue="users" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="users" className="gap-2">
+              <UserCog className="h-4 w-4" />
+              Usuários
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="gap-2">
+              <BarChart3 className="h-4 w-4" />
+              Analytics
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="users">
+            <Card>
+              <CardHeader>
+                <CardTitle>Usuários do Sistema</CardTitle>
+                <CardDescription>
+                  Gerencie as permissões dos usuários registrados
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {loading ? (
+                  <div className="flex justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Nome</TableHead>
+                        <TableHead>Permissão Atual</TableHead>
+                        <TableHead>Alterar Permissão</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {users.map((user) => (
+                        <TableRow key={user.id}>
+                          <TableCell>
+                            <div>
+                              <p className="font-medium">{user.full_name || 'Sem nome'}</p>
+                              <p className="text-sm text-muted-foreground">{user.email}</p>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-wrap gap-2">
+                              {user.roles.map(role => (
+                                <Badge key={role} variant={getRoleBadgeVariant(role)} className="gap-1">
+                                  {getRoleIcon(role)}
+                                  {role === 'admin' ? 'Admin' : role === 'moderator' ? 'Moderador' : 'Usuário'}
+                                </Badge>
+                              ))}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {hasRole('admin') && (
+                              <Select
+                                value={user.roles[0] || 'user'}
+                                onValueChange={(value) => handleRoleChange(user.id, value)}
+                              >
+                                <SelectTrigger className="w-40">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="user">Usuário</SelectItem>
+                                  <SelectItem value="moderator">Moderador</SelectItem>
+                                  <SelectItem value="admin">Admin</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="analytics">
+            <AnalyticsDashboard />
+          </TabsContent>
+        </Tabs>
+      </div>
+    </IlluminaAdminLayout>
   );
 }

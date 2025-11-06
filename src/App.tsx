@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "@/components/auth/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { HelmetProvider } from "react-helmet-async";
+import { NotificationProvider } from "@/contexts/NotificationContext";
 import { initGA, trackPageView } from "@/lib/analytics";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -35,6 +36,9 @@ const DesafioSocialGrupo = lazy(() => import("./pages/DesafioSocialGrupo"));
 const AdminDesafioSocial = lazy(() => import("./pages/AdminDesafioSocial"));
 const PerfilPublico = lazy(() => import("./pages/PerfilPublico"));
 const AdminComunidade = lazy(() => import("./pages/AdminComunidade"));
+const AdminComentarios = lazy(() => import("./pages/AdminComentarios"));
+const AdminAssinaturas = lazy(() => import("./pages/AdminAssinaturas"));
+const AdminValidarDesafios = lazy(() => import("./pages/AdminValidarDesafios"));
 const GerarImagem = lazy(() => import("./pages/GerarImagem"));
 
 // Funcionalidades Pages
@@ -104,10 +108,11 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <HelmetProvider>
         <AuthProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Analytics />
+          <NotificationProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Analytics />
             <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>}>
               <Routes>
                 <Route path="/" element={<Index />} />
@@ -223,6 +228,30 @@ const App = () => {
                   }
                 />
                 <Route
+                  path="/admin/comentarios"
+                  element={
+                    <ProtectedRoute requiredRole="admin">
+                      <AdminComentarios />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/assinaturas"
+                  element={
+                    <ProtectedRoute requiredRole="admin">
+                      <AdminAssinaturas />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/validar-desafios"
+                  element={
+                    <ProtectedRoute requiredRole="admin">
+                      <AdminValidarDesafios />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
                   path="/moderation"
                   element={
                     <ProtectedRoute requiredRole="moderator">
@@ -256,8 +285,9 @@ const App = () => {
                 />
                 <Route path="*" element={<NotFound />} />
               </Routes>
-            </Suspense>
-          </BrowserRouter>
+              </Suspense>
+            </BrowserRouter>
+          </NotificationProvider>
         </AuthProvider>
       </HelmetProvider>
     </QueryClientProvider>
