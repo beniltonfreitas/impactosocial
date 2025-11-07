@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { supabase } from "@/integrations/supabase/client";
+import { showScheduleNotification } from '@/components/admin/ScheduleNotificationToast';
 
 export interface Notification {
   id: string;
@@ -96,6 +97,21 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
 
           setNotifications(prev => [newNotif, ...prev].slice(0, 50));
           setUnread(prev => prev + 1);
+
+          // Mostrar toast para artigos próximos de publicação
+          if (payload.new.type === 'warning' && payload.new.title.includes('será publicado')) {
+            const match = payload.new.message.match(/em (\d+) minutos/);
+            if (match) {
+              const articleTitle = payload.new.message.match(/"([^"]+)"/)?.[1] || '';
+              const articleId = payload.new.action?.href?.split('=')[1] || '';
+              showScheduleNotification({
+                title: payload.new.title,
+                articleTitle,
+                minutesUntil: parseInt(match[1]),
+                articleId,
+              });
+            }
+          }
         }
       )
       .subscribe();

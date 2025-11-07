@@ -2,6 +2,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { InlineDiff } from './InlineDiff';
+import { SideBySideDiff } from './SideBySideDiff';
 
 interface Version {
   version_number: number;
@@ -103,30 +106,68 @@ export function VersionComparison({ oldVersion, newVersion, onClose }: VersionCo
 
             {/* Conteúdo */}
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-semibold">Conteúdo</h3>
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline">{oldWordCount} palavras</Badge>
-                  <span>→</span>
-                  <Badge variant="outline">{newWordCount} palavras</Badge>
-                  {wordDiff !== 0 && (
-                    <Badge variant={wordDiff > 0 ? 'default' : 'secondary'}>
-                      {wordDiff > 0 ? '+' : ''}{wordDiff}
-                    </Badge>
-                  )}
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <div className={`text-sm prose prose-sm max-w-none ${contentDiff.type === 'changed' ? 'opacity-60' : ''}`}>
-                    <div dangerouslySetInnerHTML={{ __html: oldVersion.content || '<p class="text-muted-foreground italic">Sem conteúdo</p>' }} />
+              <h3 className="font-semibold mb-4">Conteúdo</h3>
+              
+              <Tabs defaultValue="sidebyside" className="w-full">
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="sidebyside">Lado a Lado</TabsTrigger>
+                  <TabsTrigger value="inline">Inline</TabsTrigger>
+                  <TabsTrigger value="unified">Unificado</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="sidebyside" className="mt-4">
+                  <SideBySideDiff
+                    oldText={oldVersion.content || ''}
+                    newText={newVersion.content || ''}
+                  />
+                </TabsContent>
+
+                <TabsContent value="inline" className="mt-4">
+                  <div className="border rounded-lg p-4">
+                    <InlineDiff
+                      oldText={oldVersion.content || ''}
+                      newText={newVersion.content || ''}
+                    />
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <div className="text-sm prose prose-sm max-w-none">
-                    <div dangerouslySetInnerHTML={{ __html: newVersion.content || '<p class="text-muted-foreground italic">Sem conteúdo</p>' }} />
+                </TabsContent>
+
+                <TabsContent value="unified" className="mt-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Badge variant="outline">Versão {oldVersion.version_number}</Badge>
+                      <div className="text-sm prose prose-sm max-w-none opacity-60">
+                        {oldVersion.content ? (
+                          <div dangerouslySetInnerHTML={{ __html: oldVersion.content }} />
+                        ) : (
+                          <p className="text-muted-foreground italic">Sem conteúdo</p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Badge variant="default">
+                        {isCurrentVersion ? 'Versão Atual' : `Versão ${newVersion.version_number}`}
+                      </Badge>
+                      <div className="text-sm prose prose-sm max-w-none">
+                        {newVersion.content ? (
+                          <div dangerouslySetInnerHTML={{ __html: newVersion.content }} />
+                        ) : (
+                          <p className="text-muted-foreground italic">Sem conteúdo</p>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
+                </TabsContent>
+              </Tabs>
+
+              <div className="mt-4 flex items-center gap-4 text-sm">
+                <Badge variant="outline">{oldWordCount} palavras</Badge>
+                <span>→</span>
+                <Badge variant="outline">{newWordCount} palavras</Badge>
+                {wordDiff !== 0 && (
+                  <Badge variant={wordDiff > 0 ? 'default' : 'secondary'}>
+                    {wordDiff > 0 ? '+' : ''}{wordDiff}
+                  </Badge>
+                )}
               </div>
             </div>
 

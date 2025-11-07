@@ -8,6 +8,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { HelmetProvider } from "react-helmet-async";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { initGA, trackPageView } from "@/lib/analytics";
+import { useScheduleNotifications } from "@/hooks/useScheduleNotifications";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Article from "./pages/Article";
@@ -96,6 +97,11 @@ function Analytics() {
   return null;
 }
 
+function AppContent() {
+  useScheduleNotifications();
+  return null;
+}
+
 const App = () => {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -110,6 +116,7 @@ const App = () => {
       <HelmetProvider>
         <AuthProvider>
           <NotificationProvider>
+            <AppContent />
             <Toaster />
             <Sonner />
             <BrowserRouter>

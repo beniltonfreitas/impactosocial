@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { supabase } from '@/integrations/supabase/client';
-import { format, isToday, isTomorrow, startOfDay } from 'date-fns';
+import { format, isToday, isTomorrow, startOfDay, differenceInMinutes } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Calendar, Clock, Edit, Trash2, Play } from 'lucide-react';
 import { toast } from 'sonner';
@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { SEO } from '@/components/SEO';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { EditorialCalendar } from '@/components/admin/EditorialCalendar';
+import { WeeklyCalendar } from '@/components/admin/WeeklyCalendar';
 
 interface ScheduledArticle {
   id: string;
@@ -38,6 +39,14 @@ export default function AdminSchedule() {
   useEffect(() => {
     loadSchedules();
   }, []);
+
+  const upcomingSchedules = schedules.filter(s => {
+    const minutesUntil = differenceInMinutes(
+      new Date(s.scheduled_for),
+      new Date()
+    );
+    return minutesUntil > 0 && minutesUntil <= 30;
+  });
 
   const loadSchedules = async () => {
     try {
@@ -146,10 +155,22 @@ export default function AdminSchedule() {
           </p>
         </div>
 
+        {upcomingSchedules.length > 0 && (
+          <div className="bg-orange-50 dark:bg-orange-950 border border-orange-200 dark:border-orange-800 p-3 rounded-lg">
+            <div className="flex items-center gap-2">
+              <Clock className="h-5 w-5 text-orange-600" />
+              <p className="font-medium text-orange-900 dark:text-orange-100">
+                {upcomingSchedules.length} artigo(s) será(ão) publicado(s) nos próximos 30 minutos
+              </p>
+            </div>
+          </div>
+        )}
+
         <Tabs defaultValue="list" className="w-full">
           <TabsList className="mb-6">
             <TabsTrigger value="list">📋 Lista</TabsTrigger>
-            <TabsTrigger value="calendar">📅 Calendário</TabsTrigger>
+            <TabsTrigger value="calendar">📅 Mensal</TabsTrigger>
+            <TabsTrigger value="weekly">📆 Semanal</TabsTrigger>
           </TabsList>
 
           <TabsContent value="list">
@@ -274,6 +295,10 @@ export default function AdminSchedule() {
 
           <TabsContent value="calendar">
             <EditorialCalendar />
+          </TabsContent>
+
+          <TabsContent value="weekly">
+            <WeeklyCalendar />
           </TabsContent>
         </Tabs>
       </div>
