@@ -47,3 +47,12 @@ verify_jwt = false
 
 [functions.publications-stats]
 verify_jwt = true
+
+[functions.ad-impression]
+verify_jwt = false
+
+[functions.ad-click]
+verify_jwt = false
+
+[functions.ad-fetch]
+verify_jwt = false

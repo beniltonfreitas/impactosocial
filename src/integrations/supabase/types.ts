@@ -14,6 +14,249 @@ export type Database = {
   }
   public: {
     Tables: {
+      ad_campaigns: {
+        Row: {
+          advertiser: string
+          budget_daily: number | null
+          budget_total: number | null
+          cpc: number | null
+          cpm: number | null
+          created_at: string
+          end_at: string | null
+          id: string
+          name: string
+          start_at: string
+          status: Database["public"]["Enums"]["ad_campaign_status"]
+          tenant_id: string
+        }
+        Insert: {
+          advertiser: string
+          budget_daily?: number | null
+          budget_total?: number | null
+          cpc?: number | null
+          cpm?: number | null
+          created_at?: string
+          end_at?: string | null
+          id?: string
+          name: string
+          start_at: string
+          status?: Database["public"]["Enums"]["ad_campaign_status"]
+          tenant_id: string
+        }
+        Update: {
+          advertiser?: string
+          budget_daily?: number | null
+          budget_total?: number | null
+          cpc?: number | null
+          cpm?: number | null
+          created_at?: string
+          end_at?: string | null
+          id?: string
+          name?: string
+          start_at?: string
+          status?: Database["public"]["Enums"]["ad_campaign_status"]
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_campaigns_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenant"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ad_creatives: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          cta_label: string | null
+          description: string | null
+          headline: string | null
+          height: number | null
+          html_content: string | null
+          id: string
+          image_url: string | null
+          target_url: string
+          type: Database["public"]["Enums"]["ad_creative_type"]
+          video_url: string | null
+          width: number | null
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          cta_label?: string | null
+          description?: string | null
+          headline?: string | null
+          height?: number | null
+          html_content?: string | null
+          id?: string
+          image_url?: string | null
+          target_url: string
+          type: Database["public"]["Enums"]["ad_creative_type"]
+          video_url?: string | null
+          width?: number | null
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          cta_label?: string | null
+          description?: string | null
+          headline?: string | null
+          height?: number | null
+          html_content?: string | null
+          id?: string
+          image_url?: string | null
+          target_url?: string
+          type?: Database["public"]["Enums"]["ad_creative_type"]
+          video_url?: string | null
+          width?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_creatives_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "ad_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ad_placements: {
+        Row: {
+          allowed_types: string[] | null
+          created_at: string
+          id: string
+          is_active: boolean | null
+          max_ads: number | null
+          slot: string
+          tenant_id: string
+        }
+        Insert: {
+          allowed_types?: string[] | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          max_ads?: number | null
+          slot: string
+          tenant_id: string
+        }
+        Update: {
+          allowed_types?: string[] | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          max_ads?: number | null
+          slot?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_placements_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenant"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ad_stats: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          creative_id: string | null
+          event: Database["public"]["Enums"]["ad_event_type"]
+          id: string
+          ip_address: unknown
+          page: string | null
+          slot: string | null
+          tenant_id: string
+          user_agent: string | null
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          creative_id?: string | null
+          event: Database["public"]["Enums"]["ad_event_type"]
+          id?: string
+          ip_address?: unknown
+          page?: string | null
+          slot?: string | null
+          tenant_id: string
+          user_agent?: string | null
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          creative_id?: string | null
+          event?: Database["public"]["Enums"]["ad_event_type"]
+          id?: string
+          ip_address?: unknown
+          page?: string | null
+          slot?: string | null
+          tenant_id?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_stats_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "ad_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ad_stats_creative_id_fkey"
+            columns: ["creative_id"]
+            isOneToOne: false
+            referencedRelation: "ad_creatives"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ad_stats_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenant"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ad_targeting: {
+        Row: {
+          campaign_id: string
+          domains: string[] | null
+          id: string
+          locations: string[] | null
+          pages: string[] | null
+          tags: string[] | null
+        }
+        Insert: {
+          campaign_id: string
+          domains?: string[] | null
+          id?: string
+          locations?: string[] | null
+          pages?: string[] | null
+          tags?: string[] | null
+        }
+        Update: {
+          campaign_id?: string
+          domains?: string[] | null
+          id?: string
+          locations?: string[] | null
+          pages?: string[] | null
+          tags?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_targeting_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: true
+            referencedRelation: "ad_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_generated_images: {
         Row: {
           created_at: string | null
@@ -2571,6 +2814,9 @@ export type Database = {
       }
     }
     Enums: {
+      ad_campaign_status: "active" | "paused" | "ended"
+      ad_creative_type: "image" | "html" | "video"
+      ad_event_type: "impression" | "click"
       app_role: "admin" | "moderator" | "user"
       challenge_type: "clicks_10" | "shares_5" | "conversions_3"
       permission_type:
@@ -2706,6 +2952,9 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      ad_campaign_status: ["active", "paused", "ended"],
+      ad_creative_type: ["image", "html", "video"],
+      ad_event_type: ["impression", "click"],
       app_role: ["admin", "moderator", "user"],
       challenge_type: ["clicks_10", "shares_5", "conversions_3"],
       permission_type: [
