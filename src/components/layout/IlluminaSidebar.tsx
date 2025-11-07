@@ -19,10 +19,13 @@ import {
   TrendingUp,
   DollarSign,
   Megaphone,
+  Calendar,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { useAuth } from "@/components/auth/AuthContext";
 import { cn } from "@/lib/utils";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface MenuSection {
   title: string;
@@ -36,11 +39,12 @@ interface MenuItem {
   badge?: string;
 }
 
-const menuSections: MenuSection[] = [
+const menuSections = (scheduledCount: number): MenuSection[] => [
   {
     title: "Ações Principais",
     items: [
       { icon: Newspaper, label: "Notícias", href: "/admin/articles" },
+      { icon: Calendar, label: "Calendário", href: "/admin/schedule", badge: scheduledCount > 0 ? String(scheduledCount) : undefined },
       { icon: Users, label: "Comunidade", href: "/admin/comunidade" },
       { icon: CheckCircle, label: "Validar", href: "/admin/validar-desafios" },
       { icon: Compass, label: "Moderar", href: "/moderation" },
@@ -93,6 +97,19 @@ const menuSections: MenuSection[] = [
 export function IlluminaSidebar() {
   const location = useLocation();
   const { profile } = useAuth();
+  const [scheduledCount, setScheduledCount] = useState(0);
+
+  useEffect(() => {
+    const loadScheduledCount = async () => {
+      const { count } = await supabase
+        .from('article_schedule')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'pending');
+      
+      setScheduledCount(count || 0);
+    };
+    loadScheduledCount();
+  }, []);
 
   const isActive = (href: string) => {
     if (href.includes('?')) {
@@ -122,7 +139,7 @@ export function IlluminaSidebar() {
 
       {/* Seções */}
       <div className="flex-1 p-4 space-y-6">
-        {menuSections.map((section, index) => (
+        {menuSections(scheduledCount).map((section, index) => (
           <div key={index}>
             <h3 className="text-xs uppercase font-bold text-muted-foreground mb-3 px-2">
               {section.title}

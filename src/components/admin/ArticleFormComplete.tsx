@@ -6,7 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Eye } from 'lucide-react';
+import { Loader2, Eye, Clock } from 'lucide-react';
 import { ArticleFormFields } from './ArticleFormFields';
 import { ArticleEditor } from './ArticleEditor';
 import { ArticlePreview } from './ArticlePreview';
@@ -14,6 +14,11 @@ import { AutoSaveIndicator } from './AutoSaveIndicator';
 import { useAutoSave } from '@/hooks/useAutoSave';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ArticleVersionHistory } from './ArticleVersionHistory';
+import { ArticleScheduler } from './ArticleScheduler';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 const articleSchema = z.object({
   title: z.string().min(6, 'Título deve ter no mínimo 6 caracteres').max(120),
@@ -64,6 +69,16 @@ export function ArticleFormComplete({ articleId, onSuccess, onCancel }: ArticleF
   const [showPreview, setShowPreview] = useState(false);
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [lastSaved, setLastSaved] = useState<Date>();
+  const [versionsCount, setVersionsCount] = useState(0);
+  const [scheduleData, setScheduleData] = useState<{
+    publishMode: 'immediate' | 'scheduled';
+    scheduledFor?: Date;
+    notifyBefore: boolean;
+  }>({
+    publishMode: 'immediate',
+    scheduledFor: undefined,
+    notifyBefore: true,
+  });
 
   const form = useForm<ArticleFormData>({
     resolver: zodResolver(articleSchema),
@@ -142,6 +157,30 @@ export function ArticleFormComplete({ articleId, onSuccess, onCancel }: ArticleF
             category_id: article.category_id || undefined,
             tenant_id: article.tenant_id || undefined,
           });
+
+          // Carregar agendamento se existir
+          const { data: schedule } = await supabase
+            .from('article_schedule')
+            .select('*')
+            .eq('article_id', articleId)
+            .eq('status', 'pending')
+            .single();
+
+          if (schedule) {
+            setScheduleData({
+              publishMode: 'scheduled',
+              scheduledFor: new Date(schedule.scheduled_for),
+              notifyBefore: schedule.notification_hours_before === 1,
+            });
+          }
+
+          // Contar versões
+          const { count } = await supabase
+            .from('article_versions')
+            .select('*', { count: 'exact', head: true })
+            .eq('article_id', articleId);
+
+          setVersionsCount(count || 0);
         }
       }
     } catch (error) {
@@ -340,10 +379,49 @@ export function ArticleFormComplete({ articleId, onSuccess, onCancel }: ArticleF
           await supabase.from('article_gallery').insert(galleryData);
         }
 
+        // Salvar agendamento para novo artigo
+        if (savedArticle && scheduleData.publishMode === 'scheduled' && scheduleData.scheduledFor) {
+          await supabase
+            .from('article_schedule')
+            .insert({
+              article_id: savedArticle.id,
+              scheduled_for: scheduleData.scheduledFor.toISOString(),
+              notification_hours_before: scheduleData.notifyBefore ? 1 : 0,
+              status: 'pending',
+            });
+
+          await supabase
+            .from('articles')
+            .update({ status: 'scheduled' })
+            .eq('id', savedArticle.id);
+        }
+
         toast({
           title: 'Artigo criado',
           description: 'O artigo foi criado com sucesso',
         });
+      }
+
+      // Salvar agendamento para artigo existente
+      if (articleId && scheduleData.publishMode === 'scheduled' && scheduleData.scheduledFor) {
+        await supabase
+          .from('article_schedule')
+          .delete()
+          .eq('article_id', articleId);
+
+        await supabase
+          .from('article_schedule')
+          .insert({
+            article_id: articleId,
+            scheduled_for: scheduleData.scheduledFor.toISOString(),
+            notification_hours_before: scheduleData.notifyBefore ? 1 : 0,
+            status: 'pending',
+          });
+
+        await supabase
+          .from('articles')
+          .update({ status: 'scheduled' })
+          .eq('id', articleId);
       }
 
       onSuccess?.();
@@ -359,74 +437,141 @@ export function ArticleFormComplete({ articleId, onSuccess, onCancel }: ArticleF
     }
   };
 
+  const handleRestore = async () => {
+    await loadData();
+    toast({
+      title: 'Artigo restaurado',
+      description: 'Artigo restaurado com sucesso',
+    });
+  };
+
   const currentCategory = categories.find(c => c.id === form.watch('category_id'));
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="flex justify-between items-center p-4 bg-muted/50 rounded-lg">
-          <h2 className="text-2xl font-bold">
-            {articleId ? 'Editar Artigo' : 'Novo Artigo'}
-          </h2>
-          <AutoSaveIndicator status={autoSaveStatus} lastSaved={lastSaved} />
-        </div>
-
-        <ArticleFormFields
-          control={form.control}
-          categories={categories}
-          tenants={tenants}
-          onApplyAutoSeo={handleApplyAutoSeo}
-        />
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Conteúdo</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <FormField
-              control={form.control}
-              name="content"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Conteúdo do Artigo</FormLabel>
-                  <FormControl>
-                    <ArticleEditor
-                      value={field.value}
-                      onChange={field.onChange}
-                      placeholder="Escreva o conteúdo do artigo aqui..."
-                    />
-                  </FormControl>
-                  <div className="text-xs text-muted-foreground mt-2">
-                    {field.value ? `${field.value.split(/\s+/).length} palavras • ${field.value.length} caracteres` : '0 palavras • 0 caracteres'}
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </CardContent>
-        </Card>
-
-        <div className="flex gap-4">
-          <Button type="submit" disabled={isLoading}>
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {articleId ? 'Atualizar Artigo' : 'Criar Artigo'}
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handlePreview}
-            disabled={isLoading}
-            className="gap-2"
-          >
-            <Eye className="h-4 w-4" />
-            Preview
-          </Button>
-          {onCancel && (
-            <Button type="button" variant="outline" onClick={onCancel}>
-              Cancelar
+          <div className="flex items-center gap-4">
+            <h2 className="text-2xl font-bold">
+              {articleId ? 'Editar Artigo' : 'Novo Artigo'}
+            </h2>
+            <AutoSaveIndicator status={autoSaveStatus} lastSaved={lastSaved} />
+          </div>
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handlePreview}
+              disabled={isLoading}
+              className="gap-2"
+            >
+              <Eye className="h-4 w-4" />
+              Preview
             </Button>
-          )}
+            {onCancel && (
+              <Button type="button" variant="outline" onClick={onCancel}>
+                Cancelar
+              </Button>
+            )}
+            <Button type="submit" disabled={isLoading}>
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {scheduleData.publishMode === 'scheduled' 
+                ? 'Salvar e Agendar' 
+                : articleId 
+                  ? 'Atualizar Artigo' 
+                  : 'Criar Artigo'}
+            </Button>
+          </div>
         </div>
+
+        {/* Badge de status agendado */}
+        {scheduleData.publishMode === 'scheduled' && scheduleData.scheduledFor && (
+          <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 p-4 rounded-lg">
+            <div className="flex items-center gap-2">
+              <Clock className="h-5 w-5 text-blue-600" />
+              <div>
+                <p className="font-medium text-blue-900 dark:text-blue-100">
+                  Agendado para publicação
+                </p>
+                <p className="text-sm text-blue-700 dark:text-blue-300">
+                  {format(scheduleData.scheduledFor, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <Tabs defaultValue="edit" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="edit">
+              ✏️ Editar
+            </TabsTrigger>
+            <TabsTrigger value="versions" disabled={!articleId}>
+              📜 Histórico {versionsCount > 0 && `(${versionsCount})`}
+            </TabsTrigger>
+            <TabsTrigger value="schedule">
+              📅 Agendamento
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="edit" className="space-y-6">
+            <ArticleFormFields
+              control={form.control}
+              categories={categories}
+              tenants={tenants}
+              onApplyAutoSeo={handleApplyAutoSeo}
+            />
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Conteúdo</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <FormField
+                  control={form.control}
+                  name="content"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Conteúdo do Artigo</FormLabel>
+                      <FormControl>
+                        <ArticleEditor
+                          value={field.value}
+                          onChange={field.onChange}
+                          placeholder="Escreva o conteúdo do artigo aqui..."
+                        />
+                      </FormControl>
+                      <div className="text-xs text-muted-foreground mt-2">
+                        {field.value ? `${field.value.split(/\s+/).length} palavras • ${field.value.length} caracteres` : '0 palavras • 0 caracteres'}
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="versions">
+            {articleId ? (
+              <ArticleVersionHistory 
+                articleId={articleId}
+                currentVersion={form.getValues()}
+                onRestore={handleRestore}
+              />
+            ) : (
+              <div className="text-center py-12 text-muted-foreground">
+                Salve o artigo primeiro para ver o histórico de versões
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="schedule">
+            <ArticleScheduler
+              value={scheduleData}
+              onChange={setScheduleData}
+            />
+          </TabsContent>
+        </Tabs>
       </form>
 
       <ArticlePreview

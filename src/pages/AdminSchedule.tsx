@@ -11,6 +11,8 @@ import { Calendar, Clock, Edit, Trash2, Play } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { SEO } from '@/components/SEO';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { EditorialCalendar } from '@/components/admin/EditorialCalendar';
 
 interface ScheduledArticle {
   id: string;
@@ -144,8 +146,15 @@ export default function AdminSchedule() {
           </p>
         </div>
 
-        {/* Estatísticas */}
-        <div className="grid gap-4 md:grid-cols-3">
+        <Tabs defaultValue="list" className="w-full">
+          <TabsList className="mb-6">
+            <TabsTrigger value="list">📋 Lista</TabsTrigger>
+            <TabsTrigger value="calendar">📅 Calendário</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="list">
+            {/* Estatísticas */}
+            <div className="grid gap-4 md:grid-cols-3">
           <Card>
             <CardHeader className="pb-3">
               <CardDescription>Total Agendado</CardDescription>
@@ -261,6 +270,12 @@ export default function AdminSchedule() {
             ))}
           </div>
         )}
+          </TabsContent>
+
+          <TabsContent value="calendar">
+            <EditorialCalendar />
+          </TabsContent>
+        </Tabs>
       </div>
     </IlluminaAdminLayout>
   );
