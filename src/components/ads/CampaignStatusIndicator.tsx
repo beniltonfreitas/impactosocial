@@ -4,7 +4,7 @@ import { differenceInDays, isBefore } from "date-fns";
 
 interface CampaignStatusIndicatorProps {
   campaign: {
-    status: 'active' | 'paused' | 'ended';
+    status: string;
     start_at: string;
     end_at: string | null;
   };

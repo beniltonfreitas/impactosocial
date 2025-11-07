@@ -54,7 +54,9 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
           message: notif.message,
           timestamp: new Date(notif.created_at),
           read: notif.read,
-          action: notif.action,
+          action: notif.action && typeof notif.action === 'object' && !Array.isArray(notif.action) 
+            ? notif.action as { label: string; href: string }
+            : undefined,
         }));
         
         setNotifications(loadedNotifs);
