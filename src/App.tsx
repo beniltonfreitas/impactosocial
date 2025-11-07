@@ -40,6 +40,7 @@ const AdminComentarios = lazy(() => import("./pages/AdminComentarios"));
 const AdminAssinaturas = lazy(() => import("./pages/AdminAssinaturas"));
 const AdminValidarDesafios = lazy(() => import("./pages/AdminValidarDesafios"));
 const GerarImagem = lazy(() => import("./pages/GerarImagem"));
+const AdminAds = lazy(() => import("./pages/AdminAds"));
 
 // Funcionalidades Pages
 const ContabPRO = lazy(() => import("./pages/funcionalidades/ContabPRO"));
@@ -248,6 +249,14 @@ const App = () => {
                   element={
                     <ProtectedRoute requiredRole="admin">
                       <AdminValidarDesafios />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/ads"
+                  element={
+                    <ProtectedRoute requiredRole="admin">
+                      <AdminAds />
                     </ProtectedRoute>
                   }
                 />

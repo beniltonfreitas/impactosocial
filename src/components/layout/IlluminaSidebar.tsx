@@ -17,6 +17,8 @@ import {
   Bell,
   LayoutDashboard,
   TrendingUp,
+  DollarSign,
+  Megaphone,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { useAuth } from "@/components/auth/AuthContext";
@@ -53,6 +55,13 @@ const menuSections: MenuSection[] = [
       { icon: Globe, label: "Site IA", href: "/site-ai" },
       { icon: Briefcase, label: "ContabPRÓ", href: "/dashboard/funcionalidades/contabpro" },
       { icon: CreditCard, label: "Pay", href: "/dashboard/funcionalidades/illuminapay" },
+    ],
+  },
+  {
+    title: "Monetização",
+    items: [
+      { icon: Megaphone, label: "Anúncios", href: "/admin/ads" },
+      { icon: DollarSign, label: "Receitas", href: "/admin/ads?tab=reports" },
     ],
   },
   {
