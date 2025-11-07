@@ -9,7 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { ImageUpload } from './ImageUpload';
 import { TagsInput } from './TagsInput';
-import { ImageGalleryManager } from './ImageGalleryManager';
+import { ImageGalleryUpload } from './ImageGalleryUpload';
 import { Copy, Calendar as CalendarIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -305,13 +305,14 @@ export function ArticleFormFields({ control, categories, tenants, onApplyAutoSeo
         <CardContent>
           <FormField
             control={control}
-            name="gallery_images"
+            name="gallery"
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <ImageGalleryManager
+                  <ImageGalleryUpload
                     value={field.value || []}
                     onChange={field.onChange}
+                    maxImages={10}
                   />
                 </FormControl>
                 <FormMessage />
