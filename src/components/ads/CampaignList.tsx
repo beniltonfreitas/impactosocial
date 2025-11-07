@@ -6,11 +6,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Search, Pause, Play, Trash2, Edit, Eye, TrendingUp } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { CampaignForm } from "./CampaignForm";
 
 interface Campaign {
   id: string;
@@ -31,6 +33,9 @@ export function CampaignList() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "paused" | "ended">("all");
+  const [formOpen, setFormOpen] = useState(false);
+  const [selectedCampaign, setSelectedCampaign] = useState<any>(null);
+  const [formMode, setFormMode] = useState<"create" | "edit">("create");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -174,7 +179,13 @@ export function CampaignList() {
             </SelectContent>
           </Select>
         </div>
-        <Button>
+        <Button 
+          onClick={() => {
+            setFormMode("create");
+            setSelectedCampaign(null);
+            setFormOpen(true);
+          }}
+        >
           <Plus className="w-4 h-4 mr-2" />
           Nova Campanha
         </Button>
@@ -184,7 +195,13 @@ export function CampaignList() {
       {filteredCampaigns.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-muted-foreground mb-4">Nenhuma campanha encontrada.</p>
-          <Button>
+          <Button
+            onClick={() => {
+              setFormMode("create");
+              setSelectedCampaign(null);
+              setFormOpen(true);
+            }}
+          >
             <Plus className="w-4 h-4 mr-2" />
             Criar Primeira Campanha
           </Button>
@@ -253,7 +270,16 @@ export function CampaignList() {
                       <Play className="w-4 h-4" />
                     )}
                   </Button>
-                  <Button variant="outline" size="sm" className="flex-1">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex-1"
+                    onClick={() => {
+                      setFormMode("edit");
+                      setSelectedCampaign(campaign);
+                      setFormOpen(true);
+                    }}
+                  >
                     <Edit className="w-4 h-4" />
                   </Button>
                   <Button
@@ -270,6 +296,30 @@ export function CampaignList() {
           ))}
         </div>
       )}
+
+      <Dialog open={formOpen} onOpenChange={setFormOpen}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {formMode === "create" ? "Nova Campanha" : "Editar Campanha"}
+            </DialogTitle>
+            <DialogDescription>
+              {formMode === "create" 
+                ? "Crie uma nova campanha publicitária com segmentação e orçamento." 
+                : "Atualize as informações da campanha."}
+            </DialogDescription>
+          </DialogHeader>
+          <CampaignForm
+            mode={formMode}
+            campaign={selectedCampaign}
+            onSuccess={() => {
+              setFormOpen(false);
+              loadCampaigns();
+            }}
+            onCancel={() => setFormOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

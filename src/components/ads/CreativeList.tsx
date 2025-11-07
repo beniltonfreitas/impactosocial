@@ -5,8 +5,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Search, Trash2, Edit, Eye, Copy } from "lucide-react";
+import { CreativeForm } from "./CreativeForm";
+import { AdPreview } from "./AdPreview";
 
 interface Creative {
   id: string;
@@ -35,6 +38,11 @@ export function CreativeList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [campaignFilter, setCampaignFilter] = useState<string>("all");
   const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [formOpen, setFormOpen] = useState(false);
+  const [selectedCreative, setSelectedCreative] = useState<any>(null);
+  const [formMode, setFormMode] = useState<"create" | "edit">("create");
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewCreative, setPreviewCreative] = useState<any>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -175,7 +183,13 @@ export function CreativeList() {
             </SelectContent>
           </Select>
         </div>
-        <Button>
+        <Button
+          onClick={() => {
+            setFormMode("create");
+            setSelectedCreative(null);
+            setFormOpen(true);
+          }}
+        >
           <Plus className="w-4 h-4 mr-2" />
           Novo Criativo
         </Button>
@@ -185,7 +199,13 @@ export function CreativeList() {
       {filteredCreatives.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-muted-foreground mb-4">Nenhum criativo encontrado.</p>
-          <Button>
+          <Button
+            onClick={() => {
+              setFormMode("create");
+              setSelectedCreative(null);
+              setFormOpen(true);
+            }}
+          >
             <Plus className="w-4 h-4 mr-2" />
             Criar Primeiro Criativo
           </Button>
@@ -263,10 +283,27 @@ export function CreativeList() {
 
                 {/* Ações */}
                 <div className="flex gap-2 pt-2">
-                  <Button variant="outline" size="sm" className="flex-1">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex-1"
+                    onClick={() => {
+                      setPreviewCreative(creative);
+                      setPreviewOpen(true);
+                    }}
+                  >
                     <Eye className="w-4 h-4" />
                   </Button>
-                  <Button variant="outline" size="sm" className="flex-1">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex-1"
+                    onClick={() => {
+                      setFormMode("edit");
+                      setSelectedCreative(creative);
+                      setFormOpen(true);
+                    }}
+                  >
                     <Edit className="w-4 h-4" />
                   </Button>
                   <Button variant="outline" size="sm" className="flex-1">
@@ -286,6 +323,41 @@ export function CreativeList() {
           ))}
         </div>
       )}
+
+      <Dialog open={formOpen} onOpenChange={setFormOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {formMode === "create" ? "Novo Criativo" : "Editar Criativo"}
+            </DialogTitle>
+            <DialogDescription>
+              {formMode === "create" 
+                ? "Crie um novo criativo publicitário com upload e preview em tempo real." 
+                : "Atualize as informações do criativo."}
+            </DialogDescription>
+          </DialogHeader>
+          <CreativeForm
+            mode={formMode}
+            creative={selectedCreative}
+            onSuccess={() => {
+              setFormOpen(false);
+              loadData();
+            }}
+            onCancel={() => setFormOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Preview do Criativo</DialogTitle>
+          </DialogHeader>
+          <div className="flex justify-center py-8">
+            {previewCreative && <AdPreview creative={previewCreative} />}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
