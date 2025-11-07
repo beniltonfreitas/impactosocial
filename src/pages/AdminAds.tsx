@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CampaignList } from "@/components/ads/CampaignList";
 import { CreativeList } from "@/components/ads/CreativeList";
 import { PlacementList } from "@/components/ads/PlacementList";
+import { AdsAnalytics } from "@/components/ads/AdsAnalytics";
 import { Megaphone, Palette, MapPin, BarChart3 } from "lucide-react";
 
 export default function AdminAds() {
@@ -41,9 +42,7 @@ export default function AdminAds() {
         </TabsContent>
 
         <TabsContent value="reports" className="space-y-4">
-          <div className="text-center py-12 text-muted-foreground">
-            Relatórios em breve...
-          </div>
+          <AdsAnalytics />
         </TabsContent>
       </Tabs>
     </IlluminaAdminLayout>

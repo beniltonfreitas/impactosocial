@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Trash2, Edit, MapPin } from "lucide-react";
 import {
@@ -15,6 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { PlacementForm } from "./PlacementForm";
 
 interface Placement {
   id: string;
@@ -28,6 +30,9 @@ interface Placement {
 export function PlacementList() {
   const [placements, setPlacements] = useState<Placement[]>([]);
   const [loading, setLoading] = useState(true);
+  const [formOpen, setFormOpen] = useState(false);
+  const [selectedPlacement, setSelectedPlacement] = useState<any>(null);
+  const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -141,7 +146,11 @@ export function PlacementList() {
             Gerencie os espaços publicitários do site
           </p>
         </div>
-        <Button>
+        <Button onClick={() => {
+          setFormMode('create');
+          setSelectedPlacement(null);
+          setFormOpen(true);
+        }}>
           <Plus className="w-4 h-4 mr-2" />
           Nova Posição
         </Button>
@@ -153,7 +162,11 @@ export function PlacementList() {
           <CardContent className="text-center py-12">
             <MapPin className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
             <p className="text-muted-foreground mb-4">Nenhuma posição cadastrada.</p>
-            <Button>
+            <Button onClick={() => {
+              setFormMode('create');
+              setSelectedPlacement(null);
+              setFormOpen(true);
+            }}>
               <Plus className="w-4 h-4 mr-2" />
               Criar Primeira Posição
             </Button>
@@ -194,7 +207,15 @@ export function PlacementList() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex gap-2 justify-end">
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => {
+                            setFormMode('edit');
+                            setSelectedPlacement(placement);
+                            setFormOpen(true);
+                          }}
+                        >
                           <Edit className="w-4 h-4" />
                         </Button>
                         <Button
@@ -249,6 +270,26 @@ export function PlacementList() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Dialog com Form */}
+      <Dialog open={formOpen} onOpenChange={setFormOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {formMode === 'create' ? 'Nova Posição' : 'Editar Posição'}
+            </DialogTitle>
+          </DialogHeader>
+          <PlacementForm
+            mode={formMode}
+            placement={selectedPlacement}
+            onSuccess={() => {
+              setFormOpen(false);
+              loadPlacements();
+            }}
+            onCancel={() => setFormOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

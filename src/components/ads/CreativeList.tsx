@@ -81,6 +81,51 @@ export function CreativeList() {
     }
   }
 
+  async function duplicateCreative(creative: Creative) {
+    try {
+      setLoading(true);
+
+      // Criar cópia do criativo sem o ID e timestamps
+      const { id, created_at, ...creativeToCopy } = creative;
+
+      // Modificar headline para indicar que é uma cópia
+      const newCreative = {
+        campaign_id: creativeToCopy.campaign_id,
+        type: creativeToCopy.type as 'image' | 'html' | 'video',
+        image_url: creativeToCopy.image_url,
+        video_url: creativeToCopy.video_url,
+        html_content: creativeToCopy.html_content,
+        width: creativeToCopy.width,
+        height: creativeToCopy.height,
+        headline: `${creative.headline || 'Criativo'} (Cópia)`,
+        description: creativeToCopy.description,
+        target_url: creativeToCopy.target_url,
+      };
+
+      const { error } = await supabase
+        .from('ad_creatives')
+        .insert([newCreative]);
+
+      if (error) throw error;
+
+      toast({
+        title: "Criativo Duplicado",
+        description: "O criativo foi duplicado com sucesso. Você pode editá-lo agora.",
+      });
+
+      loadData(); // Recarregar lista
+    } catch (error) {
+      console.error('Error duplicating creative:', error);
+      toast({
+        title: "Erro ao Duplicar",
+        description: "Não foi possível duplicar o criativo.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function deleteCreative(id: string) {
     if (!confirm("Tem certeza que deseja deletar este criativo?")) return;
 
@@ -306,7 +351,13 @@ export function CreativeList() {
                   >
                     <Edit className="w-4 h-4" />
                   </Button>
-                  <Button variant="outline" size="sm" className="flex-1">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex-1"
+                    onClick={() => duplicateCreative(creative)}
+                    disabled={loading}
+                  >
                     <Copy className="w-4 h-4" />
                   </Button>
                   <Button
