@@ -13,6 +13,7 @@ import { Progress } from "@/components/ui/progress";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { CampaignForm } from "./CampaignForm";
+import { CampaignStatusIndicator } from "./CampaignStatusIndicator";
 
 interface Campaign {
   id: string;
@@ -216,7 +217,7 @@ export function CampaignList() {
                     <CardTitle className="text-lg mb-1">{campaign.name}</CardTitle>
                     <CardDescription>{campaign.advertiser}</CardDescription>
                   </div>
-                  {getStatusBadge(campaign.status)}
+                  <CampaignStatusIndicator campaign={campaign} />
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
