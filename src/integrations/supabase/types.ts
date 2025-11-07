@@ -367,6 +367,134 @@ export type Database = {
           },
         ]
       }
+      article_schedule: {
+        Row: {
+          article_id: string
+          created_at: string | null
+          created_by: string | null
+          error_message: string | null
+          id: string
+          notification_hours_before: number | null
+          notification_sent_at: string | null
+          published_at: string | null
+          scheduled_for: string
+          status: string
+        }
+        Insert: {
+          article_id: string
+          created_at?: string | null
+          created_by?: string | null
+          error_message?: string | null
+          id?: string
+          notification_hours_before?: number | null
+          notification_sent_at?: string | null
+          published_at?: string | null
+          scheduled_for: string
+          status?: string
+        }
+        Update: {
+          article_id?: string
+          created_at?: string | null
+          created_by?: string | null
+          error_message?: string | null
+          id?: string
+          notification_hours_before?: number | null
+          notification_sent_at?: string | null
+          published_at?: string | null
+          scheduled_for?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_schedule_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: true
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      article_versions: {
+        Row: {
+          article_id: string
+          author: string | null
+          category_id: string | null
+          change_summary: string | null
+          content: string | null
+          created_at: string | null
+          created_by: string | null
+          full_data: Json | null
+          id: string
+          image_card_url: string | null
+          image_og_url: string | null
+          image_url: string | null
+          published_at: string | null
+          slug: string
+          status: string | null
+          summary: string | null
+          tags: string[] | null
+          title: string
+          version_number: number
+        }
+        Insert: {
+          article_id: string
+          author?: string | null
+          category_id?: string | null
+          change_summary?: string | null
+          content?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          full_data?: Json | null
+          id?: string
+          image_card_url?: string | null
+          image_og_url?: string | null
+          image_url?: string | null
+          published_at?: string | null
+          slug: string
+          status?: string | null
+          summary?: string | null
+          tags?: string[] | null
+          title: string
+          version_number: number
+        }
+        Update: {
+          article_id?: string
+          author?: string | null
+          category_id?: string | null
+          change_summary?: string | null
+          content?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          full_data?: Json | null
+          id?: string
+          image_card_url?: string | null
+          image_og_url?: string | null
+          image_url?: string | null
+          published_at?: string | null
+          slug?: string
+          status?: string | null
+          summary?: string | null
+          tags?: string[] | null
+          title?: string
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_versions_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "article_versions_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       article_views: {
         Row: {
           article_id: string
