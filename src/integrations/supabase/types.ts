@@ -22,6 +22,7 @@ export type Database = {
           cpc: number | null
           cpm: number | null
           created_at: string
+          created_by: string | null
           end_at: string | null
           id: string
           name: string
@@ -36,6 +37,7 @@ export type Database = {
           cpc?: number | null
           cpm?: number | null
           created_at?: string
+          created_by?: string | null
           end_at?: string | null
           id?: string
           name: string
@@ -50,6 +52,7 @@ export type Database = {
           cpc?: number | null
           cpm?: number | null
           created_at?: string
+          created_by?: string | null
           end_at?: string | null
           id?: string
           name?: string
@@ -500,6 +503,38 @@ export type Database = {
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenant"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaign_notifications: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          id: string
+          sent_at: string
+          type: string
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          id?: string
+          sent_at?: string
+          type: string
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          id?: string
+          sent_at?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_notifications_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "ad_campaigns"
             referencedColumns: ["id"]
           },
         ]
@@ -2465,6 +2500,39 @@ export type Database = {
           name?: string
           price_monthly_cents?: number
           slug?: string
+        }
+        Relationships: []
+      }
+      system_notifications: {
+        Row: {
+          action: Json | null
+          created_at: string
+          id: string
+          message: string
+          read: boolean | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          action?: Json | null
+          created_at?: string
+          id?: string
+          message: string
+          read?: boolean | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          action?: Json | null
+          created_at?: string
+          id?: string
+          message?: string
+          read?: boolean | null
+          title?: string
+          type?: string
+          user_id?: string
         }
         Relationships: []
       }
