@@ -19,6 +19,7 @@ import { ArticleVersionHistory } from './ArticleVersionHistory';
 import { ArticleScheduler } from './ArticleScheduler';
 import { ArticleWorkflowPanel } from './ArticleWorkflowPanel';
 import { InlineComments } from './InlineComments';
+import { WorkflowHistory } from './WorkflowHistory';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -516,9 +517,12 @@ export function ArticleFormComplete({ articleId, onSuccess, onCancel }: ArticleF
         )}
 
         <Tabs defaultValue="edit" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="edit">
               ✏️ Editar
+            </TabsTrigger>
+            <TabsTrigger value="workflow" disabled={!articleId}>
+              🔄 Workflow
             </TabsTrigger>
             <TabsTrigger value="versions" disabled={!articleId}>
               📜 Histórico {versionsCount > 0 && `(${versionsCount})`}
@@ -567,21 +571,26 @@ export function ArticleFormComplete({ articleId, onSuccess, onCancel }: ArticleF
 
           <TabsContent value="workflow">
             {articleId ? (
-              <div className="grid gap-6 md:grid-cols-2">
-                <ArticleWorkflowPanel 
-                  articleId={articleId}
-                  onStatusChange={() => {
-                    toast({
-                      title: "Status atualizado",
-                      description: "O workflow do artigo foi atualizado."
-                    });
-                  }}
-                />
-                {workflowId && (
-                  <InlineComments 
+              <div className="space-y-6">
+                <div className="grid gap-6 md:grid-cols-2">
+                  <ArticleWorkflowPanel 
                     articleId={articleId}
-                    workflowId={workflowId}
+                    onStatusChange={() => {
+                      toast({
+                        title: "Status atualizado",
+                        description: "O workflow do artigo foi atualizado."
+                      });
+                    }}
                   />
+                  {workflowId && (
+                    <InlineComments 
+                      articleId={articleId}
+                      workflowId={workflowId}
+                    />
+                  )}
+                </div>
+                {workflowId && (
+                  <WorkflowHistory workflowId={workflowId} />
                 )}
               </div>
             ) : (

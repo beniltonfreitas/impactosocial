@@ -68,3 +68,6 @@ verify_jwt = true
 
 [functions.update-analytics-cron]
 verify_jwt = false
+
+[functions.populate-analytics]
+verify_jwt = true

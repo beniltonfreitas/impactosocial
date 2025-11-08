@@ -53,7 +53,11 @@ export default function AdminArticles() {
       const [articlesRes, categoriesRes] = await Promise.all([
         supabase
           .from('articles')
-          .select('*, category:categories(name, slug, color)')
+          .select(`
+            *, 
+            category:categories(name, slug, color),
+            workflow:article_workflow(id, current_status, assigned_reviewer)
+          `)
           .order('created_at', { ascending: false }),
         supabase.from('categories').select('*').order('name'),
       ]);

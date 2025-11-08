@@ -42,6 +42,8 @@ const AdminAssinaturas = lazy(() => import("./pages/AdminAssinaturas"));
 const AdminValidarDesafios = lazy(() => import("./pages/AdminValidarDesafios"));
 const GerarImagem = lazy(() => import("./pages/GerarImagem"));
 const AdminAds = lazy(() => import("./pages/AdminAds"));
+const AdminSchedule = lazy(() => import("./pages/AdminSchedule"));
+const AdminAnalytics = lazy(() => import("./pages/AdminAnalytics"));
 
 // Funcionalidades Pages
 const ContabPRO = lazy(() => import("./pages/funcionalidades/ContabPRO"));
@@ -264,6 +266,22 @@ const App = () => {
                   element={
                     <ProtectedRoute requiredRole="admin">
                       <AdminAds />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/schedule"
+                  element={
+                    <ProtectedRoute requiredRole="admin">
+                      <AdminSchedule />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/analytics"
+                  element={
+                    <ProtectedRoute requiredRole="admin">
+                      <AdminAnalytics />
                     </ProtectedRoute>
                   }
                 />
