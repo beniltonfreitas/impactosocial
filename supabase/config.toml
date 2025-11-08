@@ -59,3 +59,12 @@ verify_jwt = false
 
 [functions.ad-fetch]
 verify_jwt = false
+
+[functions.workflow-transition]
+verify_jwt = true
+
+[functions.suggest-optimal-time]
+verify_jwt = true
+
+[functions.update-analytics-cron]
+verify_jwt = false
