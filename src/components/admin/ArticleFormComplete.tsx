@@ -17,6 +17,8 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArticleVersionHistory } from './ArticleVersionHistory';
 import { ArticleScheduler } from './ArticleScheduler';
+import { ArticleWorkflowPanel } from './ArticleWorkflowPanel';
+import { InlineComments } from './InlineComments';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -79,6 +81,7 @@ export function ArticleFormComplete({ articleId, onSuccess, onCancel }: ArticleF
     scheduledFor: undefined,
     notifyBefore: true,
   });
+  const [workflowId, setWorkflowId] = useState<string | null>(null);
 
   const form = useForm<ArticleFormData>({
     resolver: zodResolver(articleSchema),
@@ -181,6 +184,17 @@ export function ArticleFormComplete({ articleId, onSuccess, onCancel }: ArticleF
             .eq('article_id', articleId);
 
           setVersionsCount(count || 0);
+
+          // Carregar workflow
+          const { data: workflowData } = await supabase
+            .from('article_workflow')
+            .select('id')
+            .eq('article_id', articleId)
+            .single();
+
+          if (workflowData) {
+            setWorkflowId(workflowData.id);
+          }
         }
       }
     } catch (error) {
@@ -551,6 +565,32 @@ export function ArticleFormComplete({ articleId, onSuccess, onCancel }: ArticleF
             </Card>
           </TabsContent>
 
+          <TabsContent value="workflow">
+            {articleId ? (
+              <div className="grid gap-6 md:grid-cols-2">
+                <ArticleWorkflowPanel 
+                  articleId={articleId}
+                  onStatusChange={() => {
+                    toast({
+                      title: "Status atualizado",
+                      description: "O workflow do artigo foi atualizado."
+                    });
+                  }}
+                />
+                {workflowId && (
+                  <InlineComments 
+                    articleId={articleId}
+                    workflowId={workflowId}
+                  />
+                )}
+              </div>
+            ) : (
+              <div className="text-center py-12 text-muted-foreground">
+                Salve o artigo primeiro para acessar o workflow
+              </div>
+            )}
+          </TabsContent>
+
           <TabsContent value="versions">
             {articleId ? (
               <ArticleVersionHistory 
@@ -569,6 +609,7 @@ export function ArticleFormComplete({ articleId, onSuccess, onCancel }: ArticleF
             <ArticleScheduler
               value={scheduleData}
               onChange={setScheduleData}
+              categoryId={form.watch('category_id') || undefined}
             />
           </TabsContent>
         </Tabs>

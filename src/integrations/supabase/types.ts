@@ -367,6 +367,88 @@ export type Database = {
           },
         ]
       }
+      article_review_comments: {
+        Row: {
+          article_id: string
+          comment_type: Database["public"]["Enums"]["comment_type"]
+          content: string
+          created_at: string | null
+          created_by: string
+          field_name: string | null
+          id: string
+          parent_comment_id: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          selected_text: string | null
+          selection_end: number | null
+          selection_start: number | null
+          status: Database["public"]["Enums"]["comment_status"]
+          thread_order: number | null
+          updated_at: string | null
+          workflow_id: string
+        }
+        Insert: {
+          article_id: string
+          comment_type?: Database["public"]["Enums"]["comment_type"]
+          content: string
+          created_at?: string | null
+          created_by: string
+          field_name?: string | null
+          id?: string
+          parent_comment_id?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          selected_text?: string | null
+          selection_end?: number | null
+          selection_start?: number | null
+          status?: Database["public"]["Enums"]["comment_status"]
+          thread_order?: number | null
+          updated_at?: string | null
+          workflow_id: string
+        }
+        Update: {
+          article_id?: string
+          comment_type?: Database["public"]["Enums"]["comment_type"]
+          content?: string
+          created_at?: string | null
+          created_by?: string
+          field_name?: string | null
+          id?: string
+          parent_comment_id?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          selected_text?: string | null
+          selection_end?: number | null
+          selection_start?: number | null
+          status?: Database["public"]["Enums"]["comment_status"]
+          thread_order?: number | null
+          updated_at?: string | null
+          workflow_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_review_comments_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "article_review_comments_parent_comment_id_fkey"
+            columns: ["parent_comment_id"]
+            isOneToOne: false
+            referencedRelation: "article_review_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "article_review_comments_workflow_id_fkey"
+            columns: ["workflow_id"]
+            isOneToOne: false
+            referencedRelation: "article_workflow"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       article_schedule: {
         Row: {
           article_id: string
@@ -532,6 +614,116 @@ export type Database = {
             columns: ["article_id"]
             isOneToOne: false
             referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      article_workflow: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          article_id: string
+          assigned_at: string | null
+          assigned_reviewer: string | null
+          created_at: string | null
+          current_status: Database["public"]["Enums"]["workflow_status"]
+          deadline: string | null
+          estimated_publish_time: string | null
+          id: string
+          previous_status: Database["public"]["Enums"]["workflow_status"] | null
+          priority: number | null
+          submitted_at: string | null
+          submitted_by: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          article_id: string
+          assigned_at?: string | null
+          assigned_reviewer?: string | null
+          created_at?: string | null
+          current_status?: Database["public"]["Enums"]["workflow_status"]
+          deadline?: string | null
+          estimated_publish_time?: string | null
+          id?: string
+          previous_status?:
+            | Database["public"]["Enums"]["workflow_status"]
+            | null
+          priority?: number | null
+          submitted_at?: string | null
+          submitted_by?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          article_id?: string
+          assigned_at?: string | null
+          assigned_reviewer?: string | null
+          created_at?: string | null
+          current_status?: Database["public"]["Enums"]["workflow_status"]
+          deadline?: string | null
+          estimated_publish_time?: string | null
+          id?: string
+          previous_status?:
+            | Database["public"]["Enums"]["workflow_status"]
+            | null
+          priority?: number | null
+          submitted_at?: string | null
+          submitted_by?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_workflow_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: true
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      article_workflow_history: {
+        Row: {
+          action: Database["public"]["Enums"]["workflow_action"]
+          from_status: Database["public"]["Enums"]["workflow_status"] | null
+          id: string
+          metadata: Json | null
+          notes: string | null
+          performed_at: string | null
+          performed_by: string
+          to_status: Database["public"]["Enums"]["workflow_status"]
+          workflow_id: string
+        }
+        Insert: {
+          action: Database["public"]["Enums"]["workflow_action"]
+          from_status?: Database["public"]["Enums"]["workflow_status"] | null
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          performed_at?: string | null
+          performed_by: string
+          to_status: Database["public"]["Enums"]["workflow_status"]
+          workflow_id: string
+        }
+        Update: {
+          action?: Database["public"]["Enums"]["workflow_action"]
+          from_status?: Database["public"]["Enums"]["workflow_status"] | null
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          performed_at?: string | null
+          performed_by?: string
+          to_status?: Database["public"]["Enums"]["workflow_status"]
+          workflow_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_workflow_history_workflow_id_fkey"
+            columns: ["workflow_id"]
+            isOneToOne: false
+            referencedRelation: "article_workflow"
             referencedColumns: ["id"]
           },
         ]
@@ -1521,6 +1713,53 @@ export type Database = {
         }
         Relationships: []
       }
+      optimal_publishing_times: {
+        Row: {
+          avg_performance_score: number | null
+          avg_views_first_24_hours: number | null
+          avg_views_first_hour: number | null
+          category_id: string
+          day_of_week: number
+          hour: number
+          id: string
+          rank_position: number | null
+          total_publications: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          avg_performance_score?: number | null
+          avg_views_first_24_hours?: number | null
+          avg_views_first_hour?: number | null
+          category_id: string
+          day_of_week: number
+          hour: number
+          id?: string
+          rank_position?: number | null
+          total_publications?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          avg_performance_score?: number | null
+          avg_views_first_24_hours?: number | null
+          avg_views_first_hour?: number | null
+          category_id?: string
+          day_of_week?: number
+          hour?: number
+          id?: string
+          rank_position?: number | null
+          total_publications?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "optimal_publishing_times_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       partner_map: {
         Row: {
           active: boolean
@@ -2380,6 +2619,78 @@ export type Database = {
         }
         Relationships: []
       }
+      publication_analytics: {
+        Row: {
+          article_id: string
+          avg_read_time_seconds: number | null
+          category_id: string | null
+          comments_count: number | null
+          created_at: string | null
+          id: string
+          performance_score: number | null
+          publish_day_of_week: number
+          publish_hour: number
+          published_at: string
+          shares_count: number | null
+          updated_at: string | null
+          views_first_24_hours: number | null
+          views_first_3_hours: number | null
+          views_first_hour: number | null
+          views_total: number | null
+        }
+        Insert: {
+          article_id: string
+          avg_read_time_seconds?: number | null
+          category_id?: string | null
+          comments_count?: number | null
+          created_at?: string | null
+          id?: string
+          performance_score?: number | null
+          publish_day_of_week: number
+          publish_hour: number
+          published_at: string
+          shares_count?: number | null
+          updated_at?: string | null
+          views_first_24_hours?: number | null
+          views_first_3_hours?: number | null
+          views_first_hour?: number | null
+          views_total?: number | null
+        }
+        Update: {
+          article_id?: string
+          avg_read_time_seconds?: number | null
+          category_id?: string | null
+          comments_count?: number | null
+          created_at?: string | null
+          id?: string
+          performance_score?: number | null
+          publish_day_of_week?: number
+          publish_hour?: number
+          published_at?: string
+          shares_count?: number | null
+          updated_at?: string | null
+          views_first_24_hours?: number | null
+          views_first_3_hours?: number | null
+          views_first_hour?: number | null
+          views_total?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "publication_analytics_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: true
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "publication_analytics_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       push_subscriptions: {
         Row: {
           auth: string
@@ -2935,6 +3246,16 @@ export type Database = {
       }
     }
     Functions: {
+      calculate_performance_score: {
+        Args: {
+          p_comments: number
+          p_shares: number
+          p_views_first_24_hours: number
+          p_views_first_hour: number
+        }
+        Returns: number
+      }
+      generate_optimal_times: { Args: never; Returns: undefined }
       get_community_ranking: {
         Args: { limit_rows?: number }
         Returns: {
@@ -3008,6 +3329,7 @@ export type Database = {
           uf: string
         }[]
       }
+      update_publication_analytics: { Args: never; Returns: undefined }
     }
     Enums: {
       ad_campaign_status: "active" | "paused" | "ended"
@@ -3015,12 +3337,32 @@ export type Database = {
       ad_event_type: "impression" | "click"
       app_role: "admin" | "moderator" | "user"
       challenge_type: "clicks_10" | "shares_5" | "conversions_3"
+      comment_status: "open" | "resolved" | "wont_fix"
+      comment_type: "general" | "inline" | "suggestion"
       permission_type:
         | "rede_pcd"
         | "contabilidade"
         | "financeiro"
         | "ia_tools"
         | "social"
+      workflow_action:
+        | "submit"
+        | "assign_reviewer"
+        | "add_comment"
+        | "request_changes"
+        | "approve"
+        | "reject"
+        | "schedule"
+        | "publish"
+      workflow_status:
+        | "draft"
+        | "submitted_for_review"
+        | "in_review"
+        | "changes_requested"
+        | "approved"
+        | "rejected"
+        | "scheduled"
+        | "published"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -3153,12 +3495,34 @@ export const Constants = {
       ad_event_type: ["impression", "click"],
       app_role: ["admin", "moderator", "user"],
       challenge_type: ["clicks_10", "shares_5", "conversions_3"],
+      comment_status: ["open", "resolved", "wont_fix"],
+      comment_type: ["general", "inline", "suggestion"],
       permission_type: [
         "rede_pcd",
         "contabilidade",
         "financeiro",
         "ia_tools",
         "social",
+      ],
+      workflow_action: [
+        "submit",
+        "assign_reviewer",
+        "add_comment",
+        "request_changes",
+        "approve",
+        "reject",
+        "schedule",
+        "publish",
+      ],
+      workflow_status: [
+        "draft",
+        "submitted_for_review",
+        "in_review",
+        "changes_requested",
+        "approved",
+        "rejected",
+        "scheduled",
+        "published",
       ],
     },
   },

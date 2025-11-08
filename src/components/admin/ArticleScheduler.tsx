@@ -11,6 +11,7 @@ import { CalendarIcon, Clock } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { OptimalTimesSuggestion } from './OptimalTimesSuggestion';
 
 interface ArticleSchedulerProps {
   value: {
@@ -19,9 +20,10 @@ interface ArticleSchedulerProps {
     notifyBefore: boolean;
   };
   onChange: (value: any) => void;
+  categoryId?: string;
 }
 
-export function ArticleScheduler({ value, onChange }: ArticleSchedulerProps) {
+export function ArticleScheduler({ value, onChange, categoryId }: ArticleSchedulerProps) {
   const [date, setDate] = useState<Date | undefined>(value.scheduledFor);
   const [time, setTime] = useState<string>(
     value.scheduledFor ? format(value.scheduledFor, 'HH:mm') : '10:00'
@@ -51,8 +53,22 @@ export function ArticleScheduler({ value, onChange }: ArticleSchedulerProps) {
   const minDate = new Date();
   minDate.setMinutes(minDate.getMinutes() + 5);
 
+  const handleSelectSuggestedTime = (suggestedDate: Date) => {
+    setDate(suggestedDate);
+    setTime(format(suggestedDate, 'HH:mm'));
+    onChange({ ...value, publishMode: 'scheduled', scheduledFor: suggestedDate });
+  };
+
   return (
-    <Card>
+    <div className="space-y-6">
+      {value.publishMode === 'scheduled' && categoryId && (
+        <OptimalTimesSuggestion 
+          categoryId={categoryId}
+          onSelectTime={handleSelectSuggestedTime}
+        />
+      )}
+      
+      <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Clock className="h-5 w-5" />
@@ -143,5 +159,6 @@ export function ArticleScheduler({ value, onChange }: ArticleSchedulerProps) {
         )}
       </CardContent>
     </Card>
+    </div>
   );
 }
