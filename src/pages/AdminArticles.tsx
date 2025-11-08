@@ -28,6 +28,7 @@ export default function AdminArticles() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [workflowFilter, setWorkflowFilter] = useState<string>('all');
   const [dateFilter, setDateFilter] = useState<'all' | 'created' | 'published'>('all');
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();
@@ -44,7 +45,7 @@ export default function AdminArticles() {
 
   useEffect(() => {
     filterArticles();
-  }, [articles, searchTerm, statusFilter, categoryFilter, dateFilter, dateFrom, dateTo]);
+  }, [articles, searchTerm, statusFilter, categoryFilter, workflowFilter, dateFilter, dateFrom, dateTo]);
 
   const loadData = async () => {
     try {
@@ -100,6 +101,17 @@ export default function AdminArticles() {
       filtered = filtered.filter((a) => a.category_id === categoryFilter);
     }
 
+    // Filtro de workflow
+    if (workflowFilter !== 'all') {
+      filtered = filtered.filter((a) => {
+        const workflowStatus = a.workflow?.current_status;
+        if (workflowFilter === 'no_workflow') {
+          return !workflowStatus;
+        }
+        return workflowStatus === workflowFilter;
+      });
+    }
+
     // Validar período
     if (dateFrom && dateTo && dateFrom > dateTo) {
       toast({
@@ -142,6 +154,19 @@ export default function AdminArticles() {
     }
 
     setFilteredArticles(filtered);
+  };
+
+  const getWorkflowStatusLabel = (status: string): string => {
+    const labels: Record<string, string> = {
+      draft: 'Rascunho',
+      submitted_for_review: 'Em Revisão',
+      changes_requested: 'Mudanças Solicitadas',
+      approved: 'Aprovado',
+      rejected: 'Rejeitado',
+      scheduled: 'Agendado',
+      published: 'Publicado',
+    };
+    return labels[status] || status;
   };
 
   const handleDelete = async () => {
@@ -353,6 +378,21 @@ export default function AdminArticles() {
                 </SelectContent>
               </Select>
 
+              <Select value={workflowFilter} onValueChange={setWorkflowFilter}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Workflow" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos</SelectItem>
+                  <SelectItem value="no_workflow">Sem workflow</SelectItem>
+                  <SelectItem value="draft">Rascunho</SelectItem>
+                  <SelectItem value="submitted_for_review">Em Revisão</SelectItem>
+                  <SelectItem value="changes_requested">Mudanças Solicitadas</SelectItem>
+                  <SelectItem value="approved">Aprovado</SelectItem>
+                  <SelectItem value="rejected">Rejeitado</SelectItem>
+                </SelectContent>
+              </Select>
+
               <Select value={dateFilter} onValueChange={(value: any) => setDateFilter(value)}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Filtrar por data" />
@@ -503,6 +543,11 @@ export default function AdminArticles() {
                               </Badge>
                             )}
                           </>
+                        )}
+                        {article.workflow?.current_status && (
+                          <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                            🔄 {getWorkflowStatusLabel(article.workflow.current_status)}
+                          </Badge>
                         )}
                         {article.featured && <Badge>Destaque</Badge>}
                         {article.breaking && <Badge variant="destructive">Urgente</Badge>}

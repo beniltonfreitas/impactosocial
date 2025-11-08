@@ -25,31 +25,68 @@ export default function AdminAnalytics() {
     try {
       setLoading(true);
 
-      // Buscar estatísticas por categoria
-      const { data: pubAnalytics } = await supabase
-        .from('publication_analytics')
-        .select('*')
-        .order('total_publications', { ascending: false })
-        .limit(10);
+      // Buscar todos os artigos publicados com categorias
+      const { data: articles } = await supabase
+        .from('articles')
+        .select('*, category:categories(name)')
+        .eq('status', 'published')
+        .not('published_at', 'is', null);
 
-      if (pubAnalytics) {
-        setCategoryStats(pubAnalytics);
+      if (articles) {
+        // Agrupar por categoria
+        const categoryMap = new Map();
         
-        const total = pubAnalytics.reduce((sum, item) => sum + (item.total_publications || 0), 0);
-        const avgEng = pubAnalytics.reduce((sum, item) => sum + (item.avg_engagement_rate || 0), 0) / pubAnalytics.length;
+        articles.forEach(article => {
+          const catName = article.category?.name || 'Sem categoria';
+          const existing = categoryMap.get(catName) || { 
+            category_name: catName, 
+            total_publications: 0, 
+            total_views: 0 
+          };
+          
+          existing.total_publications += 1;
+          existing.total_views += article.views || 0;
+          categoryMap.set(catName, existing);
+        });
+
+        const stats = Array.from(categoryMap.values())
+          .map(stat => ({
+            ...stat,
+            avg_engagement_rate: stat.total_views / (stat.total_publications || 1)
+          }))
+          .sort((a, b) => b.total_publications - a.total_publications)
+          .slice(0, 10);
+
+        setCategoryStats(stats);
+        
+        const total = articles.length;
+        const avgEng = stats.reduce((sum, item) => sum + (item.avg_engagement_rate || 0), 0) / (stats.length || 1);
         
         setTotalPublications(total);
         setAvgEngagement(avgEng || 0);
-      }
 
-      // Buscar horários ótimos
-      const { data: optimal } = await supabase
-        .from('optimal_publication_times')
-        .select('*')
-        .order('score', { ascending: false })
-        .limit(10);
+        // Gerar horários ótimos baseado nos artigos
+        const hourMap = new Map();
+        articles.forEach(article => {
+          if (article.published_at) {
+            const hour = new Date(article.published_at).getHours();
+            const existing = hourMap.get(hour) || { hour_of_day: hour, count: 0, views: 0 };
+            existing.count += 1;
+            existing.views += article.views || 0;
+            hourMap.set(hour, existing);
+          }
+        });
 
-      if (optimal) {
+        const optimal = Array.from(hourMap.values())
+          .map(item => ({
+            id: `hour-${item.hour_of_day}`,
+            hour_of_day: item.hour_of_day,
+            score: (item.views / (item.count || 1)) / 100,
+            category_name: 'Todas as categorias'
+          }))
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 10);
+
         setOptimalTimes(optimal);
       }
 
