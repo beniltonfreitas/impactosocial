@@ -408,7 +408,7 @@ export function AdsAnalytics() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle>Detalhamento por Campanha</CardTitle>
-              <CardDescription>Métricas completas de cada campanha</CardDescription>
+              <CardDescription>Métricas completas de cada campanha com ROI</CardDescription>
             </div>
             <Button variant="outline" size="sm" onClick={exportToCSV}>
               <Download className="w-4 h-4 mr-2" />
@@ -451,28 +451,39 @@ export function AdsAnalytics() {
                     {sortColumn === 'revenue' && <ArrowUpDown className="w-3 h-3" />}
                   </div>
                 </TableHead>
+                <TableHead className="text-right">ROI</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sortedCampaigns.map((campaign) => (
-                <TableRow key={campaign.id}>
-                  <TableCell className="font-medium">{campaign.name}</TableCell>
-                  <TableCell className="text-right">{campaign.impressions.toLocaleString('pt-BR')}</TableCell>
-                  <TableCell className="text-right">{campaign.clicks.toLocaleString('pt-BR')}</TableCell>
-                  <TableCell className="text-right">
-                    <Badge variant={campaign.ctr > 1 ? "default" : "secondary"}>
-                      {campaign.ctr.toFixed(2)}%
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right text-sm text-muted-foreground">
-                    {campaign.cpc > 0 && `R$ ${campaign.cpc.toFixed(2)}`}
-                    {campaign.cpm > 0 && ` / R$ ${campaign.cpm.toFixed(2)}`}
-                  </TableCell>
-                  <TableCell className="text-right font-bold">
-                    R$ {campaign.revenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                  </TableCell>
-                </TableRow>
-              ))}
+              {sortedCampaigns.map((campaign) => {
+                const estimatedCost = campaign.cpc > 0 ? campaign.clicks * campaign.cpc : 0;
+                const roi = estimatedCost > 0 ? ((campaign.revenue - estimatedCost) / estimatedCost) * 100 : 0;
+                
+                return (
+                  <TableRow key={campaign.id}>
+                    <TableCell className="font-medium">{campaign.name}</TableCell>
+                    <TableCell className="text-right">{campaign.impressions.toLocaleString('pt-BR')}</TableCell>
+                    <TableCell className="text-right">{campaign.clicks.toLocaleString('pt-BR')}</TableCell>
+                    <TableCell className="text-right">
+                      <Badge variant={campaign.ctr > 1 ? "default" : "secondary"}>
+                        {campaign.ctr.toFixed(2)}%
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right text-sm text-muted-foreground">
+                      {campaign.cpc > 0 && `R$ ${campaign.cpc.toFixed(2)}`}
+                      {campaign.cpm > 0 && ` / R$ ${campaign.cpm.toFixed(2)}`}
+                    </TableCell>
+                    <TableCell className="text-right font-bold">
+                      R$ {campaign.revenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Badge variant={roi > 0 ? "default" : roi < -20 ? "destructive" : "secondary"}>
+                        {roi > 0 ? '+' : ''}{roi.toFixed(1)}%
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </CardContent>

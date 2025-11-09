@@ -4,12 +4,19 @@ import { CampaignList } from "@/components/ads/CampaignList";
 import { CreativeList } from "@/components/ads/CreativeList";
 import { PlacementList } from "@/components/ads/PlacementList";
 import { AdsAnalytics } from "@/components/ads/AdsAnalytics";
+import { AdsOverview } from "@/components/ads/AdsOverview";
+import { CampaignAlerts } from "@/components/ads/CampaignAlerts";
 import { Megaphone, Palette, MapPin, BarChart3 } from "lucide-react";
 
 export default function AdminAds() {
   return (
     <IlluminaAdminLayout title="Publicidade & Monetização">
-      <Tabs defaultValue="campaigns" className="space-y-6">
+      <div className="space-y-6">
+        <AdsOverview />
+        <CampaignAlerts />
+      </div>
+      
+      <Tabs defaultValue="campaigns" className="space-y-6 mt-6">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="campaigns" className="flex items-center gap-2">
             <Megaphone className="w-4 h-4" />

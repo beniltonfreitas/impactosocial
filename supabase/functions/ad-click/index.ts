@@ -34,7 +34,7 @@ Deno.serve(async (req) => {
     const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '';
     const userAgent = req.headers.get('user-agent') || '';
 
-    // Inserir clique (async, não aguarda)
+    // Inserir clique e atualizar contadores (não bloqueia o redirect)
     supabaseClient
       .from('ad_stats')
       .insert({
@@ -47,8 +47,32 @@ Deno.serve(async (req) => {
         ip_address: ip,
         user_agent: userAgent,
       })
-      .then(({ error }) => {
-        if (error) console.error('Error inserting click:', error);
+      .then(async ({ error }) => {
+        if (error) {
+          console.error('Error inserting click:', error);
+          return;
+        }
+
+        // Atualizar contadores da campanha
+        const { data: campaign } = await supabaseClient
+          .from('ad_campaigns')
+          .select('clicks_count, impressions_count, spent_amount, cpc')
+          .eq('id', campaignId)
+          .single();
+
+        if (campaign) {
+          const newClickCount = (campaign.clicks_count || 0) + 1;
+          const cpcCost = campaign.cpc || 0;
+          const newSpentAmount = (campaign.spent_amount || 0) + cpcCost;
+
+          await supabaseClient
+            .from('ad_campaigns')
+            .update({
+              clicks_count: newClickCount,
+              spent_amount: newSpentAmount
+            })
+            .eq('id', campaignId);
+        }
       });
 
     // Redirecionar imediatamente

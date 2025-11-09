@@ -22,6 +22,11 @@ interface Campaign {
   status: string;
   budget_total: number | null;
   budget_daily: number | null;
+  spent_amount: number | null;
+  impressions_count: number | null;
+  clicks_count: number | null;
+  impressions_limit: number | null;
+  clicks_limit: number | null;
   cpc: number | null;
   cpm: number | null;
   start_at: string;
@@ -230,30 +235,82 @@ export function CampaignList() {
                   </p>
                 </div>
 
-                {/* Orçamento */}
+                {/* Orçamento com Progresso */}
                 {campaign.budget_total && (
                   <div>
                     <div className="flex justify-between text-sm mb-2">
                       <span className="text-muted-foreground">Orçamento</span>
-                      <span className="font-medium">R$ {campaign.budget_total.toLocaleString('pt-BR')}</span>
+                      <span className="font-medium">
+                        R$ {(campaign.spent_amount || 0).toFixed(2)} / R$ {campaign.budget_total.toFixed(2)}
+                      </span>
                     </div>
-                    <Progress value={Math.random() * 100} className="h-2" />
+                    <Progress 
+                      value={campaign.budget_total > 0 ? ((campaign.spent_amount || 0) / campaign.budget_total * 100) : 0} 
+                      className="h-2" 
+                    />
+                    {campaign.budget_total > 0 && (campaign.spent_amount || 0) / campaign.budget_total >= 0.8 && (
+                      <Badge variant="outline" className="text-xs mt-2 border-orange-500 text-orange-700">
+                        Orçamento em {(((campaign.spent_amount || 0) / campaign.budget_total) * 100).toFixed(0)}%
+                      </Badge>
+                    )}
                   </div>
                 )}
 
-                {/* Métricas Rápidas */}
+                {/* Limites com Alertas */}
+                {(campaign.impressions_limit || campaign.clicks_limit) && (
+                  <div className="text-xs space-y-1">
+                    {campaign.impressions_limit && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Limite Impressões:</span>
+                        <span className={
+                          campaign.impressions_count && campaign.impressions_count / campaign.impressions_limit >= 0.8
+                            ? "font-semibold text-orange-600"
+                            : ""
+                        }>
+                          {(campaign.impressions_count || 0).toLocaleString()} / {campaign.impressions_limit.toLocaleString()}
+                        </span>
+                      </div>
+                    )}
+                    {campaign.clicks_limit && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Limite Cliques:</span>
+                        <span className={
+                          campaign.clicks_count && campaign.clicks_count / campaign.clicks_limit >= 0.8
+                            ? "font-semibold text-orange-600"
+                            : ""
+                        }>
+                          {(campaign.clicks_count || 0).toLocaleString()} / {campaign.clicks_limit.toLocaleString()}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Métricas Reais com CTR Badge */}
                 <div className="grid grid-cols-3 gap-2 pt-2 border-t">
                   <div className="text-center">
-                    <p className="text-xs text-muted-foreground">Impressões</p>
-                    <p className="text-sm font-bold">-</p>
+                    <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
+                      <Eye className="w-3 h-3" />
+                      Impressões
+                    </p>
+                    <p className="text-sm font-bold">{(campaign.impressions_count || 0).toLocaleString('pt-BR')}</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-xs text-muted-foreground">Cliques</p>
-                    <p className="text-sm font-bold">-</p>
+                    <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
+                      <TrendingUp className="w-3 h-3" />
+                      Cliques
+                    </p>
+                    <p className="text-sm font-bold">{(campaign.clicks_count || 0).toLocaleString('pt-BR')}</p>
                   </div>
                   <div className="text-center">
                     <p className="text-xs text-muted-foreground">CTR</p>
-                    <p className="text-sm font-bold">-</p>
+                    {campaign.impressions_count && campaign.impressions_count > 0 ? (
+                      <Badge variant={(campaign.clicks_count || 0) / campaign.impressions_count >= 0.01 ? "default" : "secondary"}>
+                        {(((campaign.clicks_count || 0) / campaign.impressions_count) * 100).toFixed(2)}%
+                      </Badge>
+                    ) : (
+                      <p className="text-sm font-bold">-</p>
+                    )}
                   </div>
                 </div>
 

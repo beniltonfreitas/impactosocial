@@ -19,13 +19,19 @@ export type Database = {
           advertiser: string
           budget_daily: number | null
           budget_total: number | null
+          clicks_count: number | null
+          clicks_limit: number | null
           cpc: number | null
           cpm: number | null
           created_at: string
           created_by: string | null
           end_at: string | null
           id: string
+          impressions_count: number | null
+          impressions_limit: number | null
           name: string
+          priority: number | null
+          spent_amount: number | null
           start_at: string
           status: Database["public"]["Enums"]["ad_campaign_status"]
           tenant_id: string
@@ -34,13 +40,19 @@ export type Database = {
           advertiser: string
           budget_daily?: number | null
           budget_total?: number | null
+          clicks_count?: number | null
+          clicks_limit?: number | null
           cpc?: number | null
           cpm?: number | null
           created_at?: string
           created_by?: string | null
           end_at?: string | null
           id?: string
+          impressions_count?: number | null
+          impressions_limit?: number | null
           name: string
+          priority?: number | null
+          spent_amount?: number | null
           start_at: string
           status?: Database["public"]["Enums"]["ad_campaign_status"]
           tenant_id: string
@@ -49,13 +61,19 @@ export type Database = {
           advertiser?: string
           budget_daily?: number | null
           budget_total?: number | null
+          clicks_count?: number | null
+          clicks_limit?: number | null
           cpc?: number | null
           cpm?: number | null
           created_at?: string
           created_by?: string | null
           end_at?: string | null
           id?: string
+          impressions_count?: number | null
+          impressions_limit?: number | null
           name?: string
+          priority?: number | null
+          spent_amount?: number | null
           start_at?: string
           status?: Database["public"]["Enums"]["ad_campaign_status"]
           tenant_id?: string

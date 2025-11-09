@@ -23,6 +23,9 @@ const campaignSchema = z.object({
   advertiser: z.string().min(2, "Nome do anunciante é obrigatório"),
   budget_total: z.number().positive("Orçamento total deve ser maior que zero").optional(),
   budget_daily: z.number().positive("Orçamento diário deve ser maior que zero").optional(),
+  impressions_limit: z.number().int().positive("Limite de impressões deve ser positivo").optional(),
+  clicks_limit: z.number().int().positive("Limite de cliques deve ser positivo").optional(),
+  priority: z.number().int().min(1).max(10).optional(),
   cpc: z.number().positive("CPC deve ser maior que zero").optional(),
   cpm: z.number().positive("CPM deve ser maior que zero").optional(),
   start_at: z.date({ required_error: "Data de início é obrigatória" }),
@@ -89,6 +92,9 @@ export function CampaignForm({ mode, campaign, onSuccess, onCancel }: CampaignFo
       setValue("advertiser", campaign.advertiser);
       setValue("budget_total", campaign.budget_total || undefined);
       setValue("budget_daily", campaign.budget_daily || undefined);
+      setValue("impressions_limit", campaign.impressions_limit || undefined);
+      setValue("clicks_limit", campaign.clicks_limit || undefined);
+      setValue("priority", campaign.priority || 5);
       setValue("cpc", campaign.cpc || undefined);
       setValue("cpm", campaign.cpm || undefined);
       setValue("start_at", new Date(campaign.start_at));
@@ -111,6 +117,9 @@ export function CampaignForm({ mode, campaign, onSuccess, onCancel }: CampaignFo
         advertiser: data.advertiser,
         budget_total: data.budget_total || null,
         budget_daily: data.budget_daily || null,
+        impressions_limit: data.impressions_limit || null,
+        clicks_limit: data.clicks_limit || null,
+        priority: data.priority || 5,
         cpc: data.cpc || null,
         cpm: data.cpm || null,
         start_at: data.start_at.toISOString(),
@@ -248,6 +257,44 @@ export function CampaignForm({ mode, campaign, onSuccess, onCancel }: CampaignFo
             placeholder="5.00"
           />
           {errors.cpm && <p className="text-sm text-destructive">{errors.cpm.message}</p>}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="impressions_limit">Limite de Impressões</Label>
+          <Input
+            id="impressions_limit"
+            type="number"
+            {...register("impressions_limit", { valueAsNumber: true })}
+            placeholder="10000"
+          />
+          {errors.impressions_limit && <p className="text-sm text-destructive">{errors.impressions_limit.message}</p>}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="clicks_limit">Limite de Cliques</Label>
+          <Input
+            id="clicks_limit"
+            type="number"
+            {...register("clicks_limit", { valueAsNumber: true })}
+            placeholder="1000"
+          />
+          {errors.clicks_limit && <p className="text-sm text-destructive">{errors.clicks_limit.message}</p>}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="priority">Prioridade (1-10)</Label>
+          <Input
+            id="priority"
+            type="number"
+            min="1"
+            max="10"
+            {...register("priority", { valueAsNumber: true })}
+            placeholder="5"
+          />
+          {errors.priority && <p className="text-sm text-destructive">{errors.priority.message}</p>}
+          <p className="text-xs text-muted-foreground">Campanhas com maior prioridade têm mais chances de serem exibidas</p>
         </div>
       </div>
 

@@ -51,6 +51,27 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Atualizar contadores da campanha
+    const { data: campaign } = await supabaseClient
+      .from('ad_campaigns')
+      .select('impressions_count, cpm, spent_amount')
+      .eq('id', campaignId)
+      .single();
+
+    if (campaign) {
+      const newImpressionCount = (campaign.impressions_count || 0) + 1;
+      const cpmCost = campaign.cpm ? (campaign.cpm / 1000) : 0;
+      const newSpentAmount = (campaign.spent_amount || 0) + cpmCost;
+
+      await supabaseClient
+        .from('ad_campaigns')
+        .update({
+          impressions_count: newImpressionCount,
+          spent_amount: newSpentAmount
+        })
+        .eq('id', campaignId);
+    }
+
     return new Response(
       JSON.stringify({ ok: true }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
