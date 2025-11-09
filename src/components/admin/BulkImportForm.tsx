@@ -205,6 +205,8 @@ export function BulkImportForm({
       errors: [],
     };
 
+    let imageWarnings = 0;
+
     try {
       const parsed = JSON.parse(jsonText);
       const articles: ImportArticle[] = parsed.noticias;
@@ -218,13 +220,18 @@ export function BulkImportForm({
         try {
           // Validar imagem principal
           const imageUrlValid = await validateImageUrl(article.imagem.hero);
+          const finalImageUrl = imageUrlValid 
+            ? article.imagem.hero 
+            : 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1200&h=630&fit=crop';
+          
           if (!imageUrlValid) {
-            console.warn(`Imagem inválida para "${article.titulo}": ${article.imagem.hero}`);
+            imageWarnings++;
+            console.warn(`⚠️ Imagem inválida para "${article.titulo}": ${article.imagem.hero} - usando placeholder`);
           }
 
           // Replicar imagem hero para og e card se vazias
-          const imageOgUrl = article.imagem.og || article.imagem.hero;
-          const imageCardUrl = article.imagem.card || article.imagem.hero;
+          const imageOgUrl = article.imagem.og || finalImageUrl;
+          const imageCardUrl = article.imagem.card || finalImageUrl;
 
           // Buscar ou criar categoria
           const categoryId = await getOrCreateCategory(article.categoria);
@@ -251,7 +258,7 @@ export function BulkImportForm({
             slug: finalSlug,
             summary: article.resumo || article.seo?.meta_descricao || "",
             content: sanitizedContent,
-            image_url: article.imagem.hero,
+            image_url: finalImageUrl,
             image_og_url: imageOgUrl,
             image_card_url: imageCardUrl,
             image_credit: article.imagem.credito || null,
@@ -300,7 +307,7 @@ export function BulkImportForm({
         title: "Importação Concluída",
         description: `${result.success} notícias importadas com sucesso${
           result.failed > 0 ? `, ${result.failed} com erro` : ""
-        }`,
+        }${imageWarnings > 0 ? ` (${imageWarnings} com imagem placeholder)` : ""}`,
       });
 
       onImport(result);

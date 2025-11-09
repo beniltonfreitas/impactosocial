@@ -60,19 +60,45 @@ Deno.serve(async (req) => {
           })
           .eq('id', schedule.id);
         
-        // Enviar notificação breaking (se configurado)
+        // Enviar notificação breaking (se configurado) com retry
         if (schedule.articles?.breaking) {
-          try {
-            await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/push-notify-breaking`, {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ articleId: schedule.article_id })
-            });
-          } catch (err) {
-            console.error('Error sending breaking notification:', err);
+          let notificationSent = false;
+          let lastError = null;
+          
+          for (let attempt = 1; attempt <= 3; attempt++) {
+            try {
+              console.log(`[publish-scheduled-articles] Sending breaking notification (attempt ${attempt}/3) for article ${schedule.article_id}`);
+              
+              const response = await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/push-notify-breaking`, {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ articleId: schedule.article_id })
+              });
+              
+              if (!response.ok) {
+                throw new Error(`Notification failed with status ${response.status}`);
+              }
+              
+              notificationSent = true;
+              console.log(`[publish-scheduled-articles] Breaking notification sent successfully for article ${schedule.article_id}`);
+              break;
+            } catch (err) {
+              lastError = err;
+              console.error(`[publish-scheduled-articles] Error sending breaking notification (attempt ${attempt}/3):`, err);
+              
+              // Backoff exponencial: 1s, 2s, 4s
+              if (attempt < 3) {
+                await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, attempt - 1)));
+              }
+            }
+          }
+          
+          if (!notificationSent) {
+            console.error(`[publish-scheduled-articles] Failed to send breaking notification after 3 attempts for article ${schedule.article_id}:`, lastError);
+            // Não falhar a publicação se notificação falhar
           }
         }
         
