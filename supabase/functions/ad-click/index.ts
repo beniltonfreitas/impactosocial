@@ -73,6 +73,18 @@ Deno.serve(async (req) => {
             })
             .eq('id', campaignId);
         }
+
+        // Salvar em realtime tracking para dashboard ao vivo
+        await supabaseClient
+          .from('ad_realtime_tracking')
+          .insert({
+            campaign_id: campaignId,
+            creative_id: creativeId || null,
+            slot: slot || null,
+            page: null,
+            event_type: 'click',
+            tenant_id: tenantId,
+          });
       });
 
     // Redirecionar imediatamente

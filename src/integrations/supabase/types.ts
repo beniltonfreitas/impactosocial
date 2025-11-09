@@ -182,6 +182,54 @@ export type Database = {
           },
         ]
       }
+      ad_realtime_tracking: {
+        Row: {
+          campaign_id: string | null
+          created_at: string | null
+          creative_id: string | null
+          event_type: string
+          id: string
+          page: string | null
+          slot: string
+          tenant_id: string | null
+        }
+        Insert: {
+          campaign_id?: string | null
+          created_at?: string | null
+          creative_id?: string | null
+          event_type: string
+          id?: string
+          page?: string | null
+          slot: string
+          tenant_id?: string | null
+        }
+        Update: {
+          campaign_id?: string | null
+          created_at?: string | null
+          creative_id?: string | null
+          event_type?: string
+          id?: string
+          page?: string | null
+          slot?: string
+          tenant_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_realtime_tracking_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "ad_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ad_realtime_tracking_creative_id_fkey"
+            columns: ["creative_id"]
+            isOneToOne: false
+            referencedRelation: "ad_creatives"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ad_stats: {
         Row: {
           campaign_id: string
@@ -3273,6 +3321,7 @@ export type Database = {
         }
         Returns: number
       }
+      cleanup_old_realtime_tracking: { Args: never; Returns: undefined }
       generate_optimal_times: { Args: never; Returns: undefined }
       get_community_ranking: {
         Args: { limit_rows?: number }

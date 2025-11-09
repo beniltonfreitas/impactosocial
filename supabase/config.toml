@@ -1,5 +1,8 @@
 project_id = "wlbdscnfizpqsfcezrnn"
 
+[functions.ad-check-limits]
+verify_jwt = false
+
 [functions.campaign-scheduler]
 verify_jwt = false
 

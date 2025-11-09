@@ -72,6 +72,18 @@ Deno.serve(async (req) => {
         .eq('id', campaignId);
     }
 
+    // Salvar em realtime tracking para dashboard ao vivo
+    await supabaseClient
+      .from('ad_realtime_tracking')
+      .insert({
+        campaign_id: campaignId,
+        creative_id: creativeId || null,
+        slot: slot || null,
+        page: page || null,
+        event_type: 'impression',
+        tenant_id: tenantId,
+      });
+
     return new Response(
       JSON.stringify({ ok: true }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
