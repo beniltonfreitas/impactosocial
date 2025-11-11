@@ -6,6 +6,7 @@ import { PlacementList } from "@/components/ads/PlacementList";
 import { AdsAnalytics } from "@/components/ads/AdsAnalytics";
 import { AdsOverview } from "@/components/ads/AdsOverview";
 import { CampaignAlerts } from "@/components/ads/CampaignAlerts";
+import { FunctionsHealthBadge } from "@/components/ads/FunctionsHealthBadge";
 import { Megaphone, Palette, MapPin, BarChart3, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -18,12 +19,15 @@ export default function AdminAds() {
           <div className="flex-1">
             <AdsOverview />
           </div>
-          <Button asChild variant="outline">
-            <Link to="/admin/ads/realtime">
-              <Activity className="mr-2 h-4 w-4" />
-              Tempo Real
-            </Link>
-          </Button>
+          <div className="flex items-center gap-3">
+            <FunctionsHealthBadge />
+            <Button asChild variant="outline">
+              <Link to="/admin/ads/realtime">
+                <Activity className="mr-2 h-4 w-4" />
+                Tempo Real
+              </Link>
+            </Button>
+          </div>
         </div>
         
         <CampaignAlerts />

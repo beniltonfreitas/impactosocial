@@ -10,9 +10,7 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  const url = new URL(req.url);
-  const lat = url.searchParams.get("lat");
-  const lng = url.searchParams.get("lng");
+  const { lat, lng } = await req.json();
 
   if (!lat || !lng) {
     return new Response(JSON.stringify({ error: "lat/lng required" }), {

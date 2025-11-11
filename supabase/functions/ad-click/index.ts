@@ -11,14 +11,9 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const url = new URL(req.url);
-    const campaignId = url.searchParams.get('c');
-    const creativeId = url.searchParams.get('k');
-    const slot = url.searchParams.get('s');
-    const targetUrl = url.searchParams.get('u');
-    const tenantId = url.searchParams.get('t');
+    const { campaignId, creativeId, slot, targetUrl, tenantSlug } = await req.json();
 
-    if (!targetUrl || !campaignId || !tenantId) {
+    if (!targetUrl || !campaignId || !tenantSlug) {
       return new Response(
         JSON.stringify({ error: 'Missing required parameters' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -29,6 +24,21 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     );
+
+    // Resolve tenant slug to UUID
+    const { data: tenant } = await supabaseClient
+      .from('tenant')
+      .select('id')
+      .eq('slug', tenantSlug)
+      .single();
+
+    const tenantId = tenant?.id;
+    if (!tenantId) {
+      return new Response(
+        JSON.stringify({ error: 'Tenant not found' }),
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     // Capturar IP e User-Agent
     const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '';
@@ -87,8 +97,11 @@ Deno.serve(async (req) => {
           });
       });
 
-    // Redirecionar imediatamente
-    return Response.redirect(decodeURIComponent(targetUrl), 302);
+    // Return success (frontend handles redirect)
+    return new Response(
+      JSON.stringify({ ok: true, targetUrl }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
   } catch (error) {
     console.error('Ad click error:', error);
     return new Response(

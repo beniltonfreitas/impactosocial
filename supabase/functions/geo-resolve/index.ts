@@ -11,12 +11,7 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  const url = new URL(req.url);
-  const cep = url.searchParams.get("cep") ?? "";
-  const uf = url.searchParams.get("uf") ?? "";
-  const city = url.searchParams.get("city") ?? "";
-  const lat = url.searchParams.get("lat");
-  const lng = url.searchParams.get("lng");
+  const { cep = "", uf = "", city = "", lat, lng } = await req.json();
 
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,

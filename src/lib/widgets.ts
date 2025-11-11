@@ -1,4 +1,4 @@
-import { FN_BASE } from './constants';
+import { supabase } from '@/integrations/supabase/client';
 
 export type MarketResp = {
   usd_brl: number | null;
@@ -10,8 +10,9 @@ export type MarketResp = {
 };
 
 export async function fetchMarkets(): Promise<MarketResp> {
-  const r = await fetch(`${FN_BASE}/market-ticker`, { cache: 'no-store' });
-  return r.json();
+  const { data, error } = await supabase.functions.invoke('market-ticker');
+  if (error) throw error;
+  return data as MarketResp;
 }
 
 export type WeatherResp = {
@@ -22,8 +23,11 @@ export type WeatherResp = {
 };
 
 export async function fetchWeather(lat: number, lng: number): Promise<WeatherResp> {
-  const r = await fetch(`${FN_BASE}/weather-current?lat=${lat}&lng=${lng}`, { cache: 'no-store' });
-  return r.json();
+  const { data, error } = await supabase.functions.invoke('weather-current', {
+    body: { lat, lng }
+  });
+  if (error) throw error;
+  return data as WeatherResp;
 }
 
 export type Article = {
@@ -53,18 +57,23 @@ export async function fetchArticles(
   orderBy = 'recent'
 ): Promise<Article[]> {
   try {
-    const params = new URLSearchParams({
-      tenantSlug,
-      limit: limit.toString(),
-      ...(featured && { featured: 'true' }),
-      ...(search && { search }),
-      ...(categoryId && { categoryId }),
-      ...(orderBy && { orderBy }),
+    const { data, error } = await supabase.functions.invoke('articles-list', {
+      body: {
+        tenantSlug,
+        limit,
+        featured,
+        search,
+        categoryId,
+        orderBy
+      }
     });
-    const r = await fetch(`${FN_BASE}/articles-list?${params}`, { cache: 'no-store' });
-    if (!r.ok) return [];
-    const data = await r.json();
-    return data.articles || [];
+    
+    if (error) {
+      console.error('Error fetching articles:', error);
+      return [];
+    }
+    
+    return (data as any)?.articles || [];
   } catch (e) {
     console.error('Error fetching articles:', e);
     return [];

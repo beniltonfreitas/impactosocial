@@ -16,12 +16,27 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     );
 
-    const { campaignId, creativeId, tenantId, slot, page } = await req.json();
+    const { campaignId, creativeId, tenantSlug, slot, page } = await req.json();
 
-    if (!campaignId || !tenantId) {
+    if (!campaignId || !tenantSlug) {
       return new Response(
         JSON.stringify({ error: 'Missing required fields' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Resolve tenant slug to UUID
+    const { data: tenant } = await supabaseClient
+      .from('tenant')
+      .select('id')
+      .eq('slug', tenantSlug)
+      .single();
+
+    const tenantId = tenant?.id;
+    if (!tenantId) {
+      return new Response(
+        JSON.stringify({ error: 'Tenant not found' }),
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 

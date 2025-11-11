@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { FN_BASE, TENANT_NAME } from "@/lib/constants";
+import { supabase } from "@/integrations/supabase/client";
+import { TENANT_NAME } from "@/lib/constants";
 
 interface Creative {
   campaignId: string;
@@ -32,33 +33,27 @@ export function AdSlot({ slot, page = "/", className = "" }: AdSlotProps) {
 
     const fetchAd = async () => {
       try {
-        const response = await fetch(
-          `${FN_BASE}/ad-fetch?slot=${encodeURIComponent(slot)}&page=${encodeURIComponent(page)}&tenant=${encodeURIComponent(tenant)}`
-        );
+        const { data, error } = await supabase.functions.invoke('ad-fetch', {
+          body: { slot, page, tenantSlug: tenant }
+        });
         
-        if (!response.ok) {
+        if (error || !data || !data.campaignId) {
           setLoading(false);
           return;
         }
 
-        const data = await response.json();
+        setCreative(data);
         
-        if (data && data.campaignId) {
-          setCreative(data);
-          
-          // Registrar impressão via sendBeacon (não bloqueia)
-          if (navigator.sendBeacon) {
-            const impressionData = JSON.stringify({
-              campaignId: data.campaignId,
-              creativeId: data.creativeId,
-              tenantId: tenant,
-              slot,
-              page,
-            });
-            
-            navigator.sendBeacon(`${FN_BASE}/ad-impression`, impressionData);
+        // Registrar impressão
+        supabase.functions.invoke('ad-impression', {
+          body: {
+            campaignId: data.campaignId,
+            creativeId: data.creativeId,
+            tenantSlug: tenant,
+            slot,
+            page,
           }
-        }
+        });
       } catch (error) {
         console.error("Error fetching ad:", error);
       } finally {
@@ -73,19 +68,31 @@ export function AdSlot({ slot, page = "/", className = "" }: AdSlotProps) {
     return null;
   }
 
-  const clickUrl = `${FN_BASE}/ad-click?c=${encodeURIComponent(creative.campaignId)}&k=${encodeURIComponent(creative.creativeId)}&s=${encodeURIComponent(slot)}&u=${encodeURIComponent(creative.targetUrl)}&t=${encodeURIComponent(tenant)}`;
+  const handleClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    // Track click
+    await supabase.functions.invoke('ad-click', {
+      body: {
+        campaignId: creative.campaignId,
+        creativeId: creative.creativeId,
+        slot,
+        targetUrl: creative.targetUrl,
+        tenantSlug: tenant
+      }
+    });
+    
+    // Redirect
+    window.open(creative.targetUrl, '_blank', 'noopener,noreferrer');
+  };
 
   // Renderizar anúncio HTML customizado
   if (creative.type === "html" && creative.htmlContent) {
-    const htmlWithClick = creative.htmlContent.replace(
-      /__CLICK__/g,
-      clickUrl
-    );
-    
     return (
       <div
-        className={`ad-slot ad-slot-${slot} ${className}`}
-        dangerouslySetInnerHTML={{ __html: htmlWithClick }}
+        className={`ad-slot ad-slot-${slot} ${className} cursor-pointer`}
+        onClick={handleClick}
+        dangerouslySetInnerHTML={{ __html: creative.htmlContent }}
       />
     );
   }
@@ -94,11 +101,9 @@ export function AdSlot({ slot, page = "/", className = "" }: AdSlotProps) {
   if (creative.type === "video" && creative.videoUrl) {
     return (
       <div className={`ad-slot ad-slot-${slot} ${className}`}>
-        <a
-          href={clickUrl}
-          target="_blank"
-          rel="nofollow noopener noreferrer"
-          className="block"
+        <div
+          onClick={handleClick}
+          className="block cursor-pointer"
         >
           <video
             src={creative.videoUrl}
@@ -113,7 +118,7 @@ export function AdSlot({ slot, page = "/", className = "" }: AdSlotProps) {
             }}
             className="rounded-lg"
           />
-        </a>
+        </div>
       </div>
     );
   }
@@ -122,11 +127,9 @@ export function AdSlot({ slot, page = "/", className = "" }: AdSlotProps) {
   if (creative.imageUrl) {
     return (
       <div className={`ad-slot ad-slot-${slot} ${className}`}>
-        <a
-          href={clickUrl}
-          target="_blank"
-          rel="nofollow noopener noreferrer"
-          className="block"
+        <div
+          onClick={handleClick}
+          className="block cursor-pointer"
         >
           <img
             src={creative.imageUrl}
@@ -143,7 +146,7 @@ export function AdSlot({ slot, page = "/", className = "" }: AdSlotProps) {
               {creative.headline}
             </p>
           )}
-        </a>
+        </div>
       </div>
     );
   }

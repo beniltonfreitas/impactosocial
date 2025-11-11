@@ -29,13 +29,14 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const url = new URL(req.url);
-    const tenantSlug = url.searchParams.get('tenantSlug') || 'nacional';
-    const limit = parseInt(url.searchParams.get('limit') || '12');
-    const featured = url.searchParams.get('featured') === 'true';
-    const search = url.searchParams.get('search');
-    const categoryId = url.searchParams.get('categoryId');
-    const orderBy = url.searchParams.get('orderBy') || 'recent';
+    const { 
+      tenantSlug = 'nacional',
+      limit = 12,
+      featured = false,
+      search,
+      categoryId,
+      orderBy = 'recent'
+    } = await req.json();
     
     console.log('[articles-list] Fetching articles:', { 
       tenantSlug, 

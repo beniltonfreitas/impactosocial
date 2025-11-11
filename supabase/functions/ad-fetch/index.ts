@@ -19,13 +19,9 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const url = new URL(req.url);
-    const slot = url.searchParams.get('slot');
-    const page = url.searchParams.get('page') || '/';
-    const tenantId = url.searchParams.get('tenant');
-    const sessionId = url.searchParams.get('session') || '';
+    const { slot, page = '/', tenantSlug, sessionId = '' } = await req.json();
 
-    if (!slot || !tenantId) {
+    if (!slot || !tenantSlug) {
       return new Response(
         JSON.stringify({ error: 'Missing required parameters' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -36,6 +32,22 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     );
+
+    // Resolve tenant slug to UUID
+    const { data: tenant, error: tenantError } = await supabaseClient
+      .from('tenant')
+      .select('id')
+      .eq('slug', tenantSlug)
+      .single();
+
+    if (tenantError || !tenant) {
+      return new Response(
+        JSON.stringify({ error: 'Tenant not found' }),
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const tenantId = tenant.id;
 
     const now = new Date().toISOString();
 

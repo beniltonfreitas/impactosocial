@@ -74,3 +74,18 @@ verify_jwt = false
 
 [functions.populate-analytics]
 verify_jwt = true
+
+[functions.health-check]
+verify_jwt = false
+
+[functions.articles-list]
+verify_jwt = false
+
+[functions.weather-current]
+verify_jwt = false
+
+[functions.market-ticker]
+verify_jwt = false
+
+[functions.geo-resolve]
+verify_jwt = false

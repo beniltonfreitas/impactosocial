@@ -1,4 +1,5 @@
-import { FN_BASE, NATIONAL_DOMAIN, COOKIE_NAME, COOKIE_DOMAIN, COOKIE_MAX_AGE } from './constants';
+import { supabase } from '@/integrations/supabase/client';
+import { NATIONAL_DOMAIN, COOKIE_NAME, COOKIE_DOMAIN, COOKIE_MAX_AGE } from './constants';
 
 export type GeoResolve = {
   region: { uf: string; city: string } | null;
@@ -7,18 +8,27 @@ export type GeoResolve = {
 } | { error: string };
 
 export async function geoResolveByCEP(cep: string): Promise<GeoResolve> {
-  const r = await fetch(`${FN_BASE}/geo-resolve?cep=${cep}`, { cache: 'no-store' });
-  return r.json();
+  const { data, error } = await supabase.functions.invoke('geo-resolve', {
+    body: { cep }
+  });
+  if (error) return { error: error.message };
+  return data as GeoResolve;
 }
 
 export async function geoResolveByGeo(lat: number, lng: number): Promise<GeoResolve> {
-  const r = await fetch(`${FN_BASE}/geo-resolve?lat=${lat}&lng=${lng}`, { cache: 'no-store' });
-  return r.json();
+  const { data, error } = await supabase.functions.invoke('geo-resolve', {
+    body: { lat, lng }
+  });
+  if (error) return { error: error.message };
+  return data as GeoResolve;
 }
 
 export async function geoResolveByCity(uf: string, city: string): Promise<GeoResolve> {
-  const r = await fetch(`${FN_BASE}/geo-resolve?uf=${uf}&city=${encodeURIComponent(city)}`, { cache: 'no-store' });
-  return r.json();
+  const { data, error } = await supabase.functions.invoke('geo-resolve', {
+    body: { uf, city }
+  });
+  if (error) return { error: error.message };
+  return data as GeoResolve;
 }
 
 export function setTenantCookie(slug: string) {
